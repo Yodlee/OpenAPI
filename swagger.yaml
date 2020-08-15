@@ -20,8 +20,6 @@ paths:
           description: "Y800 : Invalid value for baseType<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for category<br>Y800 : Invalid value for toDate<br>Y800 : Invalid value for container<br>Y809 : Invalid date range<br>Y804 : Permitted values of top between 1 - 500<br>Y805 : Multiple containers not supported<br>Y800 : Invalid value for transaction type<br>Y824 : The maximum number of accountIds permitted is 100<br>Y824 : The maximum number of categoryIds permitted is 100<br>Y824 : The maximum number of highLevelCategoryIds permitted is 100<br>Y848 : detailCategoryId cannot be provided as input, as the detailedCategory feature is not enabled<br>Y823 : detailCategoryId is not for applicable containers other than bank and card<br>Y824 : The maximum number of detailCategoryIds permitted is 100<br>Y800 : Invalid value for detailCategoryId"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -107,6 +105,35 @@ paths:
         required: false
       tags:
       - "Transactions"
+  /auth/apiKey/{key}:
+    delete:
+      summary: "Delete API Key"
+      deprecated: false
+      produces:
+      - "*/*"
+      description: "This endpoint allows an existing API key to be deleted.<br>You can use one of the following authorization methods to access this API:<br><ol><li>cobsession</li><li>JWT token</li></ol><b>Notes:</b><br>This service is not available in developer sandbox environment and will be made available<br>for testing in your dedicated environment. "
+      operationId: "deleteApiKey"
+      responses:
+        201:
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y807 : Resource not found<br>Y806 : Invalid input"
+        401:
+          description: "Unauthorized"
+        204:
+          description: "No Content"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "path"
+        name: "key"
+        description: "key"
+        type: "string"
+        required: true
+      tags:
+      - "Auth"
   /cobrand/login:
     post:
       summary: "Cobrand Login"
@@ -120,8 +147,6 @@ paths:
           schema:
             $ref: "#/definitions/CobrandLoginResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -130,8 +155,6 @@ paths:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y003 : Account is locked, contact Yodlee customer care<br>Y001 : User name and password required"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -158,16 +181,12 @@ paths:
           schema:
             $ref: "#/definitions/AddedProviderAccountResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y803 : providerId is mandatory<br>Y803 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y901 : Service not supported"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -202,8 +221,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -219,23 +236,19 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The update account service is used to: <br> 1.Retrieve the latest information for accounts from the provider site. (Note: You must allow at least 15 min. between requests) <br> 2.Data to be retrieved from the provider site can be passed using datasetName or dataset. If you pass datasetName, all the attributes that are implicitly configured for the dataset will be retrieved. <br> 3.Update account credentials when the user has changed the authentication information at the the provider site. <br> 4.Post MFA information for the MFA-enabled provider accounts during add and update accounts. <br> 5.This service can be called without providing credentials to retrieve the latest information of non-MFA type of more than one provider accounts. <br> 6. If the credentials have to be updated in the Yodlee system, one of the following should be provided as input to this service: <br> a.LoginForm b.Field array<br> 7. The loginForm or the field array are the objects under the provider object that is obtained from the <a href=\"https://developer.yodlee.com/apidocs/index.php#!/providers/getSiteDetail\">get provider details</a> service response.<br> 8. The credentials provided by the user should be embedded in the loginForm or field array object.<br> 9. Similar to credentials, the MFA information should be embedded in the loginForm or field array object. <br> <b>Note:</b> If you are testing <a href=\"https://developer.yodlee.com/KnowledgeBase/How_to_use_PKI\">PKI feature</a>, for encrypting the credentials and answers for MFA questions use <a href=\"https://developer.yodlee.com/apidocs/utility/encrypt.html\">encryption utility</a>.<br> 10. This API has <a href=\"https://developer.yodlee.com/Yodlee_API/docs/v1_1/Webhooks\">webhooks</a> support. <br> 11. If the customer has subscribed to the REFRESH event notification and invoked this API for updating an account, relevant notifications will be sent to the customer.<br> 12.The update account service is used to update the renewed consent to the user's existing provider account. The renewed consent id for the provider site, authorization code received in the PUT consent along with the token received needs to be provided in the request.<br> <b>Note:</b> <br> A dataset may depend on another dataset for retrieval, so the response will include the requested datasets and the dependent datasets.<br> It is necessary to check all the dataset additional statuses returned in the response, as the provider account status is drawn from the dataset additional statuses.<br> Label is mandatory for a questionAndAnswer form type.<br> The content type has to be passed as application/json for the body parameter.<br> Updating preferences is optional and updating them using this endpoint will trigger refreshes.<br>Do not call this endpoint to refresh or edit the credentials if an action is already in progress in the providerAccount. Check the status of the providerAccount before invoking this endpoint.<br>"
+      description: "<b>Credential-based Implementation Notes:</b> <br>The update account API is used to:  &bull; Retrieve the latest information for accounts that belong to one providerAccount from the provider site. You must allow at least 15 min between requests. <br> &bull; Update account credentials when the user has changed the authentication information at the provider site. <br> &bull; Post MFA information for the MFA-enabled provider accounts during add and update accounts. <br> &bull; Retrieve the latest information of all the eligible accounts that belong to the user. <br><br><b>Edit Credentials - Notes: </b> <br> &bull; If credentials have to be updated in the Yodlee system, one of the following should be provided: <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; LoginForm <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; Field array <br> &bull; LoginForm or the field array, can be obtained from the GET providerAccounts/{providerAccountId}?include=credentials API response. <br> &bull; The credentials provided by the user should be embedded in the loginForm or field array object before you pass to this API. <br><b>Posting MFA Info - Notes: </b> <br>1. You might receive the MFA request details to be presented to the end user in the GET providerAccounts/{providerAccount} API during polling or through REFRESH webhooks notificaiton. <br>2. After receiving the inputs from your user: <br>&nbsp;&nbsp;&nbsp;&nbsp;a.Embed the MFA information provided by the user in the loginForm or field array object.<br>&nbsp;&nbsp;&nbsp;&nbsp;b.Pass one of the following objects as input to this API:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; LoginForm<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; Field array<br/><br><b>Points to consider:</b><br>&bull; Data to be retrieved from the provider site can be overridden using datasetName or dataset. If you do pass datasetName, all the datasets that are implicitly configured for <br>the dataset will be retrieved. This action is allowed for edit credentials and single provider account refresh flows only. <br>&bull; Encrypt the credentials and MFA information using the public key.<br>&bull; While testing the PKI feature in sandbox environment, encrypt the password credentials and answers to the MFA questions using the encryption tool.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Open Banking (OB)-based Authentication - Notes:</b><br>The update account API is used to:<br>&bull; Retrieve the latest information for accounts from the provider site.<br>&bull; Update the renewed consent for an existing provider account.<br>&bull; Retrieve the latest information for all the eligible accounts that belong to the user.<br/><br>Yodlee recommendations: <br/>&bull; Create the field entity with the authParameters provided in the get provider details API.<br>&bull; Populate the field entity with the values received from the OB site and pass it to this API.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Update All Eligible Accounts - Notes: </b><br>&bull; This API will trigger a refresh for all the eligible provider accounts(both OB and credential-based accounts).<br>&bull; This API will not refresh closed, inactive, or UAR accounts, or accounts with refreshes in-progress or recently refreshed non-OB accounts.<br>&bull; No parameters should be passed to this API to trigger this action.<br>&bull; Do not call this API often. Our recommendation is to call this only at the time the user logs in to your app because it can hamper other API calls performance. <br>&bull; The response only contains information for accounts that were refreshed. If no accounts are eligible for refresh, no response is returned.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>What follows are common to both OB and credential-based authentication implementations:  </b><br>&bull; Check the status of the providerAccount before invoking this API. Do not call this API to trigger any action on a providerAccount when an action is already in progress for the providerAccount. <br>&bull; If the customer has subscribed to the REFRESH event notification and invoked this API, relevant notifications will be sent to the customer.<br>&bull; A dataset may depend on another dataset for retrieval, so the response will include the requested and dependent datasets.<br>&bull; Check all the dataset additional statuses returned in the response because the provider account status is drawn from the dataset additional statuses.<br>&bull; Updating preferences using this API will trigger refreshes.<br>&bull; Pass linkedProviderAccountId in the input to link a userâ€™s credential-based providerAccount with the OB providerAccount or viceversa. Ensure that the both the providerAccounts belong to the same institution. <br>&bull; The content type has to be passed as application/json for the body parameter.<br>"
       operationId: "editCredentialsOrRefreshProviderAccount"
       responses:
         200:
           schema:
             $ref: "#/definitions/UpdatedProviderAccountResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y805 : Multiple providerAccountId not supported for updating credentials<br>Y800 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y806 : Invalid input<br>Y823 : Credentials are not applicable for real estate aggregated / manual accounts<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -274,8 +287,6 @@ paths:
           description: "Y010 : Invalid session<br>Y800 : Invalid value for accountId<br>Y800 : Invalid value for groupBy<br>Y803 : groupBy required<br>Y803 : categoryType required<br>Y800 : Invalid value for categoryId<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for toDate<br>Y800 : Invalid value for fromDate or toDate<br>Y814 : Exchange rate not available for currency<br>Y815 : Cannot apply filter on categoryId if groupBy value is CATEGORY_TYPE<br>Y816 : User-defined category details can only be requested for one system categoryId with groupBy='CATEGORY'<br>Y824 : The maximum number of accountIds permitted is 100<br>Y824 : The maximum number of categoryIds permitted is 100<br>Y824 : The maximum number of categoryTypes permitted is 100"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -354,8 +365,6 @@ paths:
           description: "Y800 : Invalid value for detailCategoryId<br>Y848 : detailCategoryId cannot be provided as input, as the detailedCategory feature is not enabled<br>Y823 : detailCategoryId is not applicable for containers other than bank and card<br>Y824 : The maximum number of detailCategoryIds permitted is 100<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -446,8 +455,6 @@ paths:
           description: "Y800 : Invalid value for eventName<br>Y821 : Data update event not supported<br>Y800 : Invalid value for fromDate.fromDate cannot be greater than current time<br>Y800 : Invalid value for toDate.toDate cannot be greater than current time<br>.Y800 : Invalid value for fromDate or toDate.fromDate and toDate cannot be older than 7 days<br>Y800 : Invalid value for fromDate.fromDate can not be greater than toDate<br>Y800 : Invalid value for loginName"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -490,8 +497,6 @@ paths:
           description: "Y800 : Invalid value for priority<br>Y800 : Invalid value for providerName<br>Y801 : Invalid length for a site search. The search string must have atleast 1 character<br>Y800 : Invalid value for skip<br>Y804 : Permitted values of top between 1 - 500<br>Y821 : Dataset not supported<br>Y820 : The additionalDataSet is not supported for Get provider API"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -554,8 +559,6 @@ paths:
           description: "Y800 : Invalid value for providerId"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -573,7 +576,7 @@ paths:
       deprecated: false
       produces:
       - "application/json"
-      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>Customers can subscribe to REFRESH and DATA_UPDATES event.<br><br><b>Notes</b>:<br>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<br>The content type has to be passed as application/json for the body parameter.<br>"
+      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>Customers can subscribe to REFRESH,DATA_UPDATES and AUTO_REFRESH_UPDATES event.<br><br><b>Notes</b>:<br>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<br>The content type has to be passed as application/json for the body parameter.<br>"
       operationId: "createSubscriptionEvent"
       responses:
         201:
@@ -584,8 +587,6 @@ paths:
           description: "Y803 : eventName required<br>Y803 : callbackUrl required<br>Y800 : Invalid value for callbackUrl"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -597,6 +598,7 @@ paths:
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
       - schema:
           $ref: "#/definitions/CreateCobrandNotificationEventRequest"
         in: "body"
@@ -623,39 +625,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "OK"
-        403:
-          description: "Forbidden"
-      parameters:
-      - in: "path"
-        name: "eventName"
-        description: "eventName"
-        type: "string"
-        required: true
-        enum:
-        - "REFRESH"
-        - "DATA_UPDATES"
-      tags:
-      - "Cobrand"
-    put:
-      summary: "Update Subscription"
-      deprecated: false
-      produces:
-      - "application/json"
-      description: "The update events service is used to update the callback URL.<br><b>Note:</b> The content type has to be passed as application/json for the body parameter. <br>"
-      operationId: "updateSubscribedEvent"
-      responses:
-        201:
-          description: "Created"
-        400:
-          schema:
-            $ref: "#/definitions/YodleeError"
-          description: "Y803 : eventName required<br>Y803 : callbackUrl required<br>Y800 : Invalid value for callbackUrl"
-        401:
-          description: "Unauthorized"
-        204:
-          description: "OK"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -667,6 +636,37 @@ paths:
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
+      tags:
+      - "Cobrand"
+    put:
+      summary: "Update Subscription"
+      deprecated: false
+      produces:
+      - "application/json"
+      description: "The update events service is used to update the callback URL.<br><b>Note:</b> The content type has to be passed as application/json for the body parameter. <br>"
+      operationId: "updateSubscribedEvent"
+      responses:
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y803 : eventName required<br>Y803 : callbackUrl required<br>Y800 : Invalid value for callbackUrl"
+        401:
+          description: "Unauthorized"
+        204:
+          description: "OK"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "path"
+        name: "eventName"
+        description: "eventName"
+        type: "string"
+        required: true
+        enum:
+        - "REFRESH"
+        - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
       - schema:
           $ref: "#/definitions/UpdateCobrandNotificationEventRequest"
         in: "body"
@@ -692,8 +692,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -715,8 +713,8 @@ paths:
           description: "Unauthorized"
         204:
           description: "Deleted Successfully"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       parameters:
       - in: "path"
         name: "categoryId"
@@ -745,8 +743,6 @@ paths:
           description: "Y800 : Invalid value for accountId<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for toDate<br>Y800 : Invalid value for docType"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -801,8 +797,6 @@ paths:
           description: "Y800 : Invalid value for container"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -832,7 +826,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "include"
-        description: "profile, holder, fullAccountNumber, paymentProfile"
+        description: "profile, holder, fullAccountNumber, paymentProfile, autoRefresh"
         type: "string"
         required: false
       tags:
@@ -853,8 +847,8 @@ paths:
           description: "Unauthorized"
         204:
           description: "OK"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       parameters:
       - in: "path"
         name: "accountId"
@@ -872,8 +866,6 @@ paths:
       description: "The update account service is used to update manual and aggregated accounts.<br>The HTTP response code is 204 (Success without content).<br>Update manual account support is available for bank, card, investment, insurance, loan, bills, otherAssets, otherLiabilities and realEstate containers only.<br><b>Note:</b> A real estate account update is only supported for manual valuation.<br>"
       operationId: "updateAccount"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -882,8 +874,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "OK"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -922,12 +912,6 @@ paths:
           description: "Y800 : Invalid value for accountId<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for toDate<br>Y809 : Invalid date range<br>Y800 : Invalid value for interval<br>Y802 : Future date not allowed"
         401:
           description: "Unauthorized"
-        204:
-          schema:
-            $ref: "#/definitions/AccountHistoricalBalancesResponse"
-          description: "OK"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -996,8 +980,6 @@ paths:
           description: "Y800 : Invalid value for priority<br>Y800 : Invalid value for providerName<br>Y801 : Invalid length for a site search. The search string must have at least 1 character<br>Y800 : Invalid value for skip<br>Y804 : Permitted values of top between 1 - 500<br>Y821 : Dataset not supported<br>Y820 : The additionalDataSet is not supported for Get provider API"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1046,8 +1028,6 @@ paths:
           description: "Y800 : Invalid value for accountIds<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for toDate<br>Y809 : Invalid date range<br>Y800 : Invalid value for interval<br>Y802 : Future date not allowed<br>Y814 : Exchange rate not available for currency"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1110,16 +1090,12 @@ paths:
           schema:
             $ref: "#/definitions/UserResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y013 : Invalid value for samlResponse<br>Y013 : Invalid value for issuer<br>Y013 : Invalid value for source<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1157,8 +1133,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1183,16 +1157,12 @@ paths:
           schema:
             $ref: "#/definitions/UserResponse"
           description: "Login Successful"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y800 : Invalid value for loginName<br>Y800 : Invalid value for password<br>Y800 : Invalid value for email<br>Y801 : Invalid length for loginName<br>Y801 : Invalid length for password<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1219,16 +1189,12 @@ paths:
           schema:
             $ref: "#/definitions/VerificationResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y901 : Service not supported<br>Y812 : Required field/value - verification.verificationType missing in the verificationParam<br>Y812 : Required field/value - accountNumber missing in the verificationParam<br>Y812 : Required field/value - accountType missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.id missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.type missing in the verificationParam<br>Y800 : Invalid value for verification.verificationType<br>Y800 : Invalid value for verificationParam<br>Y800 : Invalid value for bankTransferCode.type<br>Y800 : Invalid value for bankTransferCode.id<br>Y800 : Invalid value for accountType<br>Y800 : Invalid value for accountId<br>Y813 : Account details should be provided<br>Y801 : Invalid length for accountNumber<br>Y835 : Account(s) not eligible for Challenge Deposit verification<br>Y806 : Invalid Input<br>Y840 : Verification has been initiated already<br>Y837 : Account has been verified already"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1260,8 +1226,6 @@ paths:
           description: "Y901 : Service not supported<br>Y813 : Either of accountId or providerAccountId should be provided<br>Y800 : Invalid value for accountId<br>Y800 : Invalid value for verification.verificationType<br>Y800 : Invalid value for providerAccountId<br>Y835 : Account(s) not eligible for Matching verification<br>Y836 : No verification initiated"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1297,16 +1261,12 @@ paths:
           schema:
             $ref: "#/definitions/VerificationResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y901 : Service not supported<br>Y812 : Required field/value - verification.verificationType missing in the verificationParam<br>Y812 : Required field/value - amount.amount missing in the verificationParam<br>Y812 : Required field/value - baseType missing in the verificationParam<br>Y812 : Required field/value - currency missing in the verificationParam<br>Y812 : Required field/value - providerAccountId missing in the verificationParam<br>Y812 : Required field/value - accountId missing in the verificationParam<br>Y800 : Invalid value for verificationParam<br>Y800 : Invalid value for verification.verificationType<br>Y800 : Invalid value for baseType<br>Y800 : Invalid value for providerAccountId<br>Y800 : Invalid value for accountId<br>Y813 : Transaction should be provided<br>Y801 : Invalid length for accountNumber<br>Y801 : Invalid length for amount<br>Y835 : Account(s) not eligible for Challenge Deposit verification<br>Y806 : Invalid Input<br>Y840 : Verification has been initiated already<br>Y837 : Account has been verified already<br>Y838 : The currency code provided does not match with the currency of the transaction executed on the target account<br>Y846 : The number of financial transactions made on the target account does not match with the number of transactions entered by the user.<br>Y842 : Number of retries exceeded the maximum Challenge Deposit verification limit<br>Y844 : Financial Instructions were not executed successfully on the target account<br>Y845 : Verification time expired. Please try initiating challenge deposit again"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1339,8 +1299,6 @@ paths:
           description: "Y800 : Invalid value for holdingId<br>Y824 : The maximum number of holdingIds permitted is 100"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1367,20 +1325,19 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
       - in: "query"
         allowEmptyValue: false
         name: "eventName"
-        description: "eventName\n* REFRESH: Events that happen during add, edit and update aggregated accounts processes.<br>\n* DATA_UPDATES: Data updates that happen on provider accounts, accounts, transactions and holdings data due to user actions or auto updates. This event is triggered to help the customer perform data extracts from Yodlee system to their system.<br>"
+        description: "eventName\n* REFRESH: Events that happen during add, edit and update aggregated accounts processes.<br>\n* DATA_UPDATES: Data updates that happen on provider accounts, accounts, transactions and holdings data due to user actions or auto updates. This event is triggered to help the customer perform data extracts from Yodlee system to their system.<br>\n* AUTO_REFRESH_UPDATES: Events that gets triggered once there is a change in the state of cache refresh.<br>"
         type: "string"
         required: false
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
       tags:
       - "Cobrand"
   /holdings:
@@ -1402,8 +1359,6 @@ paths:
           description: "Y800 : Invalid value for accountId<br>Y800 : Invalid value for providerAccountId<br>Y800 : Invalid value for include<br>Y800 : Invalid value for classificationType<br>Y800 : Invalid value for classificationValue<br>Y800 : Invalid value for include<br>Y400 : classificationType mismatch<br>Y400 : classificationValue mismatch<br>Y824 : The maximum number of accountIds permitted is 100"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1439,6 +1394,56 @@ paths:
         required: false
       tags:
       - "Holdings"
+  /auth/apiKey:
+    post:
+      summary: "Generate API Key"
+      deprecated: false
+      produces:
+      - "*/*"
+      description: "This endpoint is used to generate an API key. The RSA public key you provide should be in<br/>2048 bit PKCS#8 encoded format. A public key is a mandatory input for generating the API key.<br/>The public key should be a unique key. The apiKeyId you get in the response is what you should<br/>use to generate the JWT token.<br> You can use one of the following authorization methods to access<br/>this API:<br/><ol><li>cobsession</li><li>JWT token</li></ol>Alternatively, you can use base 64 encoded cobrandLogin and cobrandPassword in the Authorization header (Format: Authorization: Basic <encoded value of cobrandLogin: cobrandPassword>)<br><b>Note:</b><br>This service is not available in developer sandbox environment and will be made available for testing in your dedicated environment. The content type has to be passed as application/json for the body parameter."
+      operationId: "generateApiKey"
+      responses:
+        201:
+          schema:
+            $ref: "#/definitions/ApiKeyResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for RS512 publicKey<br>Y806 : Invalid input<br>Y824 : The maximum number of apiKey permitted is 5<br>Y811 : publicKey value already exists"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - schema:
+          $ref: "#/definitions/ApiKeyRequest"
+        in: "body"
+        name: "apiKeyRequest"
+        description: "apiKeyRequest"
+        required: true
+      tags:
+      - "Auth"
+      consumes:
+      - "application/json"
+    get:
+      summary: "Get API Keys"
+      deprecated: false
+      produces:
+      - "*/*"
+      description: "This endpoint provides the list of API keys that exist for a customer.<br>You can use one of the following authorization methods to access this API:<br><ol><li>cobsession</li><li>JWT token</li></ol><b>Notes:</b><br>This service is not available in developer sandbox environment and will be made available<br>for testing in your dedicated environment. "
+      operationId: "getApiKeys"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ApiKeyResponse"
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      tags:
+      - "Auth"
   /documents/{documentId}:
     get:
       summary: "Download a Document"
@@ -1458,8 +1463,6 @@ paths:
           description: "Y800 : Invalid value for documentID"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1486,8 +1489,8 @@ paths:
           description: "Unauthorized"
         204:
           description: "OK"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       parameters:
       - in: "path"
         name: "documentId"
@@ -1505,8 +1508,6 @@ paths:
       description: "The run transaction categorization rule service is used to run a rule on <br>transactions, to categorize the transactions.<br>The HTTP response code is 204 (Success with no content).<br>"
       operationId: "runTransactionCategorizationRule"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -1515,8 +1516,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "Run Successfully"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1553,8 +1552,8 @@ paths:
           description: "Unauthorized"
         204:
           description: "Deleted Successfully"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       parameters:
       - in: "path"
         name: "ruleId"
@@ -1572,8 +1571,6 @@ paths:
       description: "The update transaction categorization rule service is used to update a categorization rule for both system-defined category as well as user-defined category.<br>ruleParam JSON input should be as explained in the create transaction categorization rule service.<br>The HTTP response code is 204 (Success without content).<br>"
       operationId: "updateTransactionCategorizationRule"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -1582,8 +1579,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "Updated Successfully"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1618,8 +1613,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1639,14 +1632,10 @@ paths:
       description: "The cobrand logout service is used to log out the cobrand.<br>This service does not return a response. The HTTP response code is 204 (Success with no content).<br><b>Note:</b> This endpoint is deprecated for customers using the API Key-based authentication and is applicable only to customers who use the SAML-based authentication.<br>"
       operationId: "cobrandLogout"
       responses:
-        201:
-          description: "Created"
         401:
           description: "Unauthorized"
         204:
           description: "Logout successful"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -1662,8 +1651,6 @@ paths:
       description: "This endpoint is used to update preferences like data extracts and auto refreshes without triggering refresh for the providerAccount.<br>Setting isDataExtractsEnabled to false will not trigger data extracts notification and dataExtracts/events will not reflect any data change that is happening for the providerAccount.<br>Modified data will not be provided in the dataExtracts/userData endpoint.<br>Setting isAutoRefreshEnabled to false will not trigger auto refreshes for the provider account.<br>"
       operationId: "updatePreferences"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -1672,8 +1659,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "OK"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1702,16 +1687,14 @@ paths:
       description: "This endpoint revokes the token passed in the Authorization header for API Key based authentication.<br>This service does not return a response. The HTTP response code is 204 (Success with no content).<br>"
       operationId: "deleteToken"
       responses:
-        201:
-          description: "OK"
         401:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y020 : Invalid token in authorization header<br>Y023 : Token has expired"
         204:
           description: "No Content"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       tags:
       - "Auth"
   /cobrand/publicKey:
@@ -1729,8 +1712,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -1754,8 +1735,6 @@ paths:
           description: "Y800 : Invalid value for providerAccountId<br>Y816 : questions can only be requested for questionAndAnswer Supported Sites"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1795,10 +1774,8 @@ paths:
           description: "Y800 : Invalid value for providerAccountId"
         401:
           description: "Unauthorized"
-        204:
-          description: "No Content"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       parameters:
       - in: "path"
         name: "providerAccountId"
@@ -1825,8 +1802,6 @@ paths:
           description: "Y800 : Invalid value for categoryParam<br>Y800 : Invalid value for source<br>Y801 : Invalid length for categoryName. Min 1 and max 50 is required<br>Y803 : parentCategoryId required<br>Y811 : categoryName value already exists"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1854,8 +1829,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -1868,8 +1841,6 @@ paths:
       description: "The update transaction categories service is used to update the transaction category name<br>for a high level category, a system-defined category and a user-defined category.<br>The renamed category can be set back to the original name by passing an empty string for categoryName.<br>The categoryName can accept minimum of 1, maximum of 50 alphanumeric or special characters.<br>The HTTP response code is 204 (Success without content).<br>"
       operationId: "updateTransactionCategory"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -1878,8 +1849,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "Updated Successfully"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1908,8 +1877,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -1922,14 +1889,10 @@ paths:
       description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the <a href=\"https://developer.yodlee.com/apidocs/index.php#!/derived\">derived</a> services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br>"
       operationId: "updateUser"
       responses:
-        201:
-          description: "Created"
         401:
           description: "Unauthorized"
         204:
           description: "No Content"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -1952,13 +1915,7 @@ paths:
       description: "The Create or Run Transaction Categorization Rule endpoint is used to: <br>Create transaction categorization rules for both system and user-defined categories.<br>Run all the transaction categorization rules to categorize transactions by calling the endpoint with action=run as the query parameter. <br>The input body parameters to create transaction categorization rules follow:<br>     categoryId - This field is mandatory and numeric<br>     priority - This field is optional and numeric. Priority decides the order in which the rule gets applied on transactions.<br>     ruleClause - This field is mandatory and should contain at least one rule<br>     field - The value can be description or amount<br>       If the field value is description then,<br>         1. operation - value can be stringEquals or stringContains<br>         2. value - value should be min of 3 and max of 50 characters<br>       If the field value is amount then, <br>         1. operation - value can be numberEquals, numberLessThan, numberLessThanEquals, numberGreaterThan or numberGreaterThanEquals<br>         2. value - min value 0 and a max value of 99999999999.99 is allowed<br>The HTTP response code is 201 (Created Successfully)."
       operationId: "createOrRunTransactionCategorizationRules"
       responses:
-        200:
-          schema:
-            type: "string"
-          description: "OK"
         201:
-          schema:
-            type: "string"
           description: "Created Successfully"
         400:
           schema:
@@ -1966,8 +1923,8 @@ paths:
           description: "Y806 : Invalid input<br>Y400 : Rule already exists. Rule should be unique in terms of combination of description and amount"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
+        204:
+          description: "No Content"
         404:
           description: "Not Found"
       parameters:
@@ -2006,8 +1963,6 @@ paths:
           description: "Y800 : Invalid value for accountId<br>Y800 : Invalid value for status<br>Y805 : Multiple containers not supported<br>Y800 : Invalid value for container<br>Y800 : Invalid value for isLatest<br>Y800 : Invalid value for fromDate<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2056,16 +2011,12 @@ paths:
           schema:
             $ref: "#/definitions/CreatedAccountResponse"
           description: "OK"
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
           description: "Y800 : Invalid value for accountParam"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2097,8 +2048,6 @@ paths:
           description: "Y800 : Invalid value for status<br>Y800 : Invalid value for container<br>Y800 : Invalid value for providerAccountId<br>Y824 : The maximum number of accountIds permitted is 100"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2117,7 +2066,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "include"
-        description: "profile,holder,fullAccountNumber,paymentProfile"
+        description: "profile, holder, fullAccountNumber, paymentProfile, autoRefresh"
         type: "string"
         required: false
       - in: "query"
@@ -2146,7 +2095,7 @@ paths:
       deprecated: false
       produces:
       - "application/json"
-      description: "The get holding types list service is used to get the supported holding types.<br>The response includes different holding types such as future, moneyMarketFund, stock, etc.<br>This service should be invoked by passing cobrand session only and returns the supported holding types.<br>Note: This endpoint does not accept a user-specific token. Provide a token without any user identifier.<br>"
+      description: "The get holding types list service is used to get the supported holding types.<br>The response includes different holding types such as future, moneyMarketFund, stock, etc.<br>and it returns the supported holding types <br>"
       operationId: "getHoldingTypeList"
       responses:
         200:
@@ -2155,8 +2104,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -2170,8 +2117,6 @@ paths:
       description: "The update transaction service is used to update the category,consumer description, memo for a transaction.<br>The HTTP response code is 204 (Success without content).<br>"
       operationId: "updateTransaction"
       responses:
-        201:
-          description: "Created"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
@@ -2180,8 +2125,6 @@ paths:
           description: "Unauthorized"
         204:
           description: "Updated Successfully"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2210,14 +2153,10 @@ paths:
       description: "<b>Deprecated</b>: This endpoint is deprecated for API Key-based authentication. The user logout service allows the user to log out of the application.<br>The service does not return a response body. The HTTP response code is 204 (Success with no content).<br>"
       operationId: "userLogout"
       responses:
-        201:
-          description: "Created"
         401:
           description: "Unauthorized"
         204:
           description: "Logout successful"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -2237,8 +2176,8 @@ paths:
           description: "Unauthorized"
         204:
           description: "No Content"
-        403:
-          description: "Forbidden"
+        404:
+          description: "Not Found"
       tags:
       - "User"
   /dataExtracts/events:
@@ -2260,8 +2199,6 @@ paths:
           description: "Y800 : Invalid value for fromDate.fromDate cannot be greater than current time<br>Y800 : Invalid value for toDate.toDate cannot be greater than current time<br>Y800 : Invalid value for fromDate or toDate.fromDate and toDate cannot be older than 7 days<br>Y800 : Invalid value for fromDate.fromDate cannot be greater than toDate."
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2304,8 +2241,6 @@ paths:
           description: "Y800 : Invalid value for classificationType<br>Y814 : Exchange rate not available for currency<br>Y824 : The maximum number of accountIds permitted is 100<br>"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       parameters:
@@ -2335,7 +2270,7 @@ paths:
       deprecated: false
       produces:
       - "application/json"
-      description: "The get asset classifications list service is used to get the supported asset classifications. <br>The response includes different classification types like assetClass, country, sector, style, etc., <br>and the values corresponding to each type.<br>This service should be invoked by passing cobrand session only and returns the supported asset classification.<br>Providing a user session parameter causes an error.<br>"
+      description: "The get asset classifications list service is used to get the supported asset classifications. <br>The response includes different classification types like assetClass, country, sector, style, etc., <br>and the values corresponding to each type.<br>"
       operationId: "getAssetClassificationList"
       responses:
         200:
@@ -2344,8 +2279,6 @@ paths:
           description: "OK"
         401:
           description: "Unauthorized"
-        403:
-          description: "Forbidden"
         404:
           description: "Not Found"
       tags:
@@ -2673,7 +2606,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       totalCashLimit:
-        description: "The maximum amount that can be withdrawn from an ATM using the credit card. Credit cards issuer allow cardholders to withdraw cash using their cards â€“ the cash limit is a percent of the overall credit limit.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        description: "The maximum amount that can be withdrawn from an ATM using the credit card. Credit cards issuer allow cardholders to withdraw cash using their cards - the cash limit is a percent of the overall credit limit.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       maturityDate:
@@ -2805,6 +2738,10 @@ definitions:
         description: "The loan payoff details such as date by which the payoff amount should be paid, loan payoff amount, and the outstanding balance on the loan account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/LoanPayoffDetails"
+      autoRefresh:
+        description: "Auto refresh account-related information.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/AutoRefresh"
       displayedName:
         description: "The name or identification of the account owner, as it appears at the FI site. <br><b>Note:</b> The account holder name can be full or partial based on how it is displayed in the account summary page of the FI site. In most cases, the FI site does not display the full account holder name in the account summary page.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, creditCard, investment, insurance, loan, bill, reward<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
@@ -2856,6 +2793,15 @@ definitions:
         description: "The monthly or periodic payment on a loan that is recurring in nature. The recurring payment amount is usually same as the amount due, unless late fees or other charges are added eventually changing the amount due for a particular month.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+  ApiKeyResponse:
+    type: "object"
+    title: "ApiKeyResponse"
+    properties:
+      apiKey:
+        description: "ApiKey customer details.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "array"
+        items:
+          $ref: "#/definitions/ApiKeyOutput"
   HoldingResponse:
     type: "object"
     title: "HoldingResponse"
@@ -2876,7 +2822,7 @@ definitions:
     title: "ProviderAccount"
     properties:
       preferences:
-        description: "User preference values for Auto-Refresh and DataExtracts Notification<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=preferences</li><li>GET providerAccounts/{providerAccountId} include=preferences</li></ul>"
+        description: "User preference values for Auto-Refresh and DataExtracts Notification<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/ProviderAccountPreferences"
       createdDate:
@@ -3217,7 +3163,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       totalCashLimit:
-        description: "The maximum amount that can be withdrawn from an ATM using the credit card. Credit cards issuer allow cardholders to withdraw cash using their cards â€“ the cash limit is a percent of the overall credit limit.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        description: "The maximum amount that can be withdrawn from an ATM using the credit card. Credit cards issuer allow cardholders to withdraw cash using their cards - the cash limit is a percent of the overall credit limit.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       maturityDate:
@@ -3680,6 +3626,23 @@ definitions:
       url:
         description: "Base URL using which the application is accessed.<br><br><b>Endpoints</b>:<ul><li>GET user/accessTokens</li></ul>"
         type: "string"
+  ApiKeyOutput:
+    type: "object"
+    title: "ApiKeyOutput"
+    properties:
+      expiresIn:
+        format: "int64"
+        description: "Time in seconds after which the JWT token created for users expires.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "integer"
+      createdDate:
+        description: "The date on which the apiKey was created for the customer.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "string"
+      publicKey:
+        description: "Public key uploaded by the customer while generating ApiKey.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "string"
+      key:
+        description: "ApiKey or the issuer key used to generate the JWT token for authentication.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "string"
   DocumentResponse:
     type: "object"
     title: "DocumentResponse"
@@ -4114,6 +4077,34 @@ definitions:
         description: "Public key that the customer should be using to encrypt the credentials and answers before sending to the add & update providerAccounts APIs.<br><br><b>Endpoints</b>:<ul><li>GET cobrand/publicKey</li></ul>"
         readOnly: true
         type: "string"
+  AutoRefresh:
+    type: "object"
+    title: "AutoRefresh"
+    properties:
+      additionalStatus:
+        description: "Indicates the reason for the status.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul><b>Applicable Values</b><br>\n* SCHEDULED: Auto refresh is scheduled .<br>\n* TEMP_ERROR: Auto refresh is temporarily disabled due to site or technical issues.<br>\n* SITE_BLOCKING: Auto refresh is disabled due to site blocking .<br>\n* SITE_NOT_SUPPORTED: Auto refresh is disabled because the site no longer supports updates.<br>\n* REAL_TIME_MFA_REQUIRED: Auto refresh is disabled because the site requires real time MFA information to get account updates.<br>\n* USER_ACTION_REQUIRED: Auto refresh is disabled as the user needs to take action at site or update the credentials or answers for security questions.<br>\n* UNSUBSCRIBED: Auto refresh is disabled because:<br><ul><li>The customer has unsubscribed to auto refreshes.</li><li>Yodlee has disabled auto refreshes for the customer due to site or technical issues.</li><li>Auto refresh no longer subscribed at the provider account level.</li><li>The site has been disabled for auto refreshes.</li><li>The account is inactive or closed.</li></ul><br>\n* MANUAL_ACCOUNT: Auto refresh is disabled because the account is a manual account.<br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "SCHEDULED"
+        - "TEMP_ERROR"
+        - "SITE_BLOCKING"
+        - "SITE_NOT_SUPPORTED"
+        - "REAL_TIME_MFA_REQUIRED"
+        - "USER_ACTION_REQUIRED"
+        - "UNSUBSCRIBED"
+        - "MANUAL_ACCOUNT"
+      asOfDate:
+        description: "Date on which the auto refresh status is determined.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        readOnly: true
+        type: "string"
+      status:
+        description: "Indicates whether auto refresh is enabled or disabled.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul><b>Applicable Values</b><br>\n* ENABLED: Auto refresh is enabled.<br>\n* DISABLED: Auto refresh is disabled.<br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "ENABLED"
+        - "DISABLED"
   Cobrand:
     type: "object"
     title: "Cobrand"
@@ -4707,7 +4698,7 @@ definitions:
         description: "Unique identifier for the account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         type: "integer"
       reason:
-        description: "The reason the account verification failed.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>\n* DATA_NOT_AVAILABLE: <br><b>Description: </b>The account holderâ€™s name related details are not available at the FI site.\n* ACCOUNT_HOLDER_MISMATCH: <br><b>Description: </b>The account verification process has failed due to account holderâ€™s data mismatch\n* FULL_ACCOUNT_NUMBER_AND_BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number and bank transfer code are not available.\n* FULL_ACCOUNT_NUMBER_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number is not available.\n* BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the bank transfer code is not available.\n* EXPIRED: <br><b>Description: </b>The time limit to verify the microtransaction details has expired.\n* DATA_MISMATCH: <br><b>Description: </b>The account verification process has failed due to data mismatch.\n* INSTRUCTION_GENERATION_ERROR: <br><b>Description: </b>The consumer's account verification has failed."
+        description: "The reason the account verification failed.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>\n* DATA_NOT_AVAILABLE: <br><b>Description: </b>The account holder's name related details are not available at the FI site.\n* ACCOUNT_HOLDER_MISMATCH: <br><b>Description: </b>The account verification process has failed due to account holder's data mismatch\n* FULL_ACCOUNT_NUMBER_AND_BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number and bank transfer code are not available.\n* FULL_ACCOUNT_NUMBER_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number is not available.\n* BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the bank transfer code is not available.\n* EXPIRED: <br><b>Description: </b>The time limit to verify the microtransaction details has expired.\n* DATA_MISMATCH: <br><b>Description: </b>The account verification process has failed due to data mismatch.\n* INSTRUCTION_GENERATION_ERROR: <br><b>Description: </b>The consumer's account verification has failed."
         readOnly: true
         type: "string"
         enum:
@@ -5127,16 +5118,24 @@ definitions:
         - "BUSINESS"
         - "WORK"
         - "HOME"
+  ApiKeyRequest:
+    type: "object"
+    title: "ApiKeyRequest"
+    properties:
+      publicKey:
+        description: "Public key uploaded by the customer while generating ApiKey.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "string"
   CreateCobrandNotificationEvent:
     type: "object"
     title: "CreateCobrandNotificationEvent"
     properties:
       name:
-        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul><b>Applicable Values</b><br>\n* REFRESH: Events that happen during add, edit and update aggregated accounts processes.<br>\n* DATA_UPDATES: Data updates that happen on provider accounts, accounts, transactions and holdings data due to user actions or auto updates. This event is triggered to help the customer perform data extracts from Yodlee system to their system.<br>"
+        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul><b>Applicable Values</b><br>\n* REFRESH: Events that happen during add, edit and update aggregated accounts processes.<br>\n* DATA_UPDATES: Data updates that happen on provider accounts, accounts, transactions and holdings data due to user actions or auto updates. This event is triggered to help the customer perform data extracts from Yodlee system to their system.<br>\n* AUTO_REFRESH_UPDATES: Events that gets triggered once there is a change in the state of cache refresh.<br>"
         type: "string"
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
       callbackUrl:
         description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul>"
         type: "string"
@@ -5760,7 +5759,7 @@ definitions:
         type: "string"
       providerAccountId:
         format: "int64"
-        description: "Unique identifier for the userâ€™s association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Unique identifier for the user's association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "integer"
       unvestedQuantity:
@@ -6567,7 +6566,7 @@ definitions:
         description: "Unique identifier for the account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         type: "integer"
       reason:
-        description: "The reason the account verification failed.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>\n* DATA_NOT_AVAILABLE: <br><b>Description: </b>The account holderâ€™s name related details are not available at the FI site.\n* ACCOUNT_HOLDER_MISMATCH: <br><b>Description: </b>The account verification process has failed due to account holderâ€™s data mismatch\n* FULL_ACCOUNT_NUMBER_AND_BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number and bank transfer code are not available.\n* FULL_ACCOUNT_NUMBER_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number is not available.\n* BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the bank transfer code is not available.\n* EXPIRED: <br><b>Description: </b>The time limit to verify the microtransaction details has expired.\n* DATA_MISMATCH: <br><b>Description: </b>The account verification process has failed due to data mismatch.\n* INSTRUCTION_GENERATION_ERROR: <br><b>Description: </b>The consumer's account verification has failed."
+        description: "The reason the account verification failed.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>\n* DATA_NOT_AVAILABLE: <br><b>Description: </b>The account holder's name related details are not available at the FI site.\n* ACCOUNT_HOLDER_MISMATCH: <br><b>Description: </b>The account verification process has failed due to account holder's data mismatch\n* FULL_ACCOUNT_NUMBER_AND_BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number and bank transfer code are not available.\n* FULL_ACCOUNT_NUMBER_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the full account number is not available.\n* BANK_TRANSFER_CODE_NOT_AVAILABLE: <br><b>Description: </b>The account verification process has failed as the bank transfer code is not available.\n* EXPIRED: <br><b>Description: </b>The time limit to verify the microtransaction details has expired.\n* DATA_MISMATCH: <br><b>Description: </b>The account verification process has failed due to data mismatch.\n* INSTRUCTION_GENERATION_ERROR: <br><b>Description: </b>The consumer's account verification has failed."
         readOnly: true
         type: "string"
         enum:
@@ -6822,7 +6821,7 @@ definitions:
         readOnly: true
         type: "string"
       ownership:
-        description: "Indicates the ownership of the account.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul><b>Applicable Values</b><br>\n* PRIMARY: The account holder is a primary holder of the account.<br>\n* SECONDARY: The account holder is a secondary holder of the account.<br>\n* CUSTODIAN: The account holder is a custodian of the account.<br>\n* OTHERS: An account ownership other than what has been listed here.<br>\n* POWER_OF_ATTORNEY: The account holder has a power of attorney authorizing him or her to access the account.<br>\n* TRUSTEE: The account holder is a trustee that controls funds for the benefit of another party â€“ an individual or a group.<br>\n* JOINT_OWNER: The account holder has a joint ownership of the account.<br>\n* BENEFICIARY: The account holder is a beneficiary of the account. The beneficiary has no control or ownership of the account while the account owner is alive, but is designated by the account owner to own the account upon the ownerâ€™s death.<br>\n* AAS: Indicates that the account holder is an authorized account signatory (AAS).<br>\n* BUSINESS: Indicates that the account holder is a business.<br>\n* DBA: Indicates that the account holder is a business using a different name, i.e., doing business as (DBA).<br>\n* TRUST: Indicates that the account holder is a trust.<br>"
+        description: "Indicates the ownership of the account.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul><b>Applicable Values</b><br>\n* PRIMARY: The account holder is a primary holder of the account.<br>\n* SECONDARY: The account holder is a secondary holder of the account.<br>\n* CUSTODIAN: The account holder is a custodian of the account.<br>\n* OTHERS: An account ownership other than what has been listed here.<br>\n* POWER_OF_ATTORNEY: The account holder has a power of attorney authorizing him or her to access the account.<br>\n* TRUSTEE: The account holder is a trustee that controls funds for the benefit of another party - an individual or a group.<br>\n* JOINT_OWNER: The account holder has a joint ownership of the account.<br>\n* BENEFICIARY: The account holder is a beneficiary of the account. The beneficiary has no control or ownership of the account while the account owner is alive, but is designated by the account owner to own the account upon the owner's death.<br>\n* AAS: Indicates that the account holder is an authorized account signatory (AAS).<br>\n* BUSINESS: Indicates that the account holder is a business.<br>\n* DBA: Indicates that the account holder is a business using a different name, i.e., doing business as (DBA).<br>\n* TRUST: Indicates that the account holder is a trust.<br>"
         readOnly: true
         type: "string"
         enum:
@@ -7092,7 +7091,7 @@ definitions:
         type: "string"
       providerAccountId:
         format: "int64"
-        description: "Unique identifier for the userâ€™s association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Unique identifier for the user's association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "integer"
       unvestedQuantity:
@@ -7478,7 +7477,7 @@ definitions:
         type: "string"
       providerAccountId:
         format: "int64"
-        description: "Unique identifier for the userâ€™s association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Unique identifier for the user's association with the provider.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "integer"
       unvestedQuantity:
@@ -7547,7 +7546,7 @@ info:
   description: "This file describes the Yodlee Platform APIs, using the swagger notation. You can use this swagger file to generate client side SDKs to the Yodlee Platform APIs for many different programming languages. You can generate a client SDK for Python, Java, javascript, PHP or other languages according to your development needs. For more details about our APIs themselves, please refer to https://developer.yodlee.com/Yodlee_API/."
   termsOfService: "https://developer.yodlee.com/legal"
   title: "Yodlee Core APIs"
-  version: "1.1"
+  version: "1.1.0"
 tags:
 - name: "Accounts"
   description: "Accounts API"
