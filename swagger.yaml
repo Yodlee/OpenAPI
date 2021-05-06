@@ -211,7 +211,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The get user data service is used to get a user's modified data for a particular period of time for accounts, transactions, holdings, and provider account information.<br>The time difference between fromDate and toDate fields cannot be more than 60 minutes.<br>By default, pagination is available in this API. If there are more transactions left to be retrieved, the response header provides a link to retrieve the next set of transactions.<br>For example, in the first response, along with the dataset, 500 transactions will be retrieved. The next set of 500 transactions can be retrieved by using the link in the response header.<br>This service is only invoked with either admin access token or a cobrand session.<br/>Refer to <a href=\"https://developer.yodlee.com/docs/api/1.1/DataExtracts\">dataExtracts</a> page for more information.<b>Note:</b>This service supports the localization feature and accepts locale as a header parameter.<br>"
+      description: "The get user data service is used to get a user's modified data for a particular period of time for accounts, transactions, holdings, and provider account information.<br>The time difference between fromDate and toDate fields cannot be more than 60 minutes.<br>By default, pagination is available for the transaction entity in this API. In the first response, the API will retrieve 500 transactions along with other data. The response header will provide a link to retrieve the next set of transactions.<br>In the response body of the first API response, totalTransactionsCount indicates the total number of transactions the API will retrieve for the user.<br>This service is only invoked with either admin access token or a cobrand session.<br/>Refer to <a href=\"https://developer.yodlee.com/docs/api/1.1/DataExtracts\">dataExtracts</a> page for more information.<b>Note:</b>This service supports the localization feature and accepts locale as a header parameter.<br>"
       operationId: "getDataExtractsUserData"
       responses:
         200:
@@ -3195,6 +3195,8 @@ definitions:
         - "ZAR"
         - "CNY"
         - "VND"
+        - "MYR"
+        - "CHF"
       locale:
         description: "The locale of the user. This locale will be considered for localization features like providing the provider information in the supported locale or providing category names in the transaction related services.<br><b>Applicable Values</b><br>"
         type: "string"
@@ -3477,9 +3479,26 @@ definitions:
           - "realEstate"
           - "otherAssets"
           - "otherLiabilities"
+      fromDate:
+        description: "Applicable only to EBILLS and STATEMENTS attributes of DOCUMENT dataset.<br><br><b>Endpoints</b>:<ul><li>POST providerAccounts</li><li>PUT providerAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      toFinYear:
+        description: "Applicable only to TAX attribute of DOCUMENT dataset.<br><br><b>Endpoints</b>:<ul><li>POST providerAccounts</li><li>PUT providerAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      fromFinYear:
+        description: "Applicable only to TAX attribute of DOCUMENT dataset.<br><br><b>Endpoints</b>:<ul><li>POST providerAccounts</li><li>PUT providerAccounts</li></ul>"
+        readOnly: true
+        type: "string"
       containerAttributes:
+        description: "Applicable only to TRANSACTIONS attributes of BASIC_AGG_DATA dataset.<br><br><b>Endpoints</b>:<ul><li>GET providers</li><li>GET providers/{providerId}</li><li>POST providerAccounts</li><li>PUT providerAccounts</li></ul>"
         readOnly: true
         $ref: "#/definitions/ContainerAttributes"
+      toDate:
+        description: "Applicable only to EBILLS and STATEMENTS attributes of DOCUMENT dataset.<br><br><b>Endpoints</b>:<ul><li>POST providerAccounts</li><li>PUT providerAccounts</li></ul>"
+        readOnly: true
+        type: "string"
       name:
         description: "Attributes that are supported for a dataset.<br><br><b>Endpoints</b>:<ul><li>GET providers</li><li>GET providers/{providerId}</li></ul>"
         type: "string"
@@ -4217,6 +4236,8 @@ definitions:
         - "ZAR"
         - "CNY"
         - "VND"
+        - "MYR"
+        - "CHF"
       locale:
         description: "The locale of the user. This locale will be considered for localization features like providing the provider information in the supported locale or providing category names in the transaction related services.<br><b>Applicable Values</b><br>"
         type: "string"
@@ -4906,10 +4927,9 @@ definitions:
     type: "object"
     title: "Field"
     properties:
-      isValueProvided:
-        description: "Indicates that the answer to the security question already exists in the Yodlee system.Persuading the user to provide the answer to the security question again during the edit-credential flow can be avoided.<br><br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=questions</li><li>GET providerAccounts/{providerAccountId}? include=questions</li></ul>"
-        readOnly: true
-        type: "boolean"
+      image:
+        description: "Image displayed at the endsite.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li></ul>"
+        type: "string"
       prefix:
         description: "The prefix string that has to be displayed before the field value.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         readOnly: true
@@ -4919,18 +4939,10 @@ definitions:
         description: "The minimum length of the login form field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         readOnly: true
         type: "integer"
-      name:
-        description: "Name of the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "string"
       valueEditable:
         description: "Indicates whether the field is editable or not.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         readOnly: true
         type: "string"
-      id:
-        format: "int64"
-        description: "Identifier for the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        type: "integer"
       isOptional:
         description: "Indicates if a field is an optional field or a mandatory field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         readOnly: true
@@ -4950,6 +4962,19 @@ definitions:
         - "checkbox"
         - "radio"
         - "image"
+      isValueProvided:
+        description: "Indicates that the answer to the security question already exists in the Yodlee system.Persuading the user to provide the answer to the security question again during the edit-credential flow can be avoided.<br><br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=questions</li><li>GET providerAccounts/{providerAccountId}? include=questions</li></ul>"
+        readOnly: true
+        type: "boolean"
+      name:
+        description: "Name of the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "string"
+      id:
+        minLength: 1
+        description: "Identifier for the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        type: "string"
+        maxLength: 2147483647
       value:
         description: "Value expected from the user for the field. This will be blank and is expected to be filled and sent back when submitting the login or MFA information.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         type: "string"
@@ -4992,6 +5017,8 @@ definitions:
         - "ZAR"
         - "CNY"
         - "VND"
+        - "MYR"
+        - "CHF"
   CreateConfigsNotificationEvent:
     type: "object"
     title: "CreateConfigsNotificationEvent"
@@ -7655,6 +7682,61 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/CreateConfigsNotificationEvent"
+  VerificationStatus:
+    type: "object"
+    title: "VerificationStatus"
+    properties:
+      accountId:
+        format: "int64"
+        description: "Unique identifier for the account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
+        type: "integer"
+      reason:
+        description: "The reason the account verification failed.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "DATA_NOT_AVAILABLE"
+        - "ACCOUNT_HOLDER_MISMATCH"
+        - "FULL_ACCOUNT_NUMBER_AND_BANK_TRANSFER_CODE_NOT_AVAILABLE"
+        - "FULL_ACCOUNT_NUMBER_NOT_AVAILABLE"
+        - "BANK_TRANSFER_CODE_NOT_AVAILABLE"
+        - "EXPIRED"
+        - "DATA_MISMATCH"
+        - "INSTRUCTION_GENERATION_ERROR"
+      verificationStatus:
+        description: "The status of the account verification.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul><br><b>Applicable Values</b>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "INITIATED"
+        - "DEPOSITED"
+        - "SUCCESS"
+        - "FAILED"
+      providerAccountId:
+        format: "int64"
+        description: "Unique identifier for the provider account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
+        type: "integer"
+      verificationType:
+        description: "The account verification type.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul><br><b>Applicable Values</b>"
+        type: "string"
+        enum:
+        - "MATCHING"
+        - "CHALLENGE_DEPOSIT"
+      account:
+        $ref: "#/definitions/VerificationAccount"
+      remainingAttempts:
+        format: "int64"
+        readOnly: true
+        type: "integer"
+      verificationDate:
+        description: "The date of the account verification.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
+        readOnly: true
+        type: "string"
+      verificationId:
+        format: "int64"
+        description: "Unique identifier for the verification request.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
+        readOnly: true
+        type: "integer"
   CreateConfigsNotificationEventRequest:
     type: "object"
     title: "CreateConfigsNotificationEventRequest"
@@ -7781,6 +7863,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/DataExtractsHolding"
+      totalTransactionsCount:
+        format: "int64"
+        readOnly: true
+        type: "integer"
       user:
         readOnly: true
         $ref: "#/definitions/DataExtractsUser"
@@ -8580,6 +8666,7 @@ definitions:
         - "PENDING"
         - "SCHEDULED"
         - "FAILED"
+        - "CLEARED"
   UserSession:
     type: "object"
     title: "UserSession"
@@ -8646,6 +8733,7 @@ definitions:
         - "PENDING"
         - "SCHEDULED"
         - "FAILED"
+        - "CLEARED"
   ProviderAccountResponse:
     type: "object"
     title: "ProviderAccountResponse"
@@ -9132,6 +9220,7 @@ definitions:
         - "PENDING"
         - "SCHEDULED"
         - "FAILED"
+        - "CLEARED"
   ConfigsPublicKey:
     type: "object"
     title: "ConfigsPublicKey"
@@ -9265,7 +9354,7 @@ definitions:
         readOnly: true
         type: "array"
         items:
-          $ref: "#/definitions/Verification"
+          $ref: "#/definitions/VerificationStatus"
   CreatedAccountResponse:
     type: "object"
     title: "CreatedAccountResponse"
