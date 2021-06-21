@@ -27,6 +27,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/EnrichDataRequest"
         in: "body"
@@ -59,6 +69,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -113,6 +133,11 @@ paths:
         description: "Transaction search text"
         type: "string"
         required: false
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       - in: "query"
         allowEmptyValue: false
         name: "skip"
@@ -163,6 +188,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "providerAccountId"
         format: "int64"
@@ -195,6 +230,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Not applicable for this API"
+        type: "string"
+        required: false
       - schema:
           $ref: "#/definitions/CobrandLoginRequest"
         in: "body"
@@ -227,12 +272,27 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "fromDate"
         description: "From DateTime (YYYY-MM-DDThh:mm:ssZ)"
         type: "string"
         required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       - in: "query"
         allowEmptyValue: false
         name: "loginName"
@@ -269,6 +329,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "capability"
@@ -293,6 +363,11 @@ paths:
         format: "int64"
         description: "Institution Id for Single site selection"
         type: "integer"
+        required: false
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
         required: false
       - in: "query"
         allowEmptyValue: false
@@ -350,6 +425,21 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       - in: "path"
         name: "providerId"
         format: "int64"
@@ -378,6 +468,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -416,6 +516,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -446,6 +556,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -483,6 +603,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "eventName"
@@ -517,6 +647,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "capability"
@@ -571,6 +711,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountIds"
@@ -645,6 +795,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         name: "issuer"
         description: "issuer"
@@ -686,6 +846,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "documentId"
         description: "documentId"
@@ -712,6 +882,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "documentId"
         description: "documentId"
@@ -739,6 +919,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - default: "run"
         in: "query"
         name: "action"
@@ -775,6 +965,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "ruleId"
         format: "int64"
@@ -802,6 +1002,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "ruleId"
         format: "int64"
@@ -836,6 +1046,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         name: "appIds"
         description: "appIds"
@@ -858,6 +1078,17 @@ paths:
           description: "Logout successful"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Cobrand"
       consumes:
@@ -884,12 +1115,27 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "consentId"
         format: "int64"
         description: "Consent Id generated through POST Consent."
         type: "integer"
         required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       tags:
       - "Consents"
     put:
@@ -913,6 +1159,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "consentId"
         format: "int64"
@@ -925,6 +1181,11 @@ paths:
         name: "consentRequest"
         description: "Applicable Open Banking data cluster values."
         required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       tags:
       - "Consents"
       consumes:
@@ -949,6 +1210,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/ProviderAccountPreferencesRequest"
         in: "body"
@@ -988,6 +1259,36 @@ paths:
           description: "Y016 : loginName header missing<br>Y015 : Unauthorized User<br>Y016 : Api-Version header missing<br>Y020 : Invalid token in authorization header<br>Y027 : Unsupported authentication type"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Not applicable for this API"
+        type: "string"
+        required: false
+      - in: "formData"
+        minLength: 1
+        name: "clientId"
+        description: "clientId issued by Yodlee is used to generate the OAuth token for authentication."
+        type: "string"
+        required: true
+        maxLength: 2147483647
+      - in: "header"
+        name: "loginName"
+        description: "user name parameter to register user or generate access token"
+        type: "string"
+        required: true
+      - in: "formData"
+        minLength: 1
+        name: "secret"
+        description: "secret issued by Yodlee is used to generate the OAuth token for authentication."
+        type: "string"
+        required: true
+        maxLength: 2147483647
       tags:
       - "Auth"
       consumes:
@@ -1008,6 +1309,17 @@ paths:
           description: "No Content"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Auth"
   /providerAccounts/{providerAccountId}:
@@ -1032,6 +1344,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "include"
@@ -1071,6 +1393,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "providerAccountId"
         format: "int64"
@@ -1096,6 +1428,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "User"
     put:
@@ -1113,6 +1456,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/UpdateUserRequest"
         in: "body"
@@ -1145,6 +1498,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/CreateAccountRequest"
         in: "body"
@@ -1176,6 +1539,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -1229,6 +1602,17 @@ paths:
           description: "No Content"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "User"
   /holdings/assetClassificationList:
@@ -1248,6 +1632,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Holdings"
   /verifyAccount/{providerAccountId}:
@@ -1272,6 +1667,21 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       - in: "path"
         name: "providerAccountId"
         description: "providerAccountId"
@@ -1304,6 +1714,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Configs"
   /auth/apiKey/{key}:
@@ -1328,6 +1749,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "key"
         description: "key"
@@ -1357,6 +1788,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/ProviderAccountRequest"
         in: "body"
@@ -1391,6 +1832,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         name: "include"
         description: "include"
@@ -1425,6 +1876,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "providerAccountIds"
@@ -1463,6 +1924,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -1511,6 +1982,11 @@ paths:
         description: "D-daily, W-weekly, M-mothly or Y-yearly"
         type: "string"
         required: false
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       - in: "query"
         allowEmptyValue: false
         name: "toDate"
@@ -1541,6 +2017,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -1631,6 +2117,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "providerAccountId"
         format: "int64"
@@ -1658,6 +2154,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Transactions"
   /transactions/categories/{categoryId}:
@@ -1680,6 +2187,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "categoryId"
         format: "int64"
@@ -1710,6 +2227,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "Keyword"
@@ -1764,6 +2291,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/EvaluateAddressRequest"
         in: "body"
@@ -1792,6 +2329,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "accountId"
         format: "int64"
@@ -1825,6 +2372,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "accountId"
         format: "int64"
@@ -1852,6 +2409,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "accountId"
         format: "int64"
@@ -1890,6 +2457,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -1954,6 +2531,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "providerAccountId"
@@ -1984,6 +2571,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/UserRequest"
         in: "body"
@@ -2016,6 +2613,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/VerificationRequest"
         in: "body"
@@ -2047,6 +2654,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -2088,6 +2705,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/UpdateVerificationRequest"
         in: "body"
@@ -2120,6 +2747,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "holdingId"
@@ -2148,6 +2785,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -2186,6 +2833,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -2216,6 +2873,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "eventName"
         description: "eventName"
@@ -2253,6 +2920,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "eventName"
@@ -2287,6 +2964,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -2341,6 +3028,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/ApiKeyRequest"
         in: "body"
@@ -2367,6 +3064,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Auth"
   /institutions:
@@ -2391,6 +3099,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "dataset$filter"
@@ -2449,6 +3167,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Cobrand"
   /transactions/categories:
@@ -2471,6 +3200,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/TransactionCategoryRequest"
         in: "body"
@@ -2497,6 +3236,22 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       tags:
       - "Transactions"
     put:
@@ -2518,6 +3273,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/UpdateCategoryRequest"
         in: "body"
@@ -2550,6 +3315,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "action"
@@ -2588,12 +3363,27 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - schema:
           $ref: "#/definitions/CreateConsentRequest"
         in: "body"
         name: "consentRequest"
         description: "Unique identifier for the provider site(mandatory), the name of the application,  <br/>the flag responsible to include html content in the response, <br/>when passed as true and the name of the dataset attribute supported by the provider."
         required: true
+      - in: "header"
+        name: "locale"
+        description: "locale"
+        type: "string"
+        required: false
       tags:
       - "Consents"
       consumes:
@@ -2615,10 +3405,25 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "consentIds"
         description: "Consent Id generated through POST Consent."
+        type: "string"
+        required: false
+      - in: "header"
+        name: "locale"
+        description: "locale"
         type: "string"
         required: false
       - in: "query"
@@ -2651,6 +3456,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountId"
@@ -2700,6 +3515,17 @@ paths:
           description: "Unauthorized"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "Holdings"
   /transactions/{transactionId}:
@@ -2722,6 +3548,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "path"
         name: "transactionId"
         format: "int64"
@@ -2753,6 +3589,17 @@ paths:
           description: "Logout successful"
         404:
           description: "Not Found"
+      parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       tags:
       - "User"
       consumes:
@@ -2779,6 +3626,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "eventName"
@@ -2821,6 +3678,16 @@ paths:
         404:
           description: "Not Found"
       parameters:
+      - in: "header"
+        name: "Api-Version"
+        description: "Api-Version of Yodlee API's"
+        type: "string"
+        required: true
+      - in: "header"
+        name: "Authorization"
+        description: "Authorization header to pass access token"
+        type: "string"
+        required: true
       - in: "query"
         allowEmptyValue: false
         name: "accountIds"
@@ -2921,6 +3788,7 @@ definitions:
         - "PARTIAL_SUCCESS"
         - "SUCCESS"
         - "FAILED"
+        - "MIGRATION_IN_PROGRESS"
   Document:
     type: "object"
     title: "Document"
@@ -3322,6 +4190,7 @@ definitions:
         - "PARTIAL_SUCCESS"
         - "SUCCESS"
         - "FAILED"
+        - "MIGRATION_IN_PROGRESS"
   StatementResponse:
     type: "object"
     title: "StatementResponse"
@@ -3349,6 +4218,8 @@ definitions:
       zip:
         type: "string"
       country:
+        type: "string"
+      address3:
         type: "string"
       address2:
         type: "string"
@@ -3532,6 +4403,10 @@ definitions:
         description: "The name of the high level category. A group of similar transaction categories are clubbed together to form a high-level category.<br><br><b>Applicable containers</b>: bill, creditCard, investment, insurance, loan<br>"
         readOnly: true
         type: "string"
+      defaultHighLevelCategoryName:
+        description: "A attribute which will always hold the first value(initial name) of Yodlee defined highLevelCategoryName attribute.<br><br><b>Applicable containers</b>: creditCard, investment, insurance, loan<br>"
+        readOnly: true
+        type: "string"
       highLevelCategoryId:
         format: "int64"
         description: "The unique identifier of the high level category.<br><br><b>Applicable containers</b>: bill, creditCard, investment, insurance, loan<br>"
@@ -3576,6 +4451,10 @@ definitions:
         - "UNCATEGORIZE"
         - "INCOME"
         - "EXPENSE"
+      defaultCategoryName:
+        description: "A attribute which will always hold the first value(initial name) of Yodlee defined category attribute.<br><br><b>Applicable containers</b>: creditCard, investment, insurance, loan<br>"
+        readOnly: true
+        type: "string"
   Providers:
     type: "object"
     title: "Providers"
@@ -3759,6 +4638,22 @@ definitions:
         enum:
         - "YODLEE"
         - "FACTUAL"
+  CobrandNotificationEvent:
+    type: "object"
+    title: "CobrandNotificationEvent"
+    properties:
+      name:
+        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul><b>Applicable Values</b><br>"
+        type: "string"
+        enum:
+        - "REFRESH"
+        - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
+      callbackUrl:
+        minLength: 1
+        description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul>"
+        type: "string"
+        maxLength: 2147483647
   TransactionTotal:
     type: "object"
     title: "TransactionTotal"
@@ -3774,7 +4669,7 @@ definitions:
         readOnly: true
         type: "array"
         items:
-          $ref: "#/definitions/CreateCobrandNotificationEvent"
+          $ref: "#/definitions/CobrandNotificationEvent"
   ProviderResponse:
     type: "object"
     title: "ProviderResponse"
@@ -3992,6 +4887,7 @@ definitions:
         - "PARTIAL_SUCCESS"
         - "SUCCESS"
         - "FAILED"
+        - "MIGRATION_IN_PROGRESS"
   PhoneNumber:
     type: "object"
     title: "PhoneNumber"
@@ -4162,6 +5058,8 @@ definitions:
       zip:
         type: "string"
       country:
+        type: "string"
+      address3:
         type: "string"
       address2:
         type: "string"
@@ -4740,6 +5638,11 @@ definitions:
         - "NEW_AUTHENTICATION_REQUIRED"
         - "DATASET_NOT_SUPPORTED"
         - "ENROLLMENT_REQUIRED_FOR_DATASET"
+        - "CONSENT_REQUIRED"
+        - "CONSENT_EXPIRED"
+        - "CONSENT_REVOKED"
+        - "INCORRECT_OAUTH_TOKEN"
+        - "MIGRATION_IN_PROGRESS"
       nextUpdateScheduled:
         description: "Indicates when the next attempt to update the dataset is scheduled.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
@@ -5023,13 +5926,6 @@ definitions:
     type: "object"
     title: "CreateConfigsNotificationEvent"
     properties:
-      name:
-        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "REFRESH"
-        - "DATA_UPDATES"
-        - "AUTO_REFRESH_UPDATES"
       callbackUrl:
         minLength: 1
         description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul>"
@@ -7656,6 +8552,22 @@ definitions:
         format: "int64"
         readOnly: true
         type: "integer"
+  ConfigsNotificationEvent:
+    type: "object"
+    title: "ConfigsNotificationEvent"
+    properties:
+      name:
+        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul><b>Applicable Values</b><br>"
+        type: "string"
+        enum:
+        - "REFRESH"
+        - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
+      callbackUrl:
+        minLength: 1
+        description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul>"
+        type: "string"
+        maxLength: 2147483647
   ProvidersDataset:
     type: "object"
     title: "ProvidersDataset"
@@ -7681,7 +8593,7 @@ definitions:
         readOnly: true
         type: "array"
         items:
-          $ref: "#/definitions/CreateConfigsNotificationEvent"
+          $ref: "#/definitions/ConfigsNotificationEvent"
   VerificationStatus:
     type: "object"
     title: "VerificationStatus"
@@ -7854,6 +8766,7 @@ definitions:
         - "PARTIAL_SUCCESS"
         - "SUCCESS"
         - "FAILED"
+        - "MIGRATION_IN_PROGRESS"
   DataExtractsUserData:
     type: "object"
     title: "DataExtractsUserData"
@@ -7910,6 +8823,8 @@ definitions:
         type: "string"
       country:
         type: "string"
+      address3:
+        type: "string"
       address2:
         type: "string"
       city:
@@ -7950,13 +8865,6 @@ definitions:
     type: "object"
     title: "CreateCobrandNotificationEvent"
     properties:
-      name:
-        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "REFRESH"
-        - "DATA_UPDATES"
-        - "AUTO_REFRESH_UPDATES"
       callbackUrl:
         minLength: 1
         description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET cobrand/config/notifications/events</li></ul>"
@@ -9649,6 +10557,7 @@ definitions:
         - "PARTIAL_SUCCESS"
         - "SUCCESS"
         - "FAILED"
+        - "MIGRATION_IN_PROGRESS"
   DataExtractsUserDataResponse:
     type: "object"
     title: "DataExtractsUserDataResponse"
