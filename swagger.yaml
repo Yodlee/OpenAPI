@@ -2042,7 +2042,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The get verification status service is used to retrieve the verification status of all accounts<br>for which the MS or CDV process has been initiated.<br>For the MS process, the account details object returns the aggregated information of the<br>verified accounts. For the CDV process, the account details object returns the user<br>provided account information.<br>"
+      description: "The get verification status service is used to retrieve the verification status of all accounts for which the MS or CDV process has been initiated.<br>For the MS process, the account details object returns the aggregated information of the verified accounts. For the CDV process, the account details object returns the user provided account information.<br>"
       operationId: "getVerificationStatus"
       responses:
         200:
@@ -2577,6 +2577,26 @@ paths:
       - "Transactions"
       consumes:
       - "application/json"
+    get:
+      summary: "Get Transaction Categorization Rules"
+      deprecated: true
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The get transaction categorization rule service is used to get all the categorization rules.<br>"
+      operationId: "getTransactionCategorizationRulesDeprecated"
+      responses:
+        200:
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TransactionCategorizationRule"
+          description: "OK"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      tags:
+      - "Transactions"
   /consents:
     post:
       summary: "Post Consent"
