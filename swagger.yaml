@@ -219,6 +219,54 @@ paths:
         required: true
       tags:
       - "Accounts"
+  /verification/verifiedAccounts:
+    get:
+      summary: "Get Verified Accounts"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The Verified Accounts API v1.1 provides information of bank and investment accounts that are verified by the user and applies only to Instant Account Verification (IAV) customers using FastLink 4.0. By default, the API only returns successfully verified accounts's information. <br><br>"
+      operationId: "getVerifiedAccounts"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/VerifiedAccountResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y813 : providerAccountId should be provided<br>Y800 : Invalid value for providerAccountId<br>Y800 : Invalid value for verificationStatus<br>Y800 : Invalid value for isSelected<br>Y800 : Invalid value for accountId<br>Y807 : Resource not found<br>Y871 : The verification process for the request is still in progress. This API can only be invoked after the verification process is completed<br>Y824 : The maximum number of accountIds permitted is 10"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        allowEmptyValue: false
+        name: "accountId"
+        description: "Comma separated accountIds."
+        type: "string"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "isSelected"
+        description: "Comma separated isSelected. Allowed values are true, false"
+        type: "string"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "providerAccountId"
+        description: "providerAccountId."
+        type: "string"
+        required: true
+      - in: "query"
+        allowEmptyValue: false
+        name: "verificationStatus"
+        description: "Comma separated verificationStatus. Allowed values are SUCCESS, FAILED"
+        type: "string"
+        required: false
+      tags:
+      - "Verification"
   /cobrand/login:
     post:
       summary: "Cobrand Login"
@@ -913,7 +961,7 @@ paths:
       - "application/json"
   /consents/{consentId}:
     get:
-      summary: "Get Consent Details"
+      summary: "Get Authorization Details"
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
@@ -1898,7 +1946,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The update account service is used to update manual and aggregated accounts.<br>The HTTP response code is 204 (Success without content).<br>Update manual account support is available for bank, card, investment, insurance, loan, otherAssets, otherLiabilities and realEstate containers only.<br><br><b>Note:</b><li> A real estate account update is only supported for SYSTEM and MANUAL valuation type.</li><li> Attribute <b>isEbillEnrolled</b> is deprecated as it is applicable for bill accounts only.</li>"
+      description: "The update account service is used to update manual and aggregated accounts.<br>The HTTP response code is 204 (Success without content).<br>Update manual account support is available for bank, card, investment, insurance, loan, otherAssets, otherLiabilities and realEstate containers only.<br><br><b>Note:</b><li> A real estate account update is only supported for SYSTEM and MANUAL valuation type.</li> <li> A real estate account can be linked to a loan account by passing accountId of a loan account in linkedAccountIds .</li> <li> Attribute <b>isEbillEnrolled</b> is deprecated as it is applicable for bill accounts only.</li>"
       operationId: "updateAccount"
       responses:
         400:
@@ -2056,7 +2104,7 @@ paths:
       - "application/json"
   /verification:
     post:
-      summary: "Initiaite Matching Service and Challenge Deposit"
+      summary: "Initiaite Challenge Deposit"
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
@@ -5693,6 +5741,7 @@ definitions:
         - "checkbox"
         - "radio"
         - "image"
+        - "option"
       isValueProvided:
         description: "Indicates that the answer to the security question already exists in the Yodlee system.Persuading the user to provide the answer to the security question again during the edit-credential flow can be avoided.<br><br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=questions</li><li>GET providerAccounts/{providerAccountId}? include=questions</li></ul>"
         readOnly: true
@@ -6357,6 +6406,57 @@ definitions:
     properties:
       account:
         $ref: "#/definitions/CreateAccountInfo"
+  VerifiedAccountResponse:
+    type: "object"
+    title: "VerifiedAccountResponse"
+    properties:
+      requestId:
+        description: "The unique identifier for the verification request that returns contextual data"
+        readOnly: true
+        type: "string"
+      requestDate:
+        description: "The date of the verification request"
+        readOnly: true
+        type: "string"
+      state:
+        description: "The overall status of the verification request"
+        readOnly: true
+        type: "string"
+        enum:
+        - "COMPLETED"
+        - "FAILED"
+      verifiedAccount:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/VerifiedAccounts"
+      failedReason:
+        description: "The reason for the failure of the verification request"
+        readOnly: true
+        type: "string"
+        enum:
+        - "ACCOUNT_LOCKED"
+        - "ADDL_AUTHENTICATION_REQUIRED"
+        - "CREDENTIALS_UPDATE_NEEDED"
+        - "INCORRECT_CREDENTIALS"
+        - "INVALID_ADDL_INFO_PROVIDED"
+        - "REQUEST_TIME_OUT"
+        - "SITE_BLOCKING_ERROR"
+        - "UNEXPECTED_SITE_ERROR"
+        - "SITE_NOT_SUPPORTED"
+        - "SITE_UNAVAILABLE"
+        - "TECH_ERROR"
+        - "USER_ACTION_NEEDED_AT_SITE"
+        - "SITE_SESSION_INVALIDATED"
+        - "NEW_AUTHENTICATION_REQUIRED"
+        - "CONSENT_REQUIRED"
+        - "CONSENT_EXPIRED"
+        - "CONSENT_REVOKED"
+        - "INCORRECT_OAUTH_TOKEN"
+        - "REQUIRED_DATA_NOT_AVAILABLE"
+        - "MATCHING_FAILED"
+        - "NO_ELIGIBLE_ACCOUNTS"
+        - "USER_INPUT_REQUIRED"
   Scope:
     type: "object"
     title: "Scope"
@@ -6893,6 +6993,13 @@ definitions:
         - "DELINQUENCY"
         - "DEFERMENT"
         - "FORBEARANCE"
+      linkedAccountIds:
+        description: "List of Loan accountId(s) to which the real-estate account is linked<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: realEstate<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       derivedApr:
         format: "double"
         description: "Derived APR will be an estimated purchase APR based on consumers credit card transactions and credit card purchase.<br><b>Aggregated / Manual / Derived</b>: Derived<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -7565,6 +7672,10 @@ definitions:
         description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "integer"
+      isSelectedForAggregation:
+        description: "Indicates if the account is selected by user for aggregation.<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
       collateral:
         description: "Property or possession offered to support a loan that can be seized on a default.<br><b>Applicable containers</b>: loan<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -7674,6 +7785,13 @@ definitions:
         - "DELINQUENCY"
         - "DEFERMENT"
         - "FORBEARANCE"
+      linkedAccountIds:
+        description: "List of Loan accountId(s) to which the real-estate account is linked<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: realEstate<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       derivedApr:
         format: "double"
         description: "Derived APR will be an estimated purchase APR based on consumers credit card transactions and credit card purchase.<br><b>Aggregated / Manual / Derived</b>: Derived<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -8099,6 +8217,113 @@ definitions:
         - "IFSC"
         - "ROUTING_NUMBER"
         - "SORT_CODE"
+  VerifiedAccounts:
+    type: "object"
+    title: "VerifiedAccounts"
+    properties:
+      accountName:
+        description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      verificationStatus:
+        description: "The status of the account verification."
+        readOnly: true
+        type: "string"
+        enum:
+        - "SUCCESS"
+        - "FAILED"
+      accountType:
+        description: "The type of account that is aggregated, i.e., savings, checking, charge, HELOC, etc. The account type is derived based on the attributes of the account. <br><b>Valid Values:</b><br><b>Aggregated Account Type</b><br><b>bank</b><ul><li>CHECKING</li><li>SAVINGS</li><li>MONEY_MARKET</li></ul><b>investment (SN 1.0)</b><ul><li>BROKERAGE_MARGIN</li><li>BROKERAGE_CASH</li><li>BROKERAGE_LINK_ACCOUNT</li><li>INDIVIDUAL</li><li>CMA</li></ul><b>investment (SN 2.0)</b><ul><li>BROKERAGE_MARGIN</li><li>BROKERAGE_CASH</li><li>BROKERAGE_LINK_ACCOUNT</li><li>INDIVIDUAL</li><li>CMA</li></ul><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      currentBalance:
+        description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      displayedName:
+        description: "The name or identification of the account owner, as it appears at the FI site. <br><b>Note:</b> The account holder name can be full or partial based on how it is displayed in the account summary page of the FI site. In most cases, the FI site does not display the full account holder name in the account summary page.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      holder:
+        description: "Holder details of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/AccountHolder"
+      accountNumber:
+        description: "The account number as it appears on the site. (The POST accounts service response return this field as number)<br><b>Additional Details</b>:<b> Bank / Investment</b>:<br> The account number for the bank account as it appears at the site.<br>In most cases, the site does not display the full account number in the account summary page and additional navigation is required to aggregate it.<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      classification:
+        description: "The classification of the account such as personal, corporate, etc.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<li>GET /verification/verifiedAccounts</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "OTHER"
+        - "PERSONAL"
+        - "CORPORATE"
+        - "SMALL_BUSINESS"
+        - "TRUST"
+        - "ADD_ON_CARD"
+        - "VIRTUAL_CARD"
+      availableBalance:
+        description: "The balance in the account that is available for spending. For checking accounts with overdraft, available balance may include overdraft amount, if end site adds overdraft balance to available balance.<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      fullAccountNumberList:
+        description: "Full account number List of the account that contains paymentAccountNumber and unmaskedAccountNumber. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment <br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/FullAccountNumberList"
+      accountId:
+        format: "int64"
+        description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "integer"
+      balance:
+        description: "The total account value. <br><b>Additional Details:</b><br><b>Bank:</b> available balance or current balance.<br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<b>Applicable containers</b>: bank, investment <br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      providerId:
+        description: "Identifier of the provider site. The primary key of provider resource. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      providerAccountId:
+        format: "int64"
+        description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "integer"
+      CONTAINER:
+        description: "The type of service. E.g., Bank, Investment <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "bank"
+        - "investment"
+      isSelected:
+        description: "Indicates if an account is selected by the user in the FastLink 4.0 application"
+        readOnly: true
+        type: "boolean"
+      cash:
+        description: "The amount that is available for immediate withdrawal or the total amount available to purchase securities in a brokerage or investment account.<br><b>Note:</b> The cash balance field is only applicable to brokerage related accounts.<br><br><b>Aggregated </b><br><b>Applicable containers</b>: investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      bankTransferCode:
+        description: "Bank and branch identification information.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<br><ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/BankTransferCode"
+      providerName:
+        description: "Service provider or institution name where the account originates. This belongs to the provider resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET /verification/verifiedAccounts</li></ul>"
+        readOnly: true
+        type: "string"
+      failedReason:
+        description: "The reason for the verification failure of the account."
+        readOnly: true
+        type: "string"
+        enum:
+        - "REQUIRED_DATA_NOT_AVAILABLE"
+        - "MATCHING_FAILED"
   AccountMigrationResponse:
     type: "object"
     title: "AccountMigrationResponse"
@@ -8452,11 +8677,11 @@ definitions:
     title: "AccountLatestBalance"
     properties:
       accountName:
-        description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated </b> <br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "string"
       totalBalance:
-        description: "The total account value. <br><b>Additional Details:</b><br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<b>Applicable containers</b>: investment <br><b>Aggregated</b><br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The total account value. <br><b>Additional Details:</b><br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<b>Applicable containers</b>: investment <br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       accountType:
@@ -8464,7 +8689,7 @@ definitions:
         readOnly: true
         type: "string"
       currentBalance:
-        description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated </b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       refreshStatus:
@@ -8476,7 +8701,7 @@ definitions:
         - "IN_PROGRESS"
         - "FAILED"
       accountNumber:
-        description: "The account number as it appears on the site. (The POST accounts service response return this field as number)<br><b>Additional Details</b>:<b> Bank / Investment</b>:<br> The account number for the bank account as it appears at the site.<br>In most cases, the site does not display the full account number in the account summary page and additional navigation is required to aggregate it.<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated</b> <br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The account number as it appears on the site. (The POST accounts service response return this field as number)<br><b>Additional Details</b>:<b> Bank / Investment</b>:<br> The account number for the bank account as it appears at the site.<br>In most cases, the site does not display the full account number in the account summary page and additional navigation is required to aggregate it.<br><b>Applicable containers</b>: bank, investment<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "string"
       availableBalance:
@@ -8485,39 +8710,39 @@ definitions:
         $ref: "#/definitions/Money"
       accountId:
         format: "int64"
-        description: "The primary key of the provider account resource.<br><br><b>Aggregated</b> <br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "integer"
       lastUpdated:
-        description: "The date time the account information was last retrieved from the provider site and updated in the Yodlee system.<br><br><b>Aggregated <br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The date time the account information was last retrieved from the provider site and updated in the Yodlee system.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "string"
       balance:
-        description: "The total account value. <br><b>Additional Details:</b><br><b>Bank:</b> available balance or current balance.<br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<b>Applicable containers</b>: bank, investment <br><b>Aggregated</b><br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The total account value. <br><b>Additional Details:</b><br><b>Bank:</b> available balance or current balance.<br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<b>Applicable containers</b>: bank, investment <br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       providerId:
-        description: "Identifier of the provider site. The primary key of provider resource. <br><br><b>Aggregated</b> <br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "Identifier of the provider site. The primary key of provider resource. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "string"
       providerAccountId:
         format: "int64"
-        description: "The primary key of the provider account resource.<br><br><b>Aggregated</b> <br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "integer"
       CONTAINER:
-        description: "The type of service. E.g., Bank, Investment <br><br>Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul><b>Applicable Values</b><br>"
+        description: "The type of service. E.g., Bank, Investment <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
         - "bank"
         - "investment"
       cash:
-        description: "The amount that is available for immediate withdrawal or the total amount available to purchase securities in a brokerage or investment account.<br><b>Note:</b> The cash balance field is only applicable to brokerage related accounts.<br><br><b>Aggregated </b><br><b>Applicable containers</b>: investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "The amount that is available for immediate withdrawal or the total amount available to purchase securities in a brokerage or investment account.<br><b>Note:</b> The cash balance field is only applicable to brokerage related accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
       providerName:
-        description: "Service provider or institution name where the account originates. This belongs to the provider resource.<br><br><b>Aggregated</b> <br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
+        description: "Service provider or institution name where the account originates. This belongs to the provider resource.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<ul><li>GET accounts/latestBalances</li></ul>"
         readOnly: true
         type: "string"
       failedReason:
@@ -9902,6 +10127,12 @@ definitions:
         - "DELETED"
       amountDue:
         $ref: "#/definitions/Money"
+      linkedAccountIds:
+        description: "List of loan accounts to which a real-estate account is linked."
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       balance:
         $ref: "#/definitions/Money"
       isEbillEnrolled:
