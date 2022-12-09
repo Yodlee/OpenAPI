@@ -1830,6 +1830,35 @@ paths:
       - "Consents"
       consumes:
       - "application/json"
+  /verification/classification/summary:
+    get:
+      summary: "Get Classification Summary"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The get classification summary API service returns attributes that provide account-level and transaction-level summary for a user's account.<br><br>As a prerequisite, the Account Verification customers should have Transactions enabled to fetch a response. The API can be invoked only for an account verified by the user following the get verified accounts API call. If the prerequisite is not satisfied, an appropriate error will be returned on invoking the API.<br>"
+      operationId: "getClassificationSummary"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ClassificationSummaryResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y847 : resource cannot be requested, as feature not enabled<br>Y812 : Required field/value - accountId missing in the request<br>Y800 : Invalid value for accountId. Only ACTIVE and verified bank account ID belonging to the user is allowed.<br>Y805 : Multiple accountId not supported<br>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        name: "accountId"
+        description: "accountId"
+        type: "string"
+        required: true
+      tags:
+      - "Verification"
   /accounts/migrateAccounts/{providerAccountId}:
     put:
       summary: "Migrate Accounts"
@@ -2189,7 +2218,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The register user service is used to register a user in Yodlee.<br>The loginName cannot include spaces and must be between 3 and 150 characters.<br>locale passed must be one of the supported locales for the customer. <br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>userParam is accepted as a body parameter. <br><br><b>Note:</b> <li>The content type has to be passed as application/json for the body parameter.</li>"
+      description: "The register user service is used to register a user in Yodlee.<br>The loginName cannot include spaces and must be between 3 and 150 characters.<br>locale passed must be one of the supported locales for the customer. <br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>userParam is accepted as a body parameter. <br><br><b>Note:</b> <li>The content type has to be passed as application/json for the body parameter.</li> <br> Note: We recommend you to not use special characters in loginName other than \"@\", \"#\", \"_\" & \"-\"."
       operationId: "registerUser"
       responses:
         200:
@@ -2199,7 +2228,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for loginName<br>Y800 : Invalid value for email<br>Y801 : Invalid length for loginName<br>"
+          description: "Y800 : Invalid value for loginName<br>Y800 : Invalid value for email<br>Y801 : Invalid length for loginName<br>Y800 : Invalid value for phoneNumber<br>"
         401:
           description: "Unauthorized"
         404:
@@ -2231,7 +2260,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y901 : Service not supported<br>Y812 : Required field/value - verification.verificationType missing in the verificationParam<br>Y812 : Required field/value - accountNumber missing in the verificationParam<br>Y812 : Required field/value - accountType missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.id missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.type missing in the verificationParam<br>Y800 : Invalid value for verification.verificationType<br>Y800 : Invalid value for verificationParam<br>Y800 : Invalid value for bankTransferCode.type<br>Y800 : Invalid value for bankTransferCode.id<br>Y800 : Invalid value for accountType<br>Y800 : Invalid value for accountId<br>Y813 : Account details should be provided<br>Y801 : Invalid length for accountNumber<br>Y835 : Account(s) not eligible for Challenge Deposit verification<br>Y806 : Invalid Input<br>Y840 : Verification has been initiated already<br>Y837 : Account has been verified already"
+          description: "Y901 : Service not supported<br>Y812 : Required field/value - verification.verificationType missing in the verificationParam<br>Y812 : Required field/value - accountNumber missing in the verificationParam<br>Y812 : Required field/value - accountType missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.id missing in the verificationParam<br>Y812 : Required field/value - bankTransferCode.type missing in the verificationParam<br>Y800 : Invalid value for verification.verificationType<br>Y800 : Invalid value for verificationParam<br>Y800 : Invalid value for bankTransferCode.type<br>Y800 : Invalid value for bankTransferCode.id<br>Y800 : Invalid value for accountType<br>Y800 : Invalid value for accountId<br>Y813 : Account details should be provided<br>Y801 : Invalid length for accountNumber<br>Y835 : Account(s) not eligible for Challenge Deposit verification<br>Y806 : Invalid Input<br>Y840 : Verification has been initiated already<br>Y837 : Account has been verified already<br>Y800 : Invalid value for userClassification"
         401:
           description: "Unauthorized"
         404:
@@ -3365,6 +3394,56 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/AssetClassificationList"
+  ClassificationSummaryTransactionSummary:
+    type: "object"
+    title: "ClassificationSummaryTransactionSummary"
+    properties:
+      fromDate:
+        description: "The date from which the transactions are considered for evaluating the attributes (Date of the oldest transaction for the accountId)"
+        readOnly: true
+        type: "string"
+      cardPayments:
+        description: "Indicates whether the account has any card-related payments based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      isPrimaryAccount:
+        description: "Indicates whether the account is a primary account based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      loanPayments:
+        description: "Indicates whether the account has any loan payments based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      toDate:
+        description: "The date until which the transactions are considered for evaluating the attributes (Date of the latest transaction for the accountId)"
+        readOnly: true
+        type: "string"
+      billPayments:
+        description: "Indicates whether the account has any bill payments based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      mortgagePayments:
+        description: "Indicates whether the account has any mortgage payments based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      salaryCredits:
+        description: "Indicates whether the account has salary credits based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      isActiveAccount:
+        description: "Indicates whether the account is an active account based on an implicit logic"
+        readOnly: true
+        type: "boolean"
+      latestTransactions:
+        description: "An array that lists the details about the latest 3 transactions that occurred in the user's account"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/ClassificationSummaryTransaction"
+      incomeCredits:
+        description: "Indicates whether the account has any income credits based on an implicit logic"
+        readOnly: true
+        type: "boolean"
   Consent:
     type: "object"
     title: "Consent"
@@ -3964,6 +4043,10 @@ definitions:
         description: "Indicates whether account is a manual or aggregated provider account.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
+      isRealTimeMFA:
+        description: "Attribute to specify whether the user has to input(credentials/MFA) for refreshing an account<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li>"
+        readOnly: true
+        type: "boolean"
       lastUpdated:
         description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -4021,6 +4104,14 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+  ClassificationSummaryMerchant:
+    type: "object"
+    title: "ClassificationSummaryMerchant"
+    properties:
+      name:
+        description: "The name of the merchant"
+        readOnly: true
+        type: "string"
   StatementResponse:
     type: "object"
     title: "StatementResponse"
@@ -5515,6 +5606,13 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
+      associatedProviderAccountId:
+        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -6168,6 +6266,43 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Institution"
+  ClassificationSummaryAccountSummary:
+    type: "object"
+    title: "ClassificationSummaryAccountSummary"
+    properties:
+      accountId:
+        format: "int64"
+        description: "The primary key of the account resource and the unique identifier for the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank"
+        readOnly: true
+        type: "integer"
+      lastUpdated:
+        description: "The date-time the account information was last retrieved from the provider site and updated in the Yodlee system"
+        readOnly: true
+        type: "string"
+      site:
+        description: "The name of the provider site"
+        readOnly: true
+        type: "string"
+      accountName:
+        description: "The account name as it appears at the site"
+        readOnly: true
+        type: "string"
+      accountType:
+        description: "The type of account that is aggregated such as savings, checking, etc. The account type is derived based on the attributes of the account."
+        readOnly: true
+        type: "string"
+      accountOpenDate:
+        description: "The date on which the user opened the account at the provider site"
+        readOnly: true
+        type: "string"
+      transactionSummary:
+        description: "The transaction summary entity encapsulates the transaction-level summary attributes and account specifics based on the nature of transactions"
+        readOnly: true
+        $ref: "#/definitions/ClassificationSummaryTransactionSummary"
+      availableBalance:
+        description: "The balance in the account that is available for spending. The value is aggregated from the provider site during the last refresh.<br><b>Note</b>: For checking accounts with overdraft, the available balance amount may include the overdraft amount if the provider site adds the overdraft balance to the available balance."
+        readOnly: true
+        $ref: "#/definitions/Money"
   Field:
     type: "object"
     title: "Field"
@@ -6883,6 +7018,13 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
+      associatedProviderAccountId:
+        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -9215,6 +9357,8 @@ definitions:
         $ref: "#/definitions/UserRequestPreferences"
       address:
         $ref: "#/definitions/UserAddress"
+      phoneNumber:
+        type: "string"
       name:
         $ref: "#/definitions/Name"
       email:
@@ -9265,6 +9409,16 @@ definitions:
     properties:
       transaction:
         $ref: "#/definitions/UpdateTransaction"
+  ClassificationSummaryResponse:
+    type: "object"
+    title: "ClassificationSummaryResponse"
+    properties:
+      accountSummary:
+        description: "The account summary entity encapsulates the account-level summary information, and the transaction entity provides a transaction-level summary for an account passed."
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/ClassificationSummaryAccountSummary"
   UserDetail:
     type: "object"
     title: "UserDetail"
@@ -9277,6 +9431,8 @@ definitions:
         description: "The address of the user.<br><br><b>Endpoints</b>:<ul><li>GET user</li></ul>"
         readOnly: true
         $ref: "#/definitions/UserAddress"
+      phoneNumber:
+        type: "string"
       loginName:
         description: "The login name of the user used for authentication.<br><br><b>Endpoints</b>:<ul><li>POST user/register</li><li>GET user</li></ul>"
         readOnly: true
@@ -9388,6 +9544,33 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Consent"
+  ClassificationSummaryTransaction:
+    type: "object"
+    title: "ClassificationSummaryTransaction"
+    properties:
+      date:
+        description: "The date the transaction happens in the account"
+        readOnly: true
+        type: "string"
+      amount:
+        description: "The amount of the transaction as it appears at the provider site"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      description:
+        description: "The description of the transaction"
+        readOnly: true
+        $ref: "#/definitions/Description"
+      merchant:
+        description: "The name of the merchant corresponding to the transaction"
+        readOnly: true
+        $ref: "#/definitions/ClassificationSummaryMerchant"
+      baseType:
+        description: "Indicates if the transaction appears as a debit or a credit transaction in the account"
+        readOnly: true
+        type: "string"
+        enum:
+        - "CREDIT"
+        - "DEBIT"
   LoginForm:
     type: "object"
     title: "LoginForm"
@@ -9684,6 +9867,8 @@ definitions:
         $ref: "#/definitions/UserRequestPreferences"
       address:
         $ref: "#/definitions/UserAddress"
+      phoneNumber:
+        type: "string"
       loginName:
         minLength: 3
         type: "string"
@@ -10995,6 +11180,11 @@ definitions:
         minLength: 3
         type: "string"
         maxLength: 17
+      userClassification:
+        type: "string"
+        enum:
+        - "BUSINESS"
+        - "PERSONAL"
       bankTransferCode:
         $ref: "#/definitions/VerificationBankTransferCode"
   DerivedTransactionsLinks:
@@ -11886,6 +12076,13 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
+      associatedProviderAccountId:
+        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
