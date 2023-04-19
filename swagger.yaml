@@ -1,42 +1,6 @@
 ---
 basePath: "/"
 paths:
-  /enrichData/userData:
-    post:
-      summary: "Push UserData"
-      deprecated: false
-      produces:
-      - "application/json;charset=UTF-8"
-      description: "<b>Push User Data </b><br>The data enrich API v1.1 allows customers to get the transactions enriched in real-time by feeding the data into the Yodlee Platform. To get the transactions enriched, it is necessary that users, accounts, and transactions are updated to the Yodlee Platform.<br>The following features are supported through the data enrich API:<ul><li>Add user</li><li>Add account</li><li>Update account</li><li>Add transactions</li><li>Update transactions</li></ul>Yodlee will enrich the transactions with the following information:<ul><li>Category</li><li>High Level Category</li><li>Detail Category</li><li>Simple description</li><li>Merchant details<ul><li>Name</li><li>Address</li></ul></li><li>Transaction type</li><li>Transaction subtype</li></ul>The data feed through the enrich APIs will be updated to the Yodlee Platform in real time. The updated accounts and transactions information can then be retrieved from the system using the respective Yodlee 1.1 APIs.<br><b> Implementation Notes </b><ul><li>Supported only through credential-based authentication mechanisms.</li><li>Customer must be TLS 1.2 compliant to integrate with the data enrich API.</li><li>Supported account types are savings, checking, and credit.</li><li>A maximum of 128 transactions can be passed to the API.</li><li>As the data enrich API is a premium offering and is priced per API call, Yodlee recommends not to call the API to update accounts and transactions.</li><li>The minimum required parameters to create account and transaction is accepted. The Yodlee data model supports more parameters than what is accepted in this API. Customers can make the rest of the parameters available during the auto-refresh process of the accounts.</li><li>Though few input parameters are optional, Yodlee recommends passing them as the account information will make complete sense to the consumers when it is displayed in the Yodlee applications or widgets.</li></ul>"
-      operationId: "pushUserData"
-      responses:
-        200:
-          schema:
-            $ref: "#/definitions/EnrichedTransactionResponse"
-          description: "OK"
-        400:
-          schema:
-            $ref: "#/definitions/YodleeError"
-          description: "Y851 : Value cannot be blank or null for user<br>Y851 : Value cannot be blank or null for account<br>Y851 : Value cannot be blank or null for transaction<br>Y851 : Value cannot be blank or null for user[1].loginName<br>Y851 : Value cannot be blank or null for account[1].userLoginName<br>Y851 : Value cannot be blank or null for account[1].container<br>Y851 : Value cannot be blank or null for account[1].accountNumber<br>Y851 : Value cannot be blank or null for account[1].accountType<br>Y851 : Value cannot be blank or null for account[1].availableCredit<br>Y851 : Value cannot be blank or null for account[1].availableCash<br>Y851 : Value cannot be blank or null for account[1].availableBalance<br>Y851 : Value cannot be blank or null for account[1].currentBalance<br>Y851 : Value cannot be blank or null for transaction[1].userLoginName<br>Y851 : Value cannot be blank or null for transaction[1].accountNumber<br>Y851 : Value cannot be blank or null for transaction[1].container<br>Y851 : Value cannot be blank or null for transaction[1].sourceId<br>Y851 : Value cannot be blank or null for transaction[1].description<br>Y851 : Value cannot be blank or null for transaction[1].amount<br>Y851 : Value cannot be blank or null for transaction[1].baseType<br>Y1001 : Invalid value format or data type used for transaction[1].transactionDate<br>Y821 : transaction[1].status not supported<br>Y821 : transaction[1].baseType not supported<br>Y851 : Value cannot be blank or null for transaction[1].amount.amount<br>Y851 : Value cannot be blank or null for transaction[1].amount.currency<br>Y1001 :\tInvalid value format or data type used for transaction[1].amount.amount<br>Y801 : Invalid length for transaction[1].amount.amount<br>Y1001 : Invalid value format or data type used for transaction[1].amount.currency<br>Y812 : Required field/value - account[1].userLoginName missing in user entity<br>Y812 : Required field/value - transaction[1].userLoginName missing in user entity<br>Y812 : Required field/value - account[1].accountNumber missing in transaction entity<br>Y821 : transaction[1].container not supported<br>Y821 : account[1].accountType not supported<br>Y821 : account[1].accountStatus not supported<br>Y1001 : Invalid value format or data type used for account[1].dueDate<br>Y852 : Duplicate user[2].loginName cannot be passed in the input<br>Y852 : Duplicate transaction[2].sourceId cannot be passed in the input<br>Y852 : Duplicate account[2].accountNumber cannot be passed in the input<br>Y851 : Value cannot be blank or null for user<br>Y1001 : Invalid value format or data type used for transaction[1].isDeleted<br>Y851 : Value cannot be blank or null for transaction[1].description.original<br>Y801 : Invalid length for transaction[1].description.original<br>Y824 : The maximum number of transaction permitted is 128<br>Y821 : user[1].address.country not supported<br>Y822 : user[1].address.state not supported<br>Y1001 : Invalid value format or data type used for user[1].preferences.currency<br>"
-        401:
-          description: "Unauthorized"
-        500:
-          schema:
-            $ref: "#/definitions/YodleeError"
-          description: "Y014 : Cobrand configuration missing<br>Y904 : Internal exception<br>"
-        404:
-          description: "Not Found"
-      parameters:
-      - schema:
-          $ref: "#/definitions/EnrichDataRequest"
-        in: "body"
-        name: "userData"
-        description: "Input for User Data"
-        required: false
-      tags:
-      - "EnrichData"
-      consumes:
-      - "application/json"
   /transactions:
     get:
       summary: "Get Transactions"
@@ -2413,7 +2377,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATES and LATEST_BALANCE_UPDATES event.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
+      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATE and LATEST_BALANCE_UPDATES.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
       operationId: "createSubscriptionNotificationEvent"
       responses:
         201:
@@ -2421,7 +2385,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y803 : eventName required<br>Y803 : callbackUrl required<br>Y800 : Invalid value for callbackUrl"
+          description: "Y803 : eventName required<br>Y803 : callbackUrl required<br>Y800 : Invalid value for callbackUrl<br>Y901 : Service not supported<br>"
         401:
           description: "Unauthorized"
         404:
@@ -3335,6 +3299,7 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+        - "DATA_RETRIEVAL_FAILED"
   Document:
     type: "object"
     title: "Document"
@@ -3444,17 +3409,28 @@ definitions:
         description: "Indicates whether the account has any income credits based on an implicit logic"
         readOnly: true
         type: "boolean"
+  DocumentResponse:
+    type: "object"
+    title: "DocumentResponse"
+    properties:
+      document:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/Document"
   Consent:
     type: "object"
     title: "Consent"
     required:
     - "applicationDisplayName"
     - "clientADR"
+    - "clientTrustedAdvisor"
     - "consentId"
     - "consentStatus"
     - "expirationDate"
     - "preferences"
     - "providerId"
+    - "revokeDate"
     - "scope"
     - "startDate"
     - "title"
@@ -3483,6 +3459,17 @@ definitions:
       renewal:
         description: "Renewal describes the sharing duration and reauthorization required."
         $ref: "#/definitions/Renewal"
+      clientTrustedAdvisor:
+        description: "describes information of client trusted advisor"
+        type: "array"
+        items:
+          $ref: "#/definitions/ClientTrustedAdvisor"
+      providerConsentId:
+        description: "Provider consent id"
+        type: "string"
+      revokeDate:
+        description: "Consent revoke date."
+        type: "string"
       title:
         description: "Title for the consent form."
         type: "string"
@@ -3537,15 +3524,6 @@ definitions:
       expirationDate:
         description: "Consent expiry date."
         type: "string"
-  DocumentResponse:
-    type: "object"
-    title: "DocumentResponse"
-    properties:
-      document:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/Document"
   UserAccessTokensResponse:
     type: "object"
     title: "UserAccessTokensResponse"
@@ -4014,15 +3992,6 @@ definitions:
         description: "Unit of reward balance - miles, points, segments, dollars, credits.<br><br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: reward<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
-  PaymentAccountBalanceResponse:
-    type: "object"
-    title: "PaymentAccountBalanceResponse"
-    properties:
-      account:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/PaymentAccountBalance"
   ProviderAccountDetail:
     type: "object"
     title: "ProviderAccountDetail"
@@ -4044,10 +4013,6 @@ definitions:
         - "MIGRATED"
       isManual:
         description: "Indicates whether account is a manual or aggregated provider account.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li><li>GET dataExtracts/userData</li></ul>"
-        readOnly: true
-        type: "boolean"
-      isRealTimeMFA:
-        description: "Attribute to specify whether the user has to input(credentials/MFA) for refreshing an account<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li>"
         readOnly: true
         type: "boolean"
       lastUpdated:
@@ -4107,6 +4072,16 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+        - "DATA_RETRIEVAL_FAILED"
+  PaymentAccountBalanceResponse:
+    type: "object"
+    title: "PaymentAccountBalanceResponse"
+    properties:
+      account:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/PaymentAccountBalance"
   ClassificationSummaryMerchant:
     type: "object"
     title: "ClassificationSummaryMerchant"
@@ -4172,6 +4147,14 @@ definitions:
         - "PAYMENT"
         - "PAYOFF"
         - "UNKNOWN"
+  TransactionCategorizationRuleRequest:
+    type: "object"
+    title: "TransactionCategorizationRuleRequest"
+    required:
+    - "rule"
+    properties:
+      rule:
+        $ref: "#/definitions/TransactionCategorizationRuleInfo"
   CreatedConsentResponse:
     type: "object"
     title: "CreatedConsentResponse"
@@ -4181,14 +4164,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/CreateConsent"
-  TransactionCategorizationRuleRequest:
-    type: "object"
-    title: "TransactionCategorizationRuleRequest"
-    required:
-    - "rule"
-    properties:
-      rule:
-        $ref: "#/definitions/TransactionCategorizationRuleInfo"
   UpdateAccountRequest:
     type: "object"
     title: "UpdateAccountRequest"
@@ -4206,12 +4181,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Verification"
-  ClientCredentialTokenResponse:
-    type: "object"
-    title: "ClientCredentialTokenResponse"
-    properties:
-      token:
-        $ref: "#/definitions/ClientCredentialToken"
   ProviderDetailResponse:
     type: "object"
     title: "ProviderDetailResponse"
@@ -4221,6 +4190,12 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ProviderDetail"
+  ClientCredentialTokenResponse:
+    type: "object"
+    title: "ClientCredentialTokenResponse"
+    properties:
+      token:
+        $ref: "#/definitions/ClientCredentialToken"
   UpdateTransaction:
     type: "object"
     title: "UpdateTransaction"
@@ -4324,12 +4299,6 @@ definitions:
         - "PAYMENT_DETAILS"
         - "INTEREST_DETAILS"
         - "COVERAGE"
-  EnrichDataRequest:
-    type: "object"
-    title: "EnrichDataRequest"
-    properties:
-      userData:
-        $ref: "#/definitions/EnrichUserData"
   TransactionCategory:
     type: "object"
     title: "TransactionCategory"
@@ -4630,6 +4599,8 @@ definitions:
   RenewConsentRequest:
     type: "object"
     title: "RenewConsentRequest"
+    required:
+    - "clientTrustedAdvisor"
     properties:
       preferences:
         description: "preferences for consent renewal.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
@@ -4637,6 +4608,11 @@ definitions:
       renewal:
         description: "renewal entity from consent details service, containing default consent duration and reauthorization eligibility.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
         $ref: "#/definitions/RenewalConsent"
+      clientTrustedAdvisor:
+        description: "describes information of client trusted advisor."
+        type: "array"
+        items:
+          $ref: "#/definitions/ClientTrustedAdvisor"
   Statement:
     type: "object"
     title: "Statement"
@@ -4757,30 +4733,6 @@ definitions:
         description: "The asset value that the user owns.<br><br><b>Applicable containers</b>: bank, creditcard, investment, insurance, realEstate, loan<br>"
         readOnly: true
         $ref: "#/definitions/Money"
-  EnrichDataUser:
-    type: "object"
-    title: "EnrichDataUser"
-    required:
-    - "email"
-    - "loginName"
-    properties:
-      preferences:
-        $ref: "#/definitions/UserRequestPreferences"
-      address:
-        $ref: "#/definitions/UserAddress"
-      loginName:
-        minLength: 3
-        pattern: "[^\\s]+"
-        type: "string"
-        maxLength: 150
-      name:
-        $ref: "#/definitions/Name"
-      email:
-        minLength: 1
-        type: "string"
-        maxLength: 2147483647
-      segmentName:
-        type: "string"
   PaymentAccountHolder:
     type: "object"
     title: "PaymentAccountHolder"
@@ -4844,18 +4796,10 @@ definitions:
         description: "Indicates whether account is a manual or aggregated provider account.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
-      isRealTimeMFA:
-        description: "Attribute to specify whether the user has to input(credentials/MFA) for refreshing an account.<br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>GET GET providerAccounts/{providerAccountId}</li></ul>"
-        readOnly: true
-        type: "boolean"
       lastUpdated:
         description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
-      consentId:
-        format: "int64"
-        description: "Consent Id generated through POST Consent.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
-        type: "integer"
       createdDate:
         description: "The date on when the provider account is created in the system.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
@@ -4910,6 +4854,7 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+        - "DATA_RETRIEVAL_FAILED"
   PhoneNumber:
     type: "object"
     title: "PhoneNumber"
@@ -4930,6 +4875,8 @@ definitions:
   UpdateConsentRequest:
     type: "object"
     title: "UpdateConsentRequest"
+    required:
+    - "clientTrustedAdvisor"
     properties:
       scopeId:
         description: "Applicable Open Banking data cluster values.<br><br><b>Endpoints</b>:<ul><li>PUT Consent</li></ul>"
@@ -4941,26 +4888,11 @@ definitions:
           - "TRANSACTION_DETAILS"
           - "STATEMENT_DETAILS"
           - "CONTACT_DETAILS"
-  EnrichUserData:
-    type: "object"
-    title: "EnrichUserData"
-    required:
-    - "account"
-    - "transaction"
-    - "user"
-    properties:
-      user:
+      clientTrustedAdvisor:
+        description: "describes information of client trusted advisor"
         type: "array"
         items:
-          $ref: "#/definitions/EnrichDataUser"
-      account:
-        type: "array"
-        items:
-          $ref: "#/definitions/EnrichDataAccount"
-      transaction:
-        type: "array"
-        items:
-          $ref: "#/definitions/EnrichDataTransaction"
+          $ref: "#/definitions/ClientTrustedAdvisor"
   VerificationHolderProfile:
     type: "object"
     title: "VerificationHolderProfile"
@@ -5027,21 +4959,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Email"
-  PaymentBankTransferCodeData:
-    type: "object"
-    title: "PaymentBankTransferCodeData"
-    properties:
-      id:
-        description: "The financial institution's branch identification number that is associated with the lender.<br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li></ul>"
-        type: "string"
-      type:
-        description: "The payment bank transfer code type varies based on the region of the account originates from. <br>Valid Values: BSB, IFSC, ROUTING_NUMBER, SORT_CODE<br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "BSB"
-        - "IFSC"
-        - "ROUTING_NUMBER"
-        - "SORT_CODE"
   ProviderAccountRequest:
     type: "object"
     title: "ProviderAccountRequest"
@@ -5076,6 +4993,21 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ProvidersDataset"
+  PaymentBankTransferCodeData:
+    type: "object"
+    title: "PaymentBankTransferCodeData"
+    properties:
+      id:
+        description: "The financial institution's branch identification number that is associated with the lender.<br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li></ul>"
+        type: "string"
+      type:
+        description: "The payment bank transfer code type varies based on the region of the account originates from. <br>Valid Values: BSB, IFSC, ROUTING_NUMBER, SORT_CODE<br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li></ul><b>Applicable Values</b><br>"
+        type: "string"
+        enum:
+        - "BSB"
+        - "IFSC"
+        - "ROUTING_NUMBER"
+        - "SORT_CODE"
   TransactionCount:
     type: "object"
     title: "TransactionCount"
@@ -5126,15 +5058,6 @@ definitions:
       link:
         readOnly: true
         $ref: "#/definitions/DerivedHoldingsLinks"
-  PaymentAccountResponse:
-    type: "object"
-    title: "PaymentAccountResponse"
-    properties:
-      account:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/PaymentAccount"
   UserAddress:
     type: "object"
     title: "UserAddress"
@@ -5153,6 +5076,15 @@ definitions:
         type: "string"
       state:
         type: "string"
+  PaymentAccountResponse:
+    type: "object"
+    title: "PaymentAccountResponse"
+    properties:
+      account:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/PaymentAccount"
   StockExchangeDetail:
     type: "object"
     title: "StockExchangeDetail"
@@ -5612,13 +5544,6 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
-      associatedProviderAccountId:
-        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          format: "int64"
-          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -5814,6 +5739,21 @@ definitions:
     properties:
       user:
         $ref: "#/definitions/UserRegistration"
+  PaymentProfile:
+    type: "object"
+    title: "PaymentProfile"
+    properties:
+      identifier:
+        description: "The additional information such as platform code or payment reference number that is required to make payments.<br><b>Additional Details:</b>The identifier field applies only to the student loan account type.<br><br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        $ref: "#/definitions/PaymentIdentifier"
+      address:
+        description: "The address of the lender to which the monthly payments or the loan payoff amount should be paid. <br><b>Additional Details:</b>The address field applies only to the student loan account type.<br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        type: "array"
+        items:
+          $ref: "#/definitions/AccountAddress"
+      paymentBankTransferCode:
+        description: "The additional information for payment bank transfer code.<br><br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        $ref: "#/definitions/PaymentBankTransferCode"
   DerivedHoldingsSummary:
     type: "object"
     title: "DerivedHoldingsSummary"
@@ -5842,21 +5782,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/DerivedHoldingsAccount"
-  PaymentProfile:
-    type: "object"
-    title: "PaymentProfile"
-    properties:
-      identifier:
-        description: "The additional information such as platform code or payment reference number that is required to make payments.<br><b>Additional Details:</b>The identifier field applies only to the student loan account type.<br><br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
-        $ref: "#/definitions/PaymentIdentifier"
-      address:
-        description: "The address of the lender to which the monthly payments or the loan payoff amount should be paid. <br><b>Additional Details:</b>The address field applies only to the student loan account type.<br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
-        type: "array"
-        items:
-          $ref: "#/definitions/AccountAddress"
-      paymentBankTransferCode:
-        description: "The additional information for payment bank transfer code.<br><br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
-        $ref: "#/definitions/PaymentBankTransferCode"
   AbstractAddress:
     type: "object"
     title: "AbstractAddress"
@@ -6289,110 +6214,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Institution"
-  ClassificationSummaryAccountSummary:
-    type: "object"
-    title: "ClassificationSummaryAccountSummary"
-    properties:
-      accountId:
-        format: "int64"
-        description: "The primary key of the account resource and the unique identifier for the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank"
-        readOnly: true
-        type: "integer"
-      lastUpdated:
-        description: "The date-time the account information was last retrieved from the provider site and updated in the Yodlee system"
-        readOnly: true
-        type: "string"
-      site:
-        description: "The name of the provider site"
-        readOnly: true
-        type: "string"
-      accountName:
-        description: "The account name as it appears at the site"
-        readOnly: true
-        type: "string"
-      accountType:
-        description: "The type of account that is aggregated such as savings, checking, etc. The account type is derived based on the attributes of the account."
-        readOnly: true
-        type: "string"
-      accountOpenDate:
-        description: "The date on which the user opened the account at the provider site"
-        readOnly: true
-        type: "string"
-      transactionSummary:
-        description: "The transaction summary entity encapsulates the transaction-level summary attributes and account specifics based on the nature of transactions"
-        readOnly: true
-        $ref: "#/definitions/ClassificationSummaryTransactionSummary"
-      availableBalance:
-        description: "The balance in the account that is available for spending. The value is aggregated from the provider site during the last refresh.<br><b>Note</b>: For checking accounts with overdraft, the available balance amount may include the overdraft amount if the provider site adds the overdraft balance to the available balance."
-        readOnly: true
-        $ref: "#/definitions/Money"
-  Field:
-    type: "object"
-    title: "Field"
-    properties:
-      image:
-        description: "Image displayed at the endsite.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li></ul>"
-        type: "string"
-      prefix:
-        description: "The prefix string that has to be displayed before the field value.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "string"
-      minLength:
-        format: "int64"
-        description: "The minimum length of the login form field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "integer"
-      valueEditable:
-        description: "Indicates whether the field is editable or not.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "string"
-      isOptional:
-        description: "Indicates if a field is an optional field or a mandatory field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "boolean"
-      suffix:
-        description: "The suffix string that has to be displayed next to the field value.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "string"
-      type:
-        description: "This indicates the display type of the field. For example, text box, image, etc. <br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "text"
-        - "password"
-        - "options"
-        - "checkbox"
-        - "radio"
-        - "image"
-        - "option"
-      isValueProvided:
-        description: "Indicates that the answer to the security question already exists in the Yodlee system.Persuading the user to provide the answer to the security question again during the edit-credential flow can be avoided.<br><br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=questions</li><li>GET providerAccounts/{providerAccountId}? include=questions</li></ul>"
-        readOnly: true
-        type: "boolean"
-      name:
-        description: "Name of the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "string"
-      id:
-        minLength: 1
-        description: "Identifier for the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        type: "string"
-        maxLength: 2147483647
-      value:
-        description: "Value expected from the user for the field. This will be blank and is expected to be filled and sent back when submitting the login or MFA information.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        type: "string"
-      maxLength:
-        format: "int64"
-        description: "The maximum length of the login form field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "integer"
-      option:
-        description: "Provides the different values that are available for the user to choose. This field is applicable for drop-down or radio field types.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/Option"
   Money:
     type: "object"
     title: "Money"
@@ -6855,6 +6676,110 @@ definitions:
         - "VEF"
         - "SSP"
         - "ALK"
+  Field:
+    type: "object"
+    title: "Field"
+    properties:
+      image:
+        description: "Image displayed at the endsite.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li></ul>"
+        type: "string"
+      prefix:
+        description: "The prefix string that has to be displayed before the field value.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "string"
+      minLength:
+        format: "int64"
+        description: "The minimum length of the login form field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "integer"
+      valueEditable:
+        description: "Indicates whether the field is editable or not.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "string"
+      isOptional:
+        description: "Indicates if a field is an optional field or a mandatory field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "boolean"
+      suffix:
+        description: "The suffix string that has to be displayed next to the field value.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "string"
+      type:
+        description: "This indicates the display type of the field. For example, text box, image, etc. <br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "text"
+        - "password"
+        - "options"
+        - "checkbox"
+        - "radio"
+        - "image"
+        - "option"
+      isValueProvided:
+        description: "Indicates that the answer to the security question already exists in the Yodlee system.Persuading the user to provide the answer to the security question again during the edit-credential flow can be avoided.<br><br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=questions</li><li>GET providerAccounts/{providerAccountId}? include=questions</li></ul>"
+        readOnly: true
+        type: "boolean"
+      name:
+        description: "Name of the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "string"
+      id:
+        minLength: 1
+        description: "Identifier for the field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        type: "string"
+        maxLength: 2147483647
+      value:
+        description: "Value expected from the user for the field. This will be blank and is expected to be filled and sent back when submitting the login or MFA information.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        type: "string"
+      maxLength:
+        format: "int64"
+        description: "The maximum length of the login form field.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "integer"
+      option:
+        description: "Provides the different values that are available for the user to choose. This field is applicable for drop-down or radio field types.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/Option"
+  ClassificationSummaryAccountSummary:
+    type: "object"
+    title: "ClassificationSummaryAccountSummary"
+    properties:
+      accountId:
+        format: "int64"
+        description: "The primary key of the account resource and the unique identifier for the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank"
+        readOnly: true
+        type: "integer"
+      lastUpdated:
+        description: "The date-time the account information was last retrieved from the provider site and updated in the Yodlee system"
+        readOnly: true
+        type: "string"
+      site:
+        description: "The name of the provider site"
+        readOnly: true
+        type: "string"
+      accountName:
+        description: "The account name as it appears at the site"
+        readOnly: true
+        type: "string"
+      accountType:
+        description: "The type of account that is aggregated such as savings, checking, etc. The account type is derived based on the attributes of the account."
+        readOnly: true
+        type: "string"
+      accountOpenDate:
+        description: "The date on which the user opened the account at the provider site"
+        readOnly: true
+        type: "string"
+      transactionSummary:
+        description: "The transaction summary entity encapsulates the transaction-level summary attributes and account specifics based on the nature of transactions"
+        readOnly: true
+        $ref: "#/definitions/ClassificationSummaryTransactionSummary"
+      availableBalance:
+        description: "The balance in the account that is available for spending. The value is aggregated from the provider site during the last refresh.<br><b>Note</b>: For checking accounts with overdraft, the available balance amount may include the overdraft amount if the provider site adds the overdraft balance to the available balance."
+        readOnly: true
+        $ref: "#/definitions/Money"
   CreateConfigsNotificationEvent:
     type: "object"
     title: "CreateConfigsNotificationEvent"
@@ -7041,13 +6966,6 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
-      associatedProviderAccountId:
-        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          format: "int64"
-          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -7281,14 +7199,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/AssociatedAccount"
-  CreateAccountRequest:
-    type: "object"
-    title: "CreateAccountRequest"
-    required:
-    - "account"
-    properties:
-      account:
-        $ref: "#/definitions/CreateAccountInfo"
   VerifiedAccountResponse:
     type: "object"
     title: "VerifiedAccountResponse"
@@ -7340,6 +7250,14 @@ definitions:
         - "MATCHING_FAILED"
         - "NO_ELIGIBLE_ACCOUNTS"
         - "USER_INPUT_REQUIRED"
+  CreateAccountRequest:
+    type: "object"
+    title: "CreateAccountRequest"
+    required:
+    - "account"
+    properties:
+      account:
+        $ref: "#/definitions/CreateAccountInfo"
   Scope:
     type: "object"
     title: "Scope"
@@ -8854,6 +8772,16 @@ definitions:
       isReauthorizationRequired:
         description: "Shows if the consent renewal need reauthorization"
         type: "boolean"
+  YodleeError:
+    type: "object"
+    title: "YodleeError"
+    properties:
+      errorMessage:
+        type: "string"
+      errorCode:
+        type: "string"
+      referenceCode:
+        type: "string"
   DocumentDownload:
     type: "object"
     title: "DocumentDownload"
@@ -8872,16 +8800,6 @@ definitions:
     properties:
       verification:
         $ref: "#/definitions/UpdateVerification"
-  YodleeError:
-    type: "object"
-    title: "YodleeError"
-    properties:
-      errorMessage:
-        type: "string"
-      errorCode:
-        type: "string"
-      referenceCode:
-        type: "string"
   DetailCategory:
     type: "object"
     title: "DetailCategory"
@@ -9121,21 +9039,6 @@ definitions:
         description: "The total of debit transactions for the category.<br><br><b>Applicable containers</b>: creditCard, bank, investment<br>"
         readOnly: true
         $ref: "#/definitions/Money"
-  BankTransferCode:
-    type: "object"
-    title: "BankTransferCode"
-    properties:
-      id:
-        description: "The FI's branch identification number.Additional Details: The routing number of the bank account in the United States. For non-United States accounts, it is the IFSC code (India), BSB number (Australia), and sort code (United Kingdom). <br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST verification</li></ul>"
-        type: "string"
-      type:
-        description: "The bank transfer code type varies depending on the region of the account origination. <br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST verification</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "BSB"
-        - "IFSC"
-        - "ROUTING_NUMBER"
-        - "SORT_CODE"
   VerifiedAccounts:
     type: "object"
     title: "VerifiedAccounts"
@@ -9252,6 +9155,29 @@ definitions:
         enum:
         - "REQUIRED_DATA_NOT_AVAILABLE"
         - "MATCHING_FAILED"
+  BankTransferCode:
+    type: "object"
+    title: "BankTransferCode"
+    properties:
+      id:
+        description: "The FI's branch identification number.Additional Details: The routing number of the bank account in the United States. For non-United States accounts, it is the IFSC code (India), BSB number (Australia), and sort code (United Kingdom). <br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST verification</li></ul>"
+        type: "string"
+      type:
+        description: "The bank transfer code type varies depending on the region of the account origination. <br><b>Account Type</b>: Aggregated<br><b>Applicable containers</b>: bank, investment<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST verification</li></ul><b>Applicable Values</b><br>"
+        type: "string"
+        enum:
+        - "BSB"
+        - "IFSC"
+        - "ROUTING_NUMBER"
+        - "SORT_CODE"
+  UpdateCobrandNotificationEventRequest:
+    type: "object"
+    title: "UpdateCobrandNotificationEventRequest"
+    required:
+    - "event"
+    properties:
+      event:
+        $ref: "#/definitions/UpdateCobrandNotificationEvent"
   AccountMigrationResponse:
     type: "object"
     title: "AccountMigrationResponse"
@@ -9264,14 +9190,6 @@ definitions:
         format: "int64"
         readOnly: true
         type: "integer"
-  UpdateCobrandNotificationEventRequest:
-    type: "object"
-    title: "UpdateCobrandNotificationEventRequest"
-    required:
-    - "event"
-    properties:
-      event:
-        $ref: "#/definitions/UpdateCobrandNotificationEvent"
   CobrandPublicKeyResponse:
     type: "object"
     title: "CobrandPublicKeyResponse"
@@ -9283,6 +9201,25 @@ definitions:
       keyAsPemString:
         description: "Public key that the customer should be using to encrypt the credentials and answers before sending to the add & update providerAccounts APIs.<br><br><b>Endpoints</b>:<ul><li>GET cobrand/publicKey</li></ul>"
         readOnly: true
+        type: "string"
+  Cobrand:
+    type: "object"
+    title: "Cobrand"
+    required:
+    - "cobrandLogin"
+    - "cobrandPassword"
+    properties:
+      cobrandLogin:
+        minLength: 1
+        type: "string"
+        maxLength: 2147483647
+      cobrandPassword:
+        minLength: 1
+        type: "string"
+        maxLength: 2147483647
+      locale:
+        pattern: "[a-z]{2}_[A-Z]{2}"
+        description: "The customer's locale that will be considered for the localization functionality.<br><br><b>Endpoints</b>:<ul><li>POST cobrand/login</li></ul>"
         type: "string"
   AutoRefresh:
     type: "object"
@@ -9312,25 +9249,6 @@ definitions:
         enum:
         - "ENABLED"
         - "DISABLED"
-  Cobrand:
-    type: "object"
-    title: "Cobrand"
-    required:
-    - "cobrandLogin"
-    - "cobrandPassword"
-    properties:
-      cobrandLogin:
-        minLength: 1
-        type: "string"
-        maxLength: 2147483647
-      cobrandPassword:
-        minLength: 1
-        type: "string"
-        maxLength: 2147483647
-      locale:
-        pattern: "[a-z]{2}_[A-Z]{2}"
-        description: "The customer's locale that will be considered for the localization functionality.<br><br><b>Endpoints</b>:<ul><li>POST cobrand/login</li></ul>"
-        type: "string"
   DataExtractsUser:
     type: "object"
     title: "DataExtractsUser"
@@ -9384,7 +9302,7 @@ definitions:
         readOnly: true
         type: "string"
       consumer:
-        description: "The description of the transaction as defined by the consumer. The consumer can define or provide more details of the transaction in this field.<br><br><b>Applicable containers</b>: creditCard, insurance, loan<br>"
+        description: "The description of the transaction as defined by the consumer. The consumer can define or provide more details of the transaction in this field.<br><br>"
         type: "string"
   UpdateUserRegistration:
     type: "object"
@@ -9493,76 +9411,6 @@ definitions:
         type: "string"
       segmentName:
         type: "string"
-  EnrichDataAccount:
-    type: "object"
-    title: "EnrichDataAccount"
-    properties:
-      availableCash:
-        description: "The amount that is available for an ATM withdrawal, i.e., the cash available after deducting the amount that is already withdrawn from the total cash limit. (totalCashLimit-cashAdvance= availableCash)<br><b>Additional Details:</b> The available cash amount at the account-level can differ from the available cash at the statement-level, as the information in the aggregated card account data provides more up-to-date information.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        $ref: "#/definitions/Money"
-      container:
-        description: "The type of service. E.g., Bank, Credit Card, Investment, Insurance, etc.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      availableCredit:
-        description: "<br><b>Credit Card:</b> Amount that is available to spend on the credit card. It is usually the Total credit line- Running balance- pending charges. <br><b>Loan:</b> The unused portion of  line of credit, on a revolving loan (such as a home-equity line of credit).<br><b>Additional Details:</b><br><b>Note:</b> The available credit amount at the account-level can differ from the available credit field at the statement-level, as the information in the aggregated card account data provides more up-to-date information.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard, loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        $ref: "#/definitions/Money"
-      accountName:
-        description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-      accountType:
-        minLength: 1
-        description: "The type of account that is aggregated, i.e., savings, checking, credit card, charge, HELOC, etc. The account type is derived based on the attributes of the account. <br><b>Valid Values:</b><br><b>Aggregated Account Type</b><br><b>bank</b><ul><li>CHECKING</li><li>SAVINGS</li><li>CD</li><li>PPF</li><li>RECURRING_DEPOSIT</li><li>FSA</li><li>MONEY_MARKET</li><li>IRA</li><li>PREPAID</li></ul><b>creditCard</b><ul><li>OTHER</li><li>CREDIT</li><li>STORE</li><li>CHARGE</li><li>OTHER</li></ul><b>investment (SN 1.0)</b><ul><li>BROKERAGE_MARGIN</li><li>HSA</li><li>IRA</li><li>BROKERAGE_CASH</li><li>401K</li><li>403B</li><li>TRUST</li><li>ANNUITY</li><li>SIMPLE</li><li>CUSTODIAL</li><li>BROKERAGE_CASH_OPTION</li><li>BROKERAGE_MARGIN_OPTION</li><li>INDIVIDUAL</li><li>CORPORATE</li><li>JTTIC</li><li>JTWROS</li><li>COMMUNITY_PROPERTY</li><li>JOINT_BY_ENTIRETY</li><li>CONSERVATORSHIP</li><li>ROTH</li><li>ROTH_CONVERSION</li><li>ROLLOVER</li><li>EDUCATIONAL</li><li>529_PLAN</li><li>457_DEFERRED_COMPENSATION</li><li>401A</li><li>PSP</li><li>MPP</li><li>STOCK_BASKET</li><li>LIVING_TRUST</li><li>REVOCABLE_TRUST</li><li>IRREVOCABLE_TRUST</li><li>CHARITABLE_REMAINDER</li><li>CHARITABLE_LEAD</li><li>CHARITABLE_GIFT_ACCOUNT</li><li>SEP</li><li>UTMA</li><li>UGMA</li><li>ESOPP</li><li>ADMINISTRATOR</li><li>EXECUTOR</li><li>PARTNERSHIP</li><li>SOLE_PROPRIETORSHIP</li><li>CHURCH</li><li>INVESTMENT_CLUB</li><li>RESTRICTED_STOCK_AWARD</li><li>CMA</li><li>EMPLOYEE_STOCK_PURCHASE_PLAN</li><li>PERFORMANCE_PLAN</li><li>BROKERAGE_LINK_ACCOUNT</li><li>MONEY_MARKET</li><li>SUPER_ANNUATION</li><li>REGISTERED_RETIREMENT_SAVINGS_PLAN</li><li>SPOUSAL_RETIREMENT_SAVINGS_PLAN</li><li>DEFERRED_PROFIT_SHARING_PLAN</li><li>NON_REGISTERED_SAVINGS_PLAN</li><li>REGISTERED_EDUCATION_SAVINGS_PLAN</li><li>GROUP_RETIREMENT_SAVINGS_PLAN</li><li>LOCKED_IN_RETIREMENT_SAVINGS_PLAN</li><li>RESTRICTED_LOCKED_IN_SAVINGS_PLAN</li><li>LOCKED_IN_RETIREMENT_ACCOUNT</li><li>REGISTERED_PENSION_PLAN</li><li>TAX_FREE_SAVINGS_ACCOUNT</li><li>LIFE_INCOME_FUND</li><li>REGISTERED_RETIREMENT_INCOME_FUND</li><li>SPOUSAL_RETIREMENT_INCOME_FUND</li><li>LOCKED_IN_REGISTERED_INVESTMENT_FUND</li><li>PRESCRIBED_REGISTERED_RETIREMENT_INCOME_FUND</li><li>GUARANTEED_INVESTMENT_CERTIFICATES</li><li>REGISTERED_DISABILITY_SAVINGS_PLAN</li><li>DIGITAL_WALLET</li><li>OTHER</li></ul><b>investment (SN 2.0)</b><ul><li>BROKERAGE_CASH</li><li>BROKERAGE_MARGIN</li><li>INDIVIDUAL_RETIREMENT_ACCOUNT_IRA</li><li>EMPLOYEE_RETIREMENT_ACCOUNT_401K</li><li>EMPLOYEE_RETIREMENT_SAVINGS_PLAN_403B</li><li>TRUST</li><li>ANNUITY</li><li>SIMPLE_IRA</li><li>CUSTODIAL_ACCOUNT</li><li>BROKERAGE_CASH_OPTION</li><li>BROKERAGE_MARGIN_OPTION</li><li>INDIVIDUAL</li><li>CORPORATE_INVESTMENT_ACCOUNT</li><li>JOINT_TENANTS_TENANCY_IN_COMMON_JTIC</li><li>JOINT_TENANTS_WITH_RIGHTS_OF_SURVIVORSHIP_JTWROS</li><li>JOINT_TENANTS_COMMUNITY_PROPERTY</li><li>JOINT_TENANTS_TENANTS_BY_ENTIRETY</li><li>CONSERVATOR</li><li>ROTH_IRA</li><li>ROTH_CONVERSION</li><li>ROLLOVER_IRA</li><li>EDUCATIONAL</li><li>EDUCATIONAL_SAVINGS_PLAN_529</li><li>DEFERRED_COMPENSATION_PLAN_457</li><li>MONEY_PURCHASE_RETIREMENT_PLAN_401A</li><li>PROFIT_SHARING_PLAN</li><li>MONEY_PURCHASE_PLAN</li><li>STOCK_BASKET_ACCOUNT</li><li>LIVING_TRUST</li><li>REVOCABLE_TRUST</li><li>IRREVOCABLE_TRUST</li><li>CHARITABLE_REMAINDER_TRUST</li><li>CHARITABLE_LEAD_TRUST</li><li>CHARITABLE_GIFT_ACCOUNT</li><li>SEP_IRA</li><li>UNIFORM_TRANSFER_TO_MINORS_ACT_UTMA</li><li>UNIFORM_GIFT_TO_MINORS_ACT_UGMA</li><li>EMPLOYEE_STOCK_OWNERSHIP_PLAN_ESOP</li><li>ADMINISTRATOR</li><li>EXECUTOR</li><li>PARTNERSHIP</li><li>PROPRIETORSHIP</li><li>CHURCH_ACCOUNT</li><li>INVESTMENT_CLUB</li><li>RESTRICTED_STOCK_AWARD</li><li>CASH_MANAGEMENT_ACCOUNT</li><li>EMPLOYEE_STOCK_PURCHASE_PLAN_ESPP</li><li>PERFORMANCE_PLAN</li><li>BROKERAGE_LINK_ACCOUNT</li><li>MONEY_MARKET_ACCOUNT</li><li>SUPERANNUATION</li><li>REGISTERED_RETIREMENT_SAVINGS_PLAN_RRSP</li><li>SPOUSAL_RETIREMENT_SAVINGS_PLAN_SRSP</li><li>DEFERRED_PROFIT_SHARING_PLAN_DPSP</li><li>NON_REGISTERED_SAVINGS_PLAN_NRSP</li><li>REGISTERED_EDUCATION_SAVINGS_PLAN_RESP</li><li>GROUP_RETIREMENT_SAVINGS_PLAN_GRSP</li><li>LOCKED_IN_RETIREMENT_SAVINGS_PLAN_LRSP</li><li>RESTRICTED_LOCKED_IN_SAVINGS_PLAN_RLSP</li><li>LOCKED_IN_RETIREMENT_ACCOUNT_LIRA</li><li>REGISTERED_PENSION_PLAN_RPP</li><li>TAX_FREE_SAVINGS_ACCOUNT_TFSA</li><li>LIFE_INCOME_FUND_LIF</li><li>REGISTERED_RETIREMENT_INCOME_FUND_RIF</li><li>SPOUSAL_RETIREMENT_INCOME_FUND_SRIF</li><li>LOCKED_IN_REGISTERED_INVESTMENT_FUND_LRIF</li><li>PRESCRIBED_REGISTERED_RETIREMENT_INCOME_FUND_PRIF</li><li>GUARANTEED_INVESTMENT_CERTIFICATES_GIC</li><li>REGISTERED_DISABILITY_SAVINGS_PLAN_RDSP</li><li>DEFINED_CONTRIBUTION_PLAN</li><li>DEFINED_BENEFIT_PLAN</li><li>EMPLOYEE_STOCK_OPTION_PLAN</li><li>NONQUALIFIED_DEFERRED_COMPENSATION_PLAN_409A</li><li>KEOGH_PLAN</li><li>EMPLOYEE_RETIREMENT_ACCOUNT_ROTH_401K</li><li>DEFERRED_CONTINGENT_CAPITAL_PLAN_DCCP</li><li>EMPLOYEE_BENEFIT_PLAN</li><li>EMPLOYEE_SAVINGS_PLAN</li><li>HEALTH_SAVINGS_ACCOUNT_HSA</li><li>COVERDELL_EDUCATION_SAVINGS_ACCOUNT_ESA</li><li>TESTAMENTARY_TRUST</li><li>ESTATE</li><li>GRANTOR_RETAINED_ANNUITY_TRUST_GRAT</li><li>ADVISORY_ACCOUNT</li><li>NON_PROFIT_ORGANIZATION_501C</li><li>HEALTH_REIMBURSEMENT_ARRANGEMENT_HRA</li><li>INDIVIDUAL_SAVINGS_ACCOUNT_ISA</li><li>CASH_ISA</li><li>STOCKS_AND_SHARES_ISA</li><li>INNOVATIVE_FINANCE_ISA</li><li>JUNIOR_ISA</li><li>EMPLOYEES_PROVIDENT_FUND_ORGANIZATION_EPFO</li><li>PUBLIC_PROVIDENT_FUND_PPF</li><li>EMPLOYEES_PENSION_SCHEME_EPS</li><li>NATIONAL_PENSION_SYSTEM_NPS</li><li>INDEXED_ANNUITY</li><li>ANNUITIZED_ANNUITY</li><li>VARIABLE_ANNUITY</li><li>ROTH_403B</li><li>SPOUSAL_IRA</li><li>SPOUSAL_ROTH_IRA</li><li>SARSEP_IRA</li><li>SUBSTANTIALLY_EQUAL_PERIODIC_PAYMENTS_SEPP</li><li>OFFSHORE_TRUST</li><li>IRREVOCABLE_LIFE_INSURANCE_TRUST</li><li>INTERNATIONAL_TRUST</li><li>LIFE_INTEREST_TRUST</li><li>EMPLOYEE_BENEFIT_TRUST</li><li>PRECIOUS_METAL_ACCOUNT</li><li>INVESTMENT_LOAN_ACCOUNT</li><li>GRANTOR_RETAINED_INCOME_TRUST</li><li>PENSION_PLAN</li><li>DIGITAL_WALLET</li><li>OTHER</li></ul><b>bill</b><ul><li>TELEPHONE</li><li>UTILITY</li><li>CABLE</li><li>WIRELESS</li><li>BILLS</li></ul><b>loan</b><ul><li>MORTGAGE</li><li>INSTALLMENT_LOAN</li><li>PERSONAL_LOAN</li><li>HOME_EQUITY_LINE_OF_CREDIT</li><li>LINE_OF_CREDIT</li><li>AUTO_LOAN</li><li>STUDENT_LOAN</li><li>HOME_LOAN</li></ul><b>insurance</b><ul><li>AUTO_INSURANCE</li><li>HEALTH_INSURANCE</li><li>HOME_INSURANCE</li><li>LIFE_INSURANCE</li><li>ANNUITY</li><li>TRAVEL_INSURANCE</li><li>INSURANCE</li></ul><b>realEstate</b><ul> <li>REAL_ESTATE</li></ul><b>reward</b><ul><li>REWARD_POINTS</li></ul><b>Manual Account Type</b><br><b>bank</b><ul><li>CHECKING</li><li>SAVINGS</li><li>CD</li><li>PREPAID</li></ul><b>credit</b><ul>  <li>CREDIT</li></ul><b>loan</b><ul>  <li>PERSONAL_LOAN</li><li>HOME_LOAN</li></ul><b>bill</b><ul><li>BILLS</li></ul><b>insurance</b><ul><li>INSURANCE</li><li>ANNUITY</li></ul><b>investment</b><ul><li>BROKERAGE_CASH</li></ul><br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-        maxLength: 2147483647
-      currentBalance:
-        description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
-        $ref: "#/definitions/Money"
-      displayedName:
-        description: "The name or identification of the account owner, as it appears at the FI site. <br><b>Note:</b> The account holder name can be full or partial based on how it is displayed in the account summary page of the FI site. In most cases, the FI site does not display the full account holder name in the account summary page.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank, creditCard, investment, insurance, loan, bill, reward<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-      dueDate:
-        description: "The date on which the due amount has to be paid. <br><b>Additional Details:</b><br><b>Credit Card:</b> The monthly date by when the minimum payment is due to be paid on the credit card account. <br><b>Loan:</b> The date on or before which the due amount should be paid.<br><b>Note:</b> The due date at the account-level can differ from the due date field at the statement-level, as the information in the aggregated card account data provides an up-to-date information to the consumer.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard, loan, insurance, bill<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-      accountNumber:
-        minLength: 1
-        description: "The account number as it appears on the site. (The POST accounts service response return this field as number)<br><b>Additional Details</b>:<b> Bank/ Loan/ Insurance/ Investment/Bill</b>:<br> The account number for the bank account as it appears at the site.<br><b>Credit Card</b>: The account number of the card account as it appears at the site,<br>i.e., the card number.The account number can be full or partial based on how it is displayed in the account summary page of the site.In most cases, the site does not display the full account number in the account summary page and additional navigation is required to aggregate it.<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST accounts</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-        maxLength: 2147483647
-      accountHolderName:
-        type: "string"
-      accountStatus:
-        description: "The status of the account that is updated by the consumer through an application or an API. Valid Values: AccountStatus<br><b>Additional Details:</b><br><b>ACTIVE:</b> All the added manual and aggregated accounts status will be made \"ACTIVE\" by default. <br><b>TO_BE_CLOSED:</b> If the aggregated accounts are not found or closed in the data provider site, Yodlee system marks the status as TO_BE_CLOSED<br><b>INACTIVE:</b> Users can update the status as INACTIVE to stop updating and to stop considering the account in other services<br><b>CLOSED:</b> Users can update the status as CLOSED, if the account is closed with the provider. <br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "ACTIVE"
-        - "INACTIVE"
-        - "TO_BE_CLOSED"
-        - "CLOSED"
-        - "DELETED"
-      amountDue:
-        description: "The amount due to be paid for the account.<br><b>Additional Details:</b><b>Credit Card:</b> The total amount due for the purchase of goods or services that must be paid by the due date.<br><b>Loan:</b> The amount due to be paid on the due date.<br><b>Note:</b> The amount due at the account-level can differ from the amount due at the statement-level, as the information in the aggregated card account data provides more up-to-date information.<br><b>Applicable containers</b>: creditCard, loan, insurance, bill<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        $ref: "#/definitions/Money"
-      userLoginName:
-        minLength: 1
-        description: "The loginName of the User.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        type: "string"
-        maxLength: 2147483647
-      asOfDate:
-        type: "string"
-      minimumAmountDue:
-        description: "The minimum amount due is the lowest amount of money that a consumer is required to pay each month.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard, insurance, bill, loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        $ref: "#/definitions/Money"
   TransactionResponse:
     type: "object"
     title: "TransactionResponse"
@@ -9757,11 +9605,13 @@ definitions:
     required:
     - "applicationDisplayName"
     - "clientADR"
+    - "clientTrustedAdvisor"
     - "consentId"
     - "consentStatus"
     - "expirationDate"
     - "preferences"
     - "providerId"
+    - "revokeDate"
     - "scope"
     - "startDate"
     - "title"
@@ -9790,6 +9640,17 @@ definitions:
       renewal:
         description: "Renewal describes the sharing duration and reauthorization required."
         $ref: "#/definitions/Renewal"
+      clientTrustedAdvisor:
+        description: "describes information of client trusted advisor"
+        type: "array"
+        items:
+          $ref: "#/definitions/ClientTrustedAdvisor"
+      providerConsentId:
+        description: "Provider consent id"
+        type: "string"
+      revokeDate:
+        description: "Consent revoke date."
+        type: "string"
       title:
         description: "Title for the consent form."
         type: "string"
@@ -9839,13 +9700,6 @@ definitions:
       expirationDate:
         description: "Consent expiry date."
         type: "string"
-  DataExtractsEventResponse:
-    type: "object"
-    title: "DataExtractsEventResponse"
-    properties:
-      event:
-        readOnly: true
-        $ref: "#/definitions/DataExtractsEvent"
   Verification:
     type: "object"
     title: "Verification"
@@ -9897,6 +9751,13 @@ definitions:
         description: "Unique identifier for the verification request.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         readOnly: true
         type: "integer"
+  DataExtractsEventResponse:
+    type: "object"
+    title: "DataExtractsEventResponse"
+    properties:
+      event:
+        readOnly: true
+        $ref: "#/definitions/DataExtractsEvent"
   UserRegistration:
     type: "object"
     title: "UserRegistration"
@@ -9937,23 +9798,6 @@ definitions:
         format: "int64"
         readOnly: true
         type: "integer"
-  ConfigsNotificationEvent:
-    type: "object"
-    title: "ConfigsNotificationEvent"
-    properties:
-      name:
-        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "REFRESH"
-        - "DATA_UPDATES"
-        - "AUTO_REFRESH_UPDATES"
-        - "LATEST_BALANCE_UPDATES"
-      callbackUrl:
-        minLength: 1
-        description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul>"
-        type: "string"
-        maxLength: 2147483647
   ProvidersDataset:
     type: "object"
     title: "ProvidersDataset"
@@ -9971,6 +9815,24 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Attribute"
+  ConfigsNotificationEvent:
+    type: "object"
+    title: "ConfigsNotificationEvent"
+    properties:
+      name:
+        description: "Name of the event for which the customers must subscribe to receive notifications.<br><b>Valid Value:</b> Notification Events Name<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul><b>Applicable Values</b><br>"
+        type: "string"
+        enum:
+        - "REFRESH"
+        - "DATA_UPDATES"
+        - "AUTO_REFRESH_UPDATES"
+        - "LATEST_BALANCE_UPDATES"
+        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+      callbackUrl:
+        minLength: 1
+        description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul>"
+        type: "string"
+        maxLength: 2147483647
   ThirdPartyADR:
     type: "object"
     title: "ThirdPartyADR"
@@ -10048,14 +9910,6 @@ definitions:
         description: "Unique identifier for the verification request.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         readOnly: true
         type: "integer"
-  CreateConfigsNotificationEventRequest:
-    type: "object"
-    title: "CreateConfigsNotificationEventRequest"
-    required:
-    - "event"
-    properties:
-      event:
-        $ref: "#/definitions/CreateConfigsNotificationEvent"
   ProviderAccountProfile:
     type: "object"
     title: "ProviderAccountProfile"
@@ -10071,6 +9925,14 @@ definitions:
         description: "Unique identifier for profile<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/profile</li></ul>"
         readOnly: true
         type: "integer"
+  CreateConfigsNotificationEventRequest:
+    type: "object"
+    title: "CreateConfigsNotificationEventRequest"
+    required:
+    - "event"
+    properties:
+      event:
+        $ref: "#/definitions/CreateConfigsNotificationEvent"
   VerifiedAccount:
     type: "object"
     title: "VerifiedAccount"
@@ -10167,6 +10029,7 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+        - "DATA_RETRIEVAL_FAILED"
   DataExtractsUserData:
     type: "object"
     title: "DataExtractsUserData"
@@ -10252,15 +10115,6 @@ definitions:
         - "PAYMENT"
         - "PAYOFF"
         - "UNKNOWN"
-  ApiKeyRequest:
-    type: "object"
-    title: "ApiKeyRequest"
-    properties:
-      publicKey:
-        minLength: 1
-        description: "Public key uploaded by the customer while generating ApiKey.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
-        type: "string"
-        maxLength: 2147483647
   CreateCobrandNotificationEvent:
     type: "object"
     title: "CreateCobrandNotificationEvent"
@@ -10284,6 +10138,15 @@ definitions:
       accountNumber:
         readOnly: true
         type: "string"
+  ApiKeyRequest:
+    type: "object"
+    title: "ApiKeyRequest"
+    properties:
+      publicKey:
+        minLength: 1
+        description: "Public key uploaded by the customer while generating ApiKey.<br><br><b>Endpoints</b>:<ul><li>GET /auth/apiKey</li><li>POST /auth/apiKey</li></ul>"
+        type: "string"
+        maxLength: 2147483647
   VerificationTransaction:
     type: "object"
     title: "VerificationTransaction"
@@ -10298,278 +10161,6 @@ definitions:
         enum:
         - "CREDIT"
         - "DEBIT"
-  EnrichedTransaction:
-    type: "object"
-    title: "EnrichedTransaction"
-    properties:
-      container:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      sourceId:
-        description: "A unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts.<br>Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts."
-        readOnly: true
-        type: "string"
-      merchantCity:
-        description: "City of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      highLevelCategoryId:
-        format: "int64"
-        description: "The high level category assigned to the transaction. The supported values are provided by the GET transactions/categories. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      detailCategoryId:
-        format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "integer"
-      type:
-        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-        - "BUY"
-        - "SELL"
-        - "DIVIDEND_PAYMENT"
-        - "DIVIDEND_REINVESTMENT"
-        - "MISCELLANEOUS_INCOME"
-        - "INTEREST_INCOME"
-        - "INTEREST_REINVESTMENT"
-        - "LONG_TERM_CAPITAL_GAINS_DISTRIBUTION"
-        - "REINVEST_LONG_TERM_CAPITAL_GAINS"
-        - "SHORT_TERM_CAPITAL_GAINS_DISTRIBUTION"
-        - "REINVEST_SHORT_TERM_CAPITAL_GAINS"
-        - "SHARES_IN"
-        - "SHARES_OUT"
-        - "TRANSFER_CASH_IN"
-        - "TRANSFER_CASH_OUT"
-        - "STOCK_SPLIT"
-        - "RETURN_OF_CAPITAL"
-        - "MISCELLANEOUS_EXPENSE"
-        - "TRANSFER_SHARES_IN"
-        - "TRANSFER_SHARES_OUT"
-        - "MARGIN_INTEREST_EXPENSE"
-        - "REMINDER"
-        - "CORPORATE_ACQUISITION"
-        - "STOCK_DIVIDEND"
-        - "SHORT_SELL"
-        - "BOND_CALL"
-        - "BOND_MATURES"
-        - "BUY_TO_COVER"
-        - "BUY_OPTION"
-        - "SELL_OPTION"
-        - "EXERCISE_OPTION"
-        - "ASSIGN_OPTION"
-        - "EXPIRE_OPTION"
-        - "OTHER"
-        - "SWEEP"
-        - "CAPITAL_GAINS_REINVESTED"
-        - "_1035_EXCHANGE"
-        - "_401K_CONTRIBUTION"
-        - "_401K_EMPLOYER_CONTRIBUTION"
-        - "LOAN_DISTRIBUTION"
-        - "LOAN_PAYMENT"
-        - "PENALTY"
-        - "ACCOUNT_FEE"
-        - "ACCOUNT_MAINTENANCE_FEE"
-        - "ACCUMULATION"
-        - "ACH_OUT"
-        - "ADJUSTED_BUY"
-        - "ADJUSTED_SELL"
-        - "ADMINISTRATIVE_FEE"
-        - "ANNUITY_CREDIT"
-        - "ATM_FEE"
-        - "ATM_WITHDRAWAL"
-        - "ATM_WITHDRAWAL_FEE"
-        - "ATM_WITHDRAWAL_FEE_CREDIT"
-        - "AUTOMATIC_INVESTMENT"
-        - "BAD_CHECK"
-        - "BILL_PAY"
-        - "BILL_PAY_IN"
-        - "BILL_PAY_OUT"
-        - "BUY_ACCRUED_INTEREST"
-        - "BUY_TO_CLOSE"
-        - "BUY_TO_OPEN"
-        - "CAPITAL_GAINS_RECIEVED"
-        - "CHARGE"
-        - "CHARGE_CREDIT"
-        - "CHECK"
-        - "CHECKBOOK_REORDER_FEE"
-        - "CREDIT_IN_LIEU_OF_FRACTIONAL_SHARE"
-        - "CS_ADJUSTMENT"
-        - "DEATH_BENEFIT_PAYOUT"
-        - "DEFERRED_COMPENSATION_CONTRIBUTION"
-        - "DEFERRED_COMPENSATION_DISTRIBUTION"
-        - "DEPOSIT"
-        - "DIRECT_DEPOSIT"
-        - "EDUCATIONAL_PLAN_CONTRIBUTION"
-        - "ESOP_ALLOCATION"
-        - "FEDERAL_TAX_FREE_DIVIDEND"
-        - "FEDEX_FEE"
-        - "FED_TAX_WITHHELD"
-        - "FOREIGN_TAX"
-        - "FOREIGN_TAX_CREDIT"
-        - "FRACTIONAL_SHARE_LIQUIDATION"
-        - "FUND_EXCHANGE"
-        - "FUND_EXPENSE"
-        - "IRA_CONTRIBUTION"
-        - "IRA_DISTRIBUTION"
-        - "IRA_NON_QUALIFIED_DISTRIBUTION"
-        - "MERGER"
-        - "MISC_CREDIT"
-        - "MISC_JRL_CASHTO_MARGIN"
-        - "MISC_JRL_MARGIN_TO_CASH"
-        - "MMF_DIVIDEND"
-        - "MMF_IN"
-        - "MMF_LIQ"
-        - "MMF_REIN"
-        - "MMF_SWEEP"
-        - "MMF_TRANSACTION"
-        - "MONEY_FUNDS_JOURNAL_CASH_TO_MARGIN"
-        - "MONEY_FUNDS_JOURNAL_MARGIN_TO_CASH"
-        - "MORTALITY_AND_EXPENSE_RISK_CHARGE"
-        - "NAME_CHANGE"
-        - "NSF_FEE"
-        - "ORDER_OUT"
-        - "ORDER_OUT_FEE"
-        - "OTHER_ANNUITY_FEE"
-        - "PAYOUT"
-        - "REORGANIZATION_CHARGE"
-        - "RETURNED_CHECK_FEE"
-        - "ROLLOVER_CONTRIBUTION"
-        - "ROTH_CONTRIBUTION"
-        - "RTQ_FEE"
-        - "SELL_ACCRUED_INTEREST"
-        - "SELL_TO_CLOSE"
-        - "SELL_TO_OPEN"
-        - "SEP_CONTRIBUTION"
-        - "SIMPLE_PLAN_CONTRIBUTION"
-        - "SPINOFF"
-        - "STATE_TAX_FREE_DIVIDEND"
-        - "STATE_TAX_WITHHELD"
-        - "STAX"
-        - "STOCK_FUND_OPTION_JOURNAL_CASH_TO_MARGIN"
-        - "STOCK_FUND_OPTION_JOURNAL_MARGIN_TO_CASH"
-        - "STOCK_OPTION_EXERCISE"
-        - "STOCK_OPTION_WITHHOLDING"
-        - "SURRENDER_CHARGE"
-        - "SYMBOL_CHANGE"
-        - "TAX_FREE_DIVIDEND"
-        - "WIRE_FEE"
-        - "WIRE_FUNDS_IN"
-        - "WIRE_FUNDS_OUT"
-        - "WORTHLESS_SECURITIES"
-        - "_529_PLAN_CONTRIBUTION"
-        - "ADJUSTED_ASSIGN"
-        - "REVERSAL"
-        - "DVP"
-        - "RVP"
-        - "ADJUSTMENT"
-        - "ADJUSTED_CREDIT"
-        - "ADJUSTED_DEBIT"
-        - "TENDERED"
-        - "ESOP_ALLOCATION_1"
-        - "EXCESS_CONTRIBUTION"
-        - "RECHARACTERIZATION"
-        - "CONVERSION"
-        - "ROLLOVER_TO_QUAL"
-        - "FEDERAL_TAX_FREE_INTEREST_INCOME"
-        - "STATE_TAX_FREE_INTEREST_INCOME"
-        - "FORFEITURE"
-        - "WITHDRAWAL"
-        - "LOAN_WITHDRAWAL"
-        - "BALANCE_FORWARD"
-        - "GENERIC_CONTRIBUTION"
-        - "CAPITAL_CALLS"
-        - "DISTRIBUTIONS_OUT"
-        - "PRINCIPAL_PAYMENT"
-      merchantState:
-        description: "State of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      transactionId:
-        format: "int64"
-        description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      merchantName:
-        description: "The name of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      merchantId:
-        description: "Identifier of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "string"
-      simpleDescription:
-        description: "The transaction description that appears at the FI site may not be self-explanatory, i.e., the source, purpose of the transaction may not be evident. Yodlee attempts to simplify and make the transaction meaningful to the consumer, and this simplified transaction description is provided in the simple description field.Note: The simple description field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bill, creditCard, insurance, loan<br>"
-        readOnly: true
-        type: "string"
-      subType:
-        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "OVERDRAFT_CHARGE"
-        - "ONLINE_PURCHASE"
-        - "TAX_PAYMENT"
-        - "PAYMENT_BY_CHECK"
-        - "ATM_CASH_WITHDRAWAL"
-        - "SERVICE_CHARGE"
-        - "RETURNED_CHECK_CHARGE"
-        - "STOP_PAYMENT_CHARGE"
-        - "CONVENIENCE_FEE"
-        - "AUTO_LOAN"
-        - "HOME_LOAN_MORTGAGE"
-        - "RECURRING_SUBSCRIPTION_PAYMENT"
-        - "INTEREST"
-        - "PAYMENT"
-        - "PURCHASE"
-        - "REFUND"
-        - "TRANSFER"
-        - "FINANCE_CHARGE"
-        - "OTHER_CHARGES_FEES"
-        - "ANNUAL_FEE"
-        - "DEPOSIT"
-        - "DIRECT_DEPOSIT_SALARY"
-        - "INVESTMENT_INCOME_CASH"
-        - "SSA"
-        - "REWARDS"
-        - "TAX_REFUND"
-        - "CREDIT_CARD_PAYMENT"
-        - "INSURANCE_PAYMENT"
-        - "UTILITIES_PAYMENT"
-        - "CHILD_SUPPORT"
-        - "LOAN"
-        - "PERSONAL_LOAN"
-        - "STUDENT_LOAN"
-        - "REIMBURSEMENT"
-        - "BALANCE_TRANSFER"
-        - "OVERDRAFT_PROTECTION"
-        - "CREDIT"
-        - "NSF_FEES"
-      merchantCountry:
-        description: "Country of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      categoryId:
-        format: "int64"
-        description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
   CdrPolicy:
     type: "object"
     title: "CdrPolicy"
@@ -10583,19 +10174,6 @@ definitions:
       url:
         description: "https://solutions.yodlee.com/au-cdr.html"
         type: "string"
-  AccountHistory:
-    type: "object"
-    title: "AccountHistory"
-    properties:
-      historicalBalances:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/HistoricalBalance"
-      id:
-        format: "int64"
-        readOnly: true
-        type: "integer"
   DataExtractsTransaction:
     type: "object"
     title: "DataExtractsTransaction"
@@ -10854,6 +10432,19 @@ definitions:
         - "SCHEDULED"
         - "FAILED"
         - "CLEARED"
+  AccountHistory:
+    type: "object"
+    title: "AccountHistory"
+    properties:
+      historicalBalances:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/HistoricalBalance"
+      id:
+        format: "int64"
+        readOnly: true
+        type: "integer"
   UserSession:
     type: "object"
     title: "UserSession"
@@ -10862,65 +10453,6 @@ definitions:
         description: "Session provided for a valid user to access API services upon successful authentication.<br><br><b>Endpoints</b>:<ul><li>POST user/samlLogin</li><li>POST user/register</li></ul>"
         readOnly: true
         type: "string"
-  EnrichDataTransaction:
-    type: "object"
-    title: "EnrichDataTransaction"
-    properties:
-      container:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard<br><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      sourceId:
-        minLength: 1
-        description: "A unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts.<br>Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts."
-        type: "string"
-        maxLength: 100
-      amount:
-        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        $ref: "#/definitions/Money"
-      description:
-        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        $ref: "#/definitions/Description"
-      postDate:
-        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        type: "string"
-      userLoginName:
-        minLength: 1
-        description: "The loginName of the User.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        type: "string"
-        maxLength: 2147483647
-      accountNumber:
-        minLength: 1
-        description: "The account number as it appears on the site. (The POST accounts service response return this field as number)<br><b>Additional Details</b>:<b> Bank/ Loan/ Insurance/ Investment/Bill</b>:<br> The account number for the bank account as it appears at the site.<br><b>Credit Card</b>: The account number of the card account as it appears at the site,<br>i.e., the card number.The account number can be full or partial based on how it is displayed in the account summary page of the site.In most cases, the site does not display the full account number in the account summary page and additional navigation is required to aggregate it.<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST accounts</li><li>POST dataExtracts/userData</li><li>POST dataEnrich/userData</li></ul>"
-        type: "string"
-        maxLength: 2147483647
-      transactionDate:
-        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        type: "string"
-      baseType:
-        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard<br><b>Applicable Values</b><br>"
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-      status:
-        type: "string"
-        enum:
-        - "POSTED"
-        - "PENDING"
-        - "SCHEDULED"
-        - "FAILED"
-        - "CLEARED"
   ProviderAccountResponse:
     type: "object"
     title: "ProviderAccountResponse"
@@ -11038,18 +10570,6 @@ definitions:
         minLength: 0
         type: "string"
         maxLength: 50
-  DataExtractsEventUserData:
-    type: "object"
-    title: "DataExtractsEventUserData"
-    properties:
-      links:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/DataExtractsEventLinks"
-      user:
-        readOnly: true
-        $ref: "#/definitions/DataExtractsUser"
   PaymentAccount:
     type: "object"
     title: "PaymentAccount"
@@ -11099,6 +10619,18 @@ definitions:
         description: "Full account number List of the account that is included only when include = fullAccountNumberList is provided in the request. <br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li></ul>"
         readOnly: true
         $ref: "#/definitions/FullAccountNumbers"
+  DataExtractsEventUserData:
+    type: "object"
+    title: "DataExtractsEventUserData"
+    properties:
+      links:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/DataExtractsEventLinks"
+      user:
+        readOnly: true
+        $ref: "#/definitions/DataExtractsUser"
   AddedProviderAccountResponse:
     type: "object"
     title: "AddedProviderAccountResponse"
@@ -11408,18 +10940,6 @@ definitions:
         - "SCHEDULED"
         - "FAILED"
         - "CLEARED"
-  ConfigsPublicKey:
-    type: "object"
-    title: "ConfigsPublicKey"
-    properties:
-      alias:
-        description: "The key name used for encryption.<br><br><b>Endpoints</b>:<ul><li>GET configs/publicKey</li></ul>"
-        readOnly: true
-        type: "string"
-      key:
-        description: "Public key that the customer should be using to encrypt the credentials and answers before sending to the add and update providerAccounts APIs.<br><br><b>Endpoints</b>:<ul><li>GET configs/publicKey</li></ul>"
-        readOnly: true
-        type: "string"
   Option:
     type: "object"
     title: "Option"
@@ -11433,15 +10953,18 @@ definitions:
       isSelected:
         description: "The option that is selected by default in the provider site.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         type: "boolean"
-  AccountResponse:
+  ConfigsPublicKey:
     type: "object"
-    title: "AccountResponse"
+    title: "ConfigsPublicKey"
     properties:
-      account:
+      alias:
+        description: "The key name used for encryption.<br><br><b>Endpoints</b>:<ul><li>GET configs/publicKey</li></ul>"
         readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/Account"
+        type: "string"
+      key:
+        description: "Public key that the customer should be using to encrypt the credentials and answers before sending to the add and update providerAccounts APIs.<br><br><b>Endpoints</b>:<ul><li>GET configs/publicKey</li></ul>"
+        readOnly: true
+        type: "string"
   Row:
     type: "object"
     title: "Row"
@@ -11463,6 +10986,15 @@ definitions:
       label:
         description: "The label text displayed for a row in the form.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts/{providerAccountId}</li><li>GET providers/{providerId}</li></ul>"
         type: "string"
+  AccountResponse:
+    type: "object"
+    title: "AccountResponse"
+    properties:
+      account:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/Account"
   UpdateUserRequest:
     type: "object"
     title: "UpdateUserRequest"
@@ -11471,6 +11003,20 @@ definitions:
     properties:
       user:
         $ref: "#/definitions/UpdateUserRegistration"
+  ProviderAccountPreferences:
+    type: "object"
+    title: "ProviderAccountPreferences"
+    properties:
+      isDataExtractsEnabled:
+        description: "Indicates if the updates to the provider account should be part of the data extracts event notification or the data extract data retrieval service.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=preferences</li><li>GET providerAccounts/{providerAccountId}?include=preferences</li></ul>"
+        type: "boolean"
+      linkedProviderAccountId:
+        format: "int64"
+        description: "LinkedproviderAccountd is a providerAccountId linked by the user to the primary provider account. <br>LinkedProviderAccountId and the providerAccountId belongs to the same institution.<br><br><b>Endpoints</b>:<ul><li>POST Provider Account</li><li>PUT Provider Account</li><li>GET Provider Accounts</li></ul>"
+        type: "integer"
+      isAutoRefreshEnabled:
+        description: "Indicates if auto-refreshes have to be triggered for the provider account.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=preferences</li><li>GET providerAccounts/{providerAccountId}?include=preferences</li></ul>"
+        type: "boolean"
   DataExtractsEventData:
     type: "object"
     title: "DataExtractsEventData"
@@ -11490,20 +11036,6 @@ definitions:
       toDate:
         readOnly: true
         type: "string"
-  ProviderAccountPreferences:
-    type: "object"
-    title: "ProviderAccountPreferences"
-    properties:
-      isDataExtractsEnabled:
-        description: "Indicates if the updates to the provider account should be part of the data extracts event notification or the data extract data retrieval service.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=preferences</li><li>GET providerAccounts/{providerAccountId}?include=preferences</li></ul>"
-        type: "boolean"
-      linkedProviderAccountId:
-        format: "int64"
-        description: "LinkedproviderAccountd is a providerAccountId linked by the user to the primary provider account. <br>LinkedProviderAccountId and the providerAccountId belongs to the same institution.<br><br><b>Endpoints</b>:<ul><li>POST Provider Account</li><li>PUT Provider Account</li><li>GET Provider Accounts</li></ul>"
-        type: "integer"
-      isAutoRefreshEnabled:
-        description: "Indicates if auto-refreshes have to be triggered for the provider account.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts?include=preferences</li><li>GET providerAccounts/{providerAccountId}?include=preferences</li></ul>"
-        type: "boolean"
   User:
     type: "object"
     title: "User"
@@ -11603,6 +11135,23 @@ definitions:
     properties:
       verifyAccount:
         $ref: "#/definitions/VerifyAccount"
+  ClientTrustedAdvisor:
+    type: "object"
+    title: "ClientTrustedAdvisor"
+    required:
+    - "email"
+    - "name"
+    - "role"
+    properties:
+      role:
+        description: "<b>Role of the Client Trusted Advisor</b>: Example : Lawyer , Accountant , etc..."
+        type: "string"
+      name:
+        description: "Name of the client trusted advisor"
+        type: "string"
+      email:
+        description: "<b>Email Id of the Client Trusted Advisor</b>: PRIMARY , SECONDARY , PERSONAL , WORK and OTHERS"
+        type: "string"
   AccountToken:
     type: "object"
     title: "AccountToken"
@@ -11631,15 +11180,6 @@ definitions:
         format: "int64"
         description: "Unique identifier for the provider account resource. This is created during account addition."
         type: "integer"
-  EnrichedTransactionResponse:
-    type: "object"
-    title: "EnrichedTransactionResponse"
-    properties:
-      enrichedTransaction:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/EnrichedTransaction"
   ProviderDetail:
     type: "object"
     title: "ProviderDetail"
@@ -11926,6 +11466,7 @@ definitions:
         - "SUCCESS"
         - "FAILED"
         - "MIGRATION_IN_PROGRESS"
+        - "DATA_RETRIEVAL_FAILED"
   DataExtractsUserDataResponse:
     type: "object"
     title: "DataExtractsUserDataResponse"
@@ -11975,6 +11516,12 @@ definitions:
         description: "The investment accounts cash balance.<br>Required Feature Enablement: Asset classification feature.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         $ref: "#/definitions/Money"
+  CobrandSession:
+    type: "object"
+    title: "CobrandSession"
+    properties:
+      cobSession:
+        type: "string"
   AssetClassification:
     type: "object"
     title: "AssetClassification"
@@ -11991,12 +11538,6 @@ definitions:
       classificationValue:
         description: "The value for each classificationType.<br><b>Required Feature Enablement</b>: Asset classification feature<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
-        type: "string"
-  CobrandSession:
-    type: "object"
-    title: "CobrandSession"
-    properties:
-      cobSession:
         type: "string"
   PaymentAccountHolderResponse:
     type: "object"
@@ -12058,13 +11599,6 @@ definitions:
         description: "The date when the information was last updated in the system.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
-      associatedProviderAccountId:
-        description: "The providerAccountIds that share the account with the primary providerAccountId that was created when the user had added the account for the first time.<br><b>Additional Details</b>: This attribute is returned in the response only if the account deduplication feature is enabled and the same account is mapped to more than one provider account IDs indicating the account is owned by more than one user, for example, joint accounts.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          format: "int64"
-          type: "integer"
       matchStatus:
         description: "Indicates the security match status id of the investment option identified during security normalization.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -12249,7 +11783,7 @@ info:
     url: "https://developer.yodlee.com/terms/condition#_Services_1"
   contact:
     email: "developer@yodlee.com"
-  description: "This file describes the Yodlee Platform APIs using the swagger notation. You can use this swagger file to generate client side SDKs to the Yodlee Platform APIs for many different programming languages. Yodlee supports the Java SDK and it is available <a href=\"https://developer.yodlee.com/java-sdk-overview \">here</a>. You can generate a client SDK for Python, Java, JavaScript, PHP, or other languages according to your development needs. For more details about the APIs, refer to <a href=\"https://developer.yodlee.com/docs/api/1.1/Overview\">Yodlee API v1.1 - Overview</a>.<br><br>You will have to set the header before making the API call. The following headers apply to all the APIs:<ul><li>Authorization: This header holds the access token</li> <li> Api-Version: 1.1</li></ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description."
+  description: "This file describes the Yodlee Platform APIs using the swagger notation. You can use this swagger file to generate client side SDKs to the Yodlee Platform APIs for many different programming languages. Yodlee API v1.1 - Overview</a>.<br><br>You will have to set the header before making the API call. The following headers apply to all the APIs:<ul><li>Authorization: This header holds the access token</li> <li> Api-Version: 1.1</li></ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description."
   termsOfService: "https://developer.yodlee.com/terms/condition"
   title: "Yodlee Core APIs"
   version: "1.1.0"
@@ -12272,8 +11806,6 @@ tags:
   description: "Derived API"
 - name: "Documents"
   description: "Documents API"
-- name: "EnrichData"
-  description: "EnrichData API"
 - name: "Holdings"
   description: "Holdings API"
 - name: "Institutions"
