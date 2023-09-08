@@ -986,7 +986,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for consentId <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed</b><br><b>consent duration days preference required consentParam</b><br>Y800 : Invalid value for consentParam <br/>Y812 : Required field/value - scopeId missing in the consentParam <br/>"
+          description: "Y800 : Invalid value for consentId <br/>Y800 : Invalid value for consentParam <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed<br>Y803 : consent duration days preference required consentParam <br/>Y812 : Required field/value - scopeId missing in the consentParam <br/>"
         401:
           description: "Unauthorized"
         404:
@@ -1802,7 +1802,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for consentId <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed</b><br>Y800 : Invalid value for requestbody <br/>"
+          description: "Y800 : Invalid value for consentId <br/>Y800 : Invalid value for consentParam <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed<br/>Y803 : consent duration days preference required consentParam <br/>Y812 : Required field/value - scopeId missing in the consentParam <br/>"
         401:
           description: "Unauthorized"
         404:
@@ -2423,7 +2423,7 @@ paths:
       parameters:
       - in: "path"
         name: "eventName"
-        description: "eventName"
+        description: "Name of the webhook subscription event"
         type: "string"
         required: true
         enum:
@@ -2465,7 +2465,7 @@ paths:
         name: "eventName"
         description: "Name of the webhook subscription event"
         type: "string"
-        required: false
+        required: true
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
@@ -2497,7 +2497,7 @@ paths:
         name: "eventName"
         description: "Name of the webhook subscription event"
         type: "string"
-        required: false
+        required: true
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
@@ -3221,6 +3221,31 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Holding"
+  CustomDisplayData:
+    type: "object"
+    title: "CustomDisplayData"
+    required:
+    - "clientTrustedAdvisorTxt"
+    - "consentConfirmation"
+    - "deletePreference"
+    - "thirdParty"
+    - "userDataTreatment"
+    properties:
+      consentConfirmation:
+        description: "Details of ConsentConfirmation"
+        $ref: "#/definitions/ConsentConfirmation"
+      deletePreference:
+        description: "Details of DeletePreference"
+        $ref: "#/definitions/DeletePreference"
+      thirdParty:
+        description: "Details of ThirdParty"
+        $ref: "#/definitions/ThirdParty"
+      clientTrustedAdvisorTxt:
+        description: "Details of ClientTrustedAdvisorTxt"
+        $ref: "#/definitions/ClientTrustedAdvisorTxt"
+      userDataTreatment:
+        description: "Details of UserDataTreatment"
+        $ref: "#/definitions/UserDataTreatment"
   AccountHolderData:
     type: "object"
     title: "AccountHolderData"
@@ -6299,6 +6324,19 @@ definitions:
         description: "The balance in the account that is available for spending. For checking accounts with overdraft, available balance may include overdraft amount, if end site adds overdraft balance to available balance.<br><b>Endpoints</b>:<ul><li>GET /partner/paymentProcessor/account</li><li>GET /partner/paymentProcessor/account/balance</li><li>GET /partner/paymentProcessor/account/holder</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+  ConsentConfirmation:
+    type: "object"
+    title: "ConsentConfirmation"
+    required:
+    - "description"
+    - "header"
+    properties:
+      description:
+        description: "Consent confirmation Description"
+        type: "string"
+      header:
+        description: "Consent confirmation Header"
+        type: "string"
   HolderProfileResponse:
     type: "object"
     title: "HolderProfileResponse"
@@ -6990,6 +7028,19 @@ definitions:
         description: "Name of the account holder.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Name"
+  ThirdParty:
+    type: "object"
+    title: "ThirdParty"
+    required:
+    - "description"
+    - "header"
+    properties:
+      description:
+        description: "Third Party Description"
+        type: "string"
+      header:
+        description: "Third Party Header"
+        type: "string"
   HoldingTypeListResponse:
     type: "object"
     title: "HoldingTypeListResponse"
@@ -7019,6 +7070,15 @@ definitions:
           - "ETF"
           - "warrants"
           - "digitalAsset"
+  ClientTrustedAdvisorTxt:
+    type: "object"
+    title: "ClientTrustedAdvisorTxt"
+    required:
+    - "description"
+    properties:
+      description:
+        description: "ClientTrustedAdvisorTxt Description"
+        type: "string"
   Holding:
     type: "object"
     title: "Holding"
@@ -8991,6 +9051,19 @@ definitions:
       value:
         description: "preference value for AU Open Banking only.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
         type: "string"
+  DeletePreference:
+    type: "object"
+    title: "DeletePreference"
+    properties:
+      description:
+        description: "Delete Preference Descritption"
+        type: "string"
+      alternateDescription:
+        description: "Delete Preference Alternate Descritption"
+        type: "string"
+      labelDescription:
+        description: "Delete Preference LabelDescritption"
+        type: "string"
   UpdatedConsentResponse:
     type: "object"
     title: "UpdatedConsentResponse"
@@ -9793,6 +9866,9 @@ definitions:
       startDateTime:
         description: "Consent start datetime."
         type: "string"
+      customDisplayData:
+        description: "customDisplayData describes details thirdParty , consentConfirmation,deletePreference,userdataTreatment and clientTrustedAdvisorTxt"
+        $ref: "#/definitions/CustomDisplayData"
       thirdPartyADR:
         description: "ThirdPartyADR describes details of additional parties which are accredited data recipients under organization"
         type: "array"
@@ -9820,9 +9896,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Scope"
-      userDataTreatment:
-        description: "userDataTreatment describes details consumer data right policy and De-identification of data"
-        $ref: "#/definitions/UserDataTreatment"
       links:
         description: "GET consent preferences API details"
         type: "array"
@@ -11930,6 +12003,7 @@ definitions:
     title: "ConsentPreferencesResponse"
     required:
     - "consentId"
+    - "customDisplayData"
     - "preferences"
     properties:
       consentId:
@@ -11939,6 +12013,9 @@ definitions:
       preferences:
         description: "User chosen preference value for consent expiration"
         $ref: "#/definitions/Preferences"
+      customDisplayData:
+        description: "custom display data"
+        $ref: "#/definitions/CustomDisplayData"
   CreateConsentRequest:
     type: "object"
     title: "CreateConsentRequest"
