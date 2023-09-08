@@ -498,7 +498,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "eventName"
-        description: "eventName"
+        description: "Name of the webhook subscription event"
         type: "string"
         required: false
         enum:
@@ -506,6 +506,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
+        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
       tags:
       - "Configs"
   /providers/count:
@@ -985,7 +986,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for consentId <br/>Y800 : Invalid value for consentParam <br/>Y812 : Required field/value - scopeId missing in the consentParam <br/>"
+          description: "Y800 : Invalid value for consentId <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed</b><br><b>consent duration days preference required consentParam</b><br>Y800 : Invalid value for consentParam <br/>Y812 : Required field/value - scopeId missing in the consentParam <br/>"
         401:
           description: "Unauthorized"
         404:
@@ -1376,6 +1377,35 @@ paths:
       - "Verify Account"
       consumes:
       - "application/json"
+  /consents/preferences:
+    get:
+      summary: "Get Consents Preferences"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "This API service provides user's preferences for the consent"
+      operationId: "getConsentPreferences"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ConsentPreferencesResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for consentId <br/>Y812 :Required field/value - consentId missing in the request <br/>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        name: "consentId"
+        description: "consentId"
+        type: "string"
+        required: true
+      tags:
+      - "Consents"
   /configs/publicKey:
     get:
       summary: "Get Public Key"
@@ -1762,7 +1792,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The consent renewal service is used to renew the consent by validating the consent state. This API supports both UK and AU Open Banking. </br><b>Renewing an UK Open Banking consent:</b><br><li>Before the grace period of 90 days: The consent will be renewed using the third-party provider (TPP) renewal process that Yodlee does, and no consent reauthorisation is required.The API response will contain the complete renewed consent object.</li><li>After the grace period of 90 days: The API will provide an authorisation URL to redirect the user to the financial institution site to complete the consent reauthorization process.<br><b>Renewing an AU Open Banking consent:</b><br><li>Invoke this API, and in the API response, an authorisation URL will be provided to redirect the user to the financial institution site to complete the consent reauthorisation process.</li><br>"
+      description: "The consent renewal service is used to renew the consent by validating the consent state. This API supports both UK and AU Open Banking. </br><b>Renewing an UK Open Banking consent:</b><br><li>Before the grace period of 90 days: The consent will be renewed using the third-party provider (TPP) renewal process that Yodlee does, and no consent reauthorisation is required.The API response will contain the complete renewed consent object.</li><li>After the grace period of 90 days: The API will provide an authorisation URL to redirect the user to the financial institution site to complete the consent reauthorization process.<br><b>Renewing an AU Open Banking consent:</b><br><b>consent duration days preference required consentParam</b><br><li>Invoke this API, and in the API response, an authorisation URL will be provided to redirect the user to the financial institution site to complete the consent reauthorisation process.</li><br>"
       operationId: "renewConsent"
       responses:
         200:
@@ -1772,7 +1802,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for consentId <br/>Y800 : Invalid value for requestbody <br/>"
+          description: "Y800 : Invalid value for consentId <br/>Y802 : The consent duration days is outside of the range selected during onboarding, hence consentDurationDays not allowed</b><br>Y800 : Invalid value for requestbody <br/>"
         401:
           description: "Unauthorized"
         404:
@@ -2182,7 +2212,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The register user service is used to register a user in Yodlee.<br>The loginName cannot include spaces and must be between 3 and 150 characters.<br>locale passed must be one of the supported locales for the customer. <br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>userParam is accepted as a body parameter. <br><br><b>Note:</b> <li>The content type has to be passed as application/json for the body parameter.</li> <br> Note: We recommend you to not use special characters in loginName other than \"@\", \"#\", \"_\" & \"-\"."
+      description: "The register user service is used to register a user in Yodlee.<br>The loginName cannot include spaces and must be between 3 and 150 characters.<br>locale passed must be one of the supported locales for the customer. <br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>userParam is accepted as a body parameter. <br><br><b>Note:</b> <li>The content type has to be passed as application/json for the body parameter.</li>"
       operationId: "registerUser"
       responses:
         200:
@@ -2377,7 +2407,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATE and LATEST_BALANCE_UPDATES.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
+      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATES,LATEST_BALANCE_UPDATES and CREDIT_ACCELERATOR_REPORT_UPDATES event.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
       operationId: "createSubscriptionNotificationEvent"
       responses:
         201:
@@ -2401,6 +2431,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
+        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
       - schema:
           $ref: "#/definitions/CreateConfigsNotificationEventRequest"
         in: "body"
@@ -2432,14 +2463,15 @@ paths:
       parameters:
       - in: "path"
         name: "eventName"
-        description: "eventName"
+        description: "Name of the webhook subscription event"
         type: "string"
-        required: true
+        required: false
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
+        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
       tags:
       - "Configs"
     put:
@@ -2463,14 +2495,15 @@ paths:
       parameters:
       - in: "path"
         name: "eventName"
-        description: "eventName"
+        description: "Name of the webhook subscription event"
         type: "string"
-        required: true
+        required: false
         enum:
         - "REFRESH"
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
+        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
       - schema:
           $ref: "#/definitions/UpdateConfigsNotificationEventRequest"
         in: "body"
@@ -3428,11 +3461,15 @@ definitions:
     - "consentId"
     - "consentStatus"
     - "expirationDate"
+    - "expirationDateTime"
+    - "links"
     - "preferences"
     - "providerId"
     - "revokeDate"
+    - "revokeDateTime"
     - "scope"
     - "startDate"
+    - "startDateTime"
     - "title"
     - "titleBody"
     properties:
@@ -3442,23 +3479,12 @@ definitions:
         enum:
         - "ONE_TIME"
         - "RECURRING"
-      otspADRName:
-        description: "Name of the Accredited Data Recipient/Organization"
+      expirationDateTime:
+        description: "Consent expiry datetime."
         type: "string"
-      preferences:
-        description: "Preferences describes options about the additional usage of data or purge data"
-        type: "array"
-        items:
-          $ref: "#/definitions/Preferences"
       otspADR:
         description: "Unique/Accredition Id of the ADR"
         type: "string"
-      clientADR:
-        description: "Client Name of the ADR"
-        type: "string"
-      renewal:
-        description: "Renewal describes the sharing duration and reauthorization required."
-        $ref: "#/definitions/Renewal"
       clientTrustedAdvisor:
         description: "describes information of client trusted advisor"
         type: "array"
@@ -3476,18 +3502,10 @@ definitions:
       applicationDisplayName:
         description: "Application display name."
         type: "string"
-      titleBody:
-        description: "Description for the title."
-        type: "string"
       consentId:
         format: "int64"
         description: "Consent Id generated through POST Consent."
         type: "integer"
-      thirdPartyADR:
-        description: "ThirdPartyADR describes details of additional parties which are accredited data recipients under organization"
-        type: "array"
-        items:
-          $ref: "#/definitions/ThirdPartyADR"
       providerId:
         format: "int64"
         description: "Provider Id for which the consent needs to be generated."
@@ -3505,11 +3523,6 @@ definitions:
         - "EXPIRED"
         - "REVOKED"
         - "CONSENT_REPEALED"
-      providerAccountId:
-        format: "int64"
-        description: "Unique identifier for the provider account resource. <br>This is created during account addition.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li></ul>"
-        readOnly: true
-        type: "integer"
       scope:
         description: "Scope describes about the consent permissions and their purpose."
         type: "array"
@@ -3518,11 +3531,49 @@ definitions:
       userDataTreatment:
         description: "userDataTreatment describes details consumer data right policy and De-identification of data"
         $ref: "#/definitions/UserDataTreatment"
-      startDate:
-        description: "Consent start date."
-        type: "string"
+      links:
+        description: "GET consent preferences API details"
+        type: "array"
+        items:
+          $ref: "#/definitions/Links"
       expirationDate:
         description: "Consent expiry date."
+        type: "string"
+      otspADRName:
+        description: "Name of the Accredited Data Recipient/Organization"
+        type: "string"
+      preferences:
+        description: "Preferences describes options about the additional usage of data or purge data"
+        type: "array"
+        items:
+          $ref: "#/definitions/Preferences"
+      clientADR:
+        description: "Client Name of the ADR"
+        type: "string"
+      renewal:
+        description: "Renewal describes the sharing duration and reauthorization required."
+        $ref: "#/definitions/Renewal"
+      revokeDateTime:
+        description: "Consent revoke datetime."
+        type: "string"
+      titleBody:
+        description: "Description for the title."
+        type: "string"
+      startDateTime:
+        description: "Consent start datetime."
+        type: "string"
+      thirdPartyADR:
+        description: "ThirdPartyADR describes details of additional parties which are accredited data recipients under organization"
+        type: "array"
+        items:
+          $ref: "#/definitions/ThirdPartyADR"
+      providerAccountId:
+        format: "int64"
+        description: "Unique identifier for the provider account resource. <br>This is created during account addition.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li></ul>"
+        readOnly: true
+        type: "integer"
+      startDate:
+        description: "Consent start date."
         type: "string"
   UserAccessTokensResponse:
     type: "object"
@@ -4115,22 +4166,36 @@ definitions:
     - "street"
     properties:
       zip:
+        description: "Zip."
+        readOnly: true
         type: "string"
       country:
+        description: "Country."
+        readOnly: true
         type: "string"
       address3:
+        description: "Address Line 3."
+        readOnly: true
         type: "string"
       address2:
+        description: "Address Line 2."
+        readOnly: true
         type: "string"
       city:
+        description: "City."
+        readOnly: true
         type: "string"
       sourceType:
         type: "string"
       address1:
+        description: "Address Line 1."
+        readOnly: true
         type: "string"
       street:
         type: "string"
       state:
+        description: "State."
+        readOnly: true
         type: "string"
       type:
         type: "string"
@@ -4878,6 +4943,9 @@ definitions:
     required:
     - "clientTrustedAdvisor"
     properties:
+      preferences:
+        description: "preferences for consent renewal.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
+        $ref: "#/definitions/RenewConsentPreferences"
       scopeId:
         description: "Applicable Open Banking data cluster values.<br><br><b>Endpoints</b>:<ul><li>PUT Consent</li></ul>"
         type: "array"
@@ -5063,18 +5131,32 @@ definitions:
     title: "UserAddress"
     properties:
       zip:
+        description: "Zip."
+        readOnly: true
         type: "string"
       country:
+        description: "Country."
+        readOnly: true
         type: "string"
       address3:
+        description: "Address Line 3."
+        readOnly: true
         type: "string"
       address2:
+        description: "Address Line 2."
+        readOnly: true
         type: "string"
       city:
+        description: "City."
+        readOnly: true
         type: "string"
       address1:
+        description: "Address Line 1."
+        readOnly: true
         type: "string"
       state:
+        description: "State."
+        readOnly: true
         type: "string"
   PaymentAccountResponse:
     type: "object"
@@ -5110,12 +5192,20 @@ definitions:
     title: "Name"
     properties:
       middle:
+        description: "Middle name."
+        readOnly: true
         type: "string"
       last:
+        description: "Last name."
+        readOnly: true
         type: "string"
       fullName:
+        description: "Full name."
+        readOnly: true
         type: "string"
       first:
+        description: "First name."
+        readOnly: true
         type: "string"
   UserResponsePreferences:
     type: "object"
@@ -5787,18 +5877,32 @@ definitions:
     title: "AbstractAddress"
     properties:
       zip:
+        description: "Zip."
+        readOnly: true
         type: "string"
       country:
+        description: "Country."
+        readOnly: true
         type: "string"
       address3:
+        description: "Address Line 3."
+        readOnly: true
         type: "string"
       address2:
+        description: "Address Line 2."
+        readOnly: true
         type: "string"
       city:
+        description: "City."
+        readOnly: true
         type: "string"
       address1:
+        description: "Address Line 1."
+        readOnly: true
         type: "string"
       state:
+        description: "State."
+        readOnly: true
         type: "string"
   ProvidersCountResponse:
     type: "object"
@@ -6217,16 +6321,20 @@ definitions:
   Money:
     type: "object"
     title: "Money"
-    required:
-    - "amount"
     properties:
       amount:
         format: "double"
+        description: "Value of amount."
+        readOnly: true
         type: "number"
       convertedAmount:
         format: "double"
+        description: "Value of the converted amount."
+        readOnly: true
         type: "number"
       currency:
+        description: "Currency should be a valid three-letter ISO Code."
+        readOnly: true
         type: "string"
         enum:
         - "USD"
@@ -6452,6 +6560,8 @@ definitions:
         - "SSP"
         - "ALK"
       convertedCurrency:
+        description: "Currency should be a valid three-letter ISO Code."
+        readOnly: true
         type: "string"
         enum:
         - "USD"
@@ -8777,10 +8887,16 @@ definitions:
     title: "YodleeError"
     properties:
       errorMessage:
+        description: "The descriptive message that explains the error scenario."
+        readOnly: true
         type: "string"
       errorCode:
+        description: "The error code follows the format YNNN. The error codes do not change. New error codes may be added as we introduce new features and enhance functionalities."
+        readOnly: true
         type: "string"
       referenceCode:
+        description: "Unique Yodlee identifier used to troubleshoot issues at Yodleeâ€™s end."
+        readOnly: true
         type: "string"
   DocumentDownload:
     type: "object"
@@ -8874,7 +8990,7 @@ definitions:
         type: "integer"
       value:
         description: "preference value for AU Open Banking only.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
-        type: "boolean"
+        type: "string"
   UpdatedConsentResponse:
     type: "object"
     title: "UpdatedConsentResponse"
@@ -9609,11 +9725,15 @@ definitions:
     - "consentId"
     - "consentStatus"
     - "expirationDate"
+    - "expirationDateTime"
+    - "links"
     - "preferences"
     - "providerId"
     - "revokeDate"
+    - "revokeDateTime"
     - "scope"
     - "startDate"
+    - "startDateTime"
     - "title"
     - "titleBody"
     properties:
@@ -9625,6 +9745,9 @@ definitions:
         - "RECURRING"
       otspADRName:
         description: "Name of the Accredited Data Recipient/Organization"
+        type: "string"
+      expirationDateTime:
+        description: "Consent expiry datetime."
         type: "string"
       preferences:
         description: "Preferences describes options about the additional usage of data or purge data"
@@ -9645,6 +9768,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ClientTrustedAdvisor"
+      revokeDateTime:
+        description: "Consent revoke datetime."
+        type: "string"
       providerConsentId:
         description: "Provider consent id"
         type: "string"
@@ -9664,6 +9790,9 @@ definitions:
         format: "int64"
         description: "Consent Id generated through POST Consent."
         type: "integer"
+      startDateTime:
+        description: "Consent start datetime."
+        type: "string"
       thirdPartyADR:
         description: "ThirdPartyADR describes details of additional parties which are accredited data recipients under organization"
         type: "array"
@@ -9694,6 +9823,11 @@ definitions:
       userDataTreatment:
         description: "userDataTreatment describes details consumer data right policy and De-identification of data"
         $ref: "#/definitions/UserDataTreatment"
+      links:
+        description: "GET consent preferences API details"
+        type: "array"
+        items:
+          $ref: "#/definitions/Links"
       startDate:
         description: "Consent start date."
         type: "string"
@@ -10083,22 +10217,36 @@ definitions:
     title: "AccountAddress"
     properties:
       zip:
+        description: "Zip."
+        readOnly: true
         type: "string"
       country:
+        description: "Country."
+        readOnly: true
         type: "string"
       address3:
+        description: "Address Line 3."
+        readOnly: true
         type: "string"
       address2:
+        description: "Address Line 2."
+        readOnly: true
         type: "string"
       city:
+        description: "City."
+        readOnly: true
         type: "string"
       sourceType:
         type: "string"
       address1:
+        description: "Address Line 1."
+        readOnly: true
         type: "string"
       street:
         type: "string"
       state:
+        description: "State."
+        readOnly: true
         type: "string"
       type:
         type: "string"
@@ -11760,6 +11908,37 @@ definitions:
         description: "Total of debit transaction amounts that had occured on the date.<br><br><b>Applicable containers</b>: creditCard, bank, investment<br>"
         readOnly: true
         $ref: "#/definitions/Money"
+  Links:
+    type: "object"
+    title: "Links"
+    required:
+    - "href"
+    - "methodType"
+    - "rel"
+    properties:
+      methodType:
+        description: "Type of the HTTP method <br/> GET , PUT , POST , DELETE , ..."
+        type: "string"
+      rel:
+        description: "Get Consent preference"
+        type: "string"
+      href:
+        description: "Get Consent preference Endpoint"
+        type: "string"
+  ConsentPreferencesResponse:
+    type: "object"
+    title: "ConsentPreferencesResponse"
+    required:
+    - "consentId"
+    - "preferences"
+    properties:
+      consentId:
+        format: "int64"
+        description: "Consent Id generated through POST Consent."
+        type: "integer"
+      preferences:
+        description: "User chosen preference value for consent expiration"
+        $ref: "#/definitions/Preferences"
   CreateConsentRequest:
     type: "object"
     title: "CreateConsentRequest"
