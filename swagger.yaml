@@ -1067,21 +1067,31 @@ paths:
           description: "Y016 : loginName header missing<br>Y015 : Unauthorized User<br>Y016 : Api-Version header missing<br>Y020 : Invalid token in authorization header<br>Y027 : Unsupported authentication type"
         404:
           description: "Not Found"
-      parameters:
-      - in: "formData"
-        name: "clientId"
-        description: "clientId issued by Yodlee is used to generate the OAuth token for authentication."
-        type: "string"
-        required: false
-      - in: "formData"
-        name: "secret"
-        description: "secret issued by Yodlee is used to generate the OAuth token for authentication."
-        type: "string"
-        required: false
       tags:
       - "Auth"
       consumes:
       - "application/x-www-form-urlencoded"
+      parameters:
+      - in: "formData"
+        name: "clientId"
+        type: "string"
+        description: "clientId issued by Yodlee is used to generate the OAuth token for authentication."
+        required: true
+      - in: "formData"
+        name: "secret"
+        type: "string"
+        description: "secret issued by Yodlee is used to generate the OAuth token for authentication."
+        required: true
+      - in: "header"
+        name: "loginName"
+        type: "string"
+        description: "The id of your end user."
+        required: true
+      - in: "header"
+        name: "Api-Version"
+        type: "string"
+        description: "The api verson"
+        required: true
     delete:
       summary: "Delete Token"
       deprecated: false
