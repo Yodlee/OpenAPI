@@ -7,7 +7,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The Transaction service is used to get a list of transactions for a user.<br>By default, this service returns the last 30 days of transactions from today's date.<br>The keyword parameter performs a contains search on the original, consumer, and simple description attributes, replace the special characters #, &, and + with percent-encoding values %23, %26, and %2B respectively. Eg: for -Debit# , pass the input as -Debit%23.<br>Values for categoryId parameter can be fetched from get transaction category list service.<br> The categoryId is used to filter transactions based on system-defined category as well as user-defined category.<br>User-defined categoryIds should be provided in the filter with the prefix ''U''. E.g. U10002<br>The skip and top parameters are used for pagination. In the skip and top parameters pass the number of records to be skipped and retrieved, respectively. The response header provides the links to retrieve the next and previous set of transactions.<br>Double quotes in the merchant name will be prefixed by backslashes (&#92;) in the response, e.g. Toys \"R\" Us. <br>sourceId is a unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts. Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts.<br><br><b>Note</b><ul><li><a href=\"https://developer.yodlee.com/docs/api/1.1/Transaction_Data_Enrichment\">TDE</a> is made available for bank and card accounts. The address field in the response is available only when the TDE key is turned on.</li><li>The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 transactions.</li><li>This service supports the localization feature and accepts locale as a header parameter.</li></ul>"
+      description: "The Transaction service is used to get a list of transactions for a user.<br>By default, this service returns the last 30 days of transactions from today's date.<br>The keyword parameter performs a contains search on the original, consumer, and simple description attributes, replace the special characters #, &, and + with percent-encoding values %23, %26, and %2B respectively. Eg: for -Debit# , pass the input as -Debit%23.<br>Values for categoryId parameter can be fetched from get transaction category list service.<br> The categoryId is used to filter transactions based on system-defined category as well as user-defined category.<br>User-defined categoryIds should be provided in the filter with the prefix ''U''. E.g. U10002<br>The skip and top parameters are used for pagination. In the skip and top parameters pass the number of records to be skipped and retrieved, respectively. The response header provides the links to retrieve the next and previous set of transactions.<br>Double quotes in the merchant name will be prefixed by backslashes (&#92;) in the response, e.g. Toys \"R\" Us. <br>sourceId is a unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts. Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts.<br><br><b>Note</b><ul><li><a href=\"https://developer.envestnet.com/resources/yodlee/transaction-data-enrichment/docs/overview\">Transaction Data Enrichment</a> is made available for bank and card accounts. The address field in the response is available only when the Transaction Data Enrichment key is turned ON.</li><li>The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 transactions.</li><li>This service supports the localization feature and accepts locale as a header parameter.</li></ul>"
       operationId: "getTransactions"
       responses:
         200:
@@ -166,7 +166,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "isSelected"
-        description: "Comma separated isSelected. Allowed values are true, false <br><b>Note:</b> If no value is passed, the implicit default value is true."
+        description: "Comma separated isSelected. Allowed values are true, false. <br>"
         type: "string"
         required: false
       - in: "query"
@@ -477,69 +477,6 @@ paths:
       - "Cobrand"
       consumes:
       - "application/json"
-  /holdings/{id}:
-    delete:
-      summary: "Delete Holding"
-      deprecated: false
-      produces:
-      - "application/json;charset=UTF-8"
-      description: "The delete holding service allows a manual holding to be deleted."
-      operationId: "deleteHolding"
-      responses:
-        400:
-          schema:
-            $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for id<br>Y806 : Invalid input<br>"
-        401:
-          description: "Unauthorized"
-        204:
-          description: "OK"
-        404:
-          description: "Not Found"
-      parameters:
-      - in: "path"
-        name: "id"
-        format: "int64"
-        description: "id"
-        type: "integer"
-        required: true
-      tags:
-      - "Holdings"
-    put:
-      summary: "Update Holding"
-      deprecated: false
-      produces:
-      - "application/json;charset=UTF-8"
-      description: "The update manual holding service is used to update a existing manual holding."
-      operationId: "updateHolding"
-      responses:
-        400:
-          schema:
-            $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for symbol<br>Y800 : Invalid value for exercisedQuantity<br>Y800 : Invalid value for cusipNumber<br>Y800 : Invalid value for vestedQuantity<br>Y800 : Invalid value for unvestedValue<br>Y800 : Invalid value for vestedValue<br>Y800 : Invalid value for option<br>Y800 : Invalid value for holdingType<br>Y800 : Invalid value for maturityDate<br>Y800 : Invalid value for price<br>Y800 : Invalid value for term<br>Y800 : Invalid value for contractQuantity<br>Y800 : Invalid value for isShort<br>Y800 : Invalid value for value<br>Y800 : Invalid value for expirationDate<br>Y800 : Invalid value for interestRate<br>Y800 : Invalid value for quantity<br>Y800 : Invalid value for grantDate<br>Y800 : Invalid value for sedol<br>Y800 : Invalid value for vestedSharesExercisable<br>Y800 : Invalid value for spread<br>Y800 : Invalid value for couponRate<br>Y800 : Invalid value for unvestedQuantity<br>Y800 : Invalid value for costBasis<br>Y800 : Invalid value for vestingDate<br>Y800 : Invalid value for isin<br>Y800 : Invalid value for strikePrice<br>Y801 : Invalid length for symbol<br>Y801 : Invalid length for term<br>Y801 : Invalid length for description<br>Y801 : Required field/value - description missing in the request<br>Y802 : accountId not allowed<br>"
-        401:
-          description: "Unauthorized"
-        204:
-          description: "OK"
-        404:
-          description: "Not Found"
-      parameters:
-      - schema:
-          $ref: "#/definitions/UpdateHoldingRequest"
-        in: "body"
-        name: "holdingRequest"
-        description: "holdingRequest"
-        required: true
-      - in: "path"
-        name: "id"
-        format: "int64"
-        description: "id"
-        type: "integer"
-        required: true
-      tags:
-      - "Holdings"
-      consumes:
-      - "application/json"
   /configs/notifications/events:
     get:
       summary: "Get Subscribed Notification Events"
@@ -572,6 +509,48 @@ paths:
         - "CREDIT_ACCELERATOR_REPORT_UPDATES"
       tags:
       - "Configs"
+  /consents/history/count:
+    get:
+      summary: "Get Consent History Count"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The count service provides the total number of history records for a specific consent. <br/>If you are implementing pagination for consent history, call this endpoint before calling GET /consents/history to know the number of records for the given consent that are returned for the input parameters passed.<br/>"
+      operationId: "getConsentHistoryCount"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ConsentHistoryCountResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for consentId <br/>Y803 : consentId is required <br/>Y800 : Invalid value for fromDate<br/>Y800 : Invalid value for toDate<br/>Y809 : Invalid date range<br/>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        allowEmptyValue: false
+        name: "consentId"
+        description: "Consent Id generated through POST Consent."
+        type: "string"
+        required: true
+      - in: "query"
+        allowEmptyValue: false
+        name: "fromDate"
+        description: "Consent History from date(YYYY-MM-DD)"
+        type: "string"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "toDate"
+        description: "Consent History end date (YYYY-MM-DD)"
+        type: "string"
+        required: false
+      tags:
+      - "Consents"
   /providers/count:
     get:
       summary: "Get Providers Count"
@@ -700,6 +679,62 @@ paths:
         required: false
       tags:
       - "Derived"
+  /consents/history:
+    get:
+      summary: "Get Consent History "
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The get consent history service is used to retrieve all the history related to the consent. <br/>The get consent history service is available only for AU Open Banking region consents.<br/>All history event details for few fields like userDataPurge and deidentifiecationPreference may not be available for older consents.<br/><b>Note:</b><br/>  i. Duration (fromDate and toDate) is optional. In the absence of duration, one year history is retrieved from today's date.<br/>ii. The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 records.<br/>"
+      operationId: "getConsentHistory"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/ConsentHistoryResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for consentId <br/>Y803 : consentId is required <br/>Y804 : Permitted values of top between 1 - 500<br/>Y800 : Invalid value for skip<br/>Y800 : Invalid value for fromDate<br/>Y800 : Invalid value for toDate<br/>Y809 : Invalid date range<br/>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        allowEmptyValue: false
+        name: "consentId"
+        description: "Consent Id generated through POST Consent."
+        type: "string"
+        required: true
+      - in: "query"
+        allowEmptyValue: false
+        name: "fromDate"
+        description: "Consent History from date(YYYY-MM-DD)"
+        type: "string"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "skip"
+        format: "int32"
+        description: "skip (Min 0)"
+        type: "integer"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "toDate"
+        description: "Consent History end date (YYYY-MM-DD)"
+        type: "string"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "top"
+        format: "int32"
+        description: "top (Max 500)"
+        type: "integer"
+        required: false
+      tags:
+      - "Consents"
   /user/samlLogin:
     post:
       summary: "Saml Login"
@@ -1256,7 +1291,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the <a href=\"https://developer.yodlee.com/api-reference#tag/Derived\">derived</a> services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <u><i>Login Name Change Feature</i></u>: loginName can be passed to update the userâ€™s login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the userâ€™s loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
+      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the <a href=\"https://developer.yodlee.com/api-reference#tag/Derived\">derived</a> services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <b>Login Name Change Feature:</b> loginName can be passed to update the user's login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the user's loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
       operationId: "updateUser"
       responses:
         401:
@@ -1581,7 +1616,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The add account service is used to link the user's account with the provider site in the Yodlee system. Providers that require multifactor authentication or open banking are also supported by this service. The response includes the Yodlee generated ID (providerAccountId) of the account along with the refresh information.<br><br>Open Banking Implementation Notes: <br>To link the user's account of the Open Banking provider site in the Yodlee system, pass the field entity that contains:<br>1. id - From the authParameters provided in the get provider details service<br>2. value - From the redirect URL of the Open Banking site<br><br>Credential-based Implementation Notes: <br>1. The loginForm or the field array are the objects under the provider object, obtained from the <a href=\"https://developer.yodlee.com/apidocs/index.php#!/providers/getSiteDetail\">get provider details</a> service response.<br>2. The credentials provided by the user should be embedded in the loginForm or field array object.<br>3. While testing the <a href=\"https://developer.yodlee.com/KnowledgeBase/How_to_use_PKI\">PKI feature</a>, encrypt the credentials using the <a href=\"https://developer.yodlee.com/apidocs/utility/encrypt.html\">encryption utility</a>.<br>4. The data to be retrieved from the provider site can be passed using datasetName or dataset. If datasetName is passed, all the attributes that are implicitly configured for the dataset will be retrieved.<br>5. If the customer has not subscribed to the REFRESH event webhooks notification for accounts that require multifactor authentication (MFA), the get providerAccount service has to be called continuously till the login form (supported types are token, question & answer, and captcha) is returned in the response.<br>6. The <a href=\"https://developer.yodlee.com/apidocs/index.php#!/providerAccounts/updateAccount\">update account</a> service should be called to post the MFA information to continue adding the account.<br><br>Generic Implementation Notes:<br>1. Refer to the <a href=\"https://developer.yodlee.com/Yodlee_API/docs/v1_1/API_Flow\">add account</a> flow chart for implementation.<br>2. The get provider account details has <a href=\"https://developer.yodlee.com/Yodlee_API/docs/v1_1/Webhooks\">webhooks support</a>. If the customer has subscribed to the REFRESH event notification and has invoked this service to add an account, relevant notifications will be sent to the callback URL.<br>3. If you had not subscribed for notifications, the <a href=\"https://developer.yodlee.com/apidocs/index.php#!/providerAccounts/getRefreshForProviderAccount\">get provider account </a> details service has to be polled continuously till the account addition status is FAILED or PARTIAL_SUCCESS or SUCCESS. <br>4. A dataset may depend on another dataset for retrieval, so the response will include the requested datasets and the dependent datasets.<br>   It is necessary to check all the dataset additional statuses returned in the response, as the provider account status is drawn from the dataset additional statuses.<br>5. Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the open banking providerAccount. Ensure that the credential-based providerAccount belongs to the same institution. <br>6. The content type has to be passed as application/json in the body parameter. <br>7. Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account."
+      description: "The add account service is used to link the user's account with the provider site in the Yodlee system. Providers that require multifactor authentication or open banking are also supported by this service. The response includes the Yodlee generated ID (providerAccountId) of the account along with the refresh information.<br><br>Open Banking Implementation Notes: <br>To link the user's account of the Open Banking provider site in the Yodlee system, pass the field entity that contains:<br>1. id - From the authParameters provided in the get provider details service<br>2. value - From the redirect URL of the Open Banking site<br><br>Credential-based Implementation Notes: <br>1. The loginForm or the field array are the objects under the provider object, obtained from the <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccountsprovideraccountid-get\">Get Provider Details</a> service response.<br>2. The credentials provided by the user should be embedded in the loginForm or field array object.<br>3. While testing the <a href=\"https://developer.yodlee.com/KnowledgeBase/How_to_use_PKI\">PKI feature</a>, encrypt the credentials using the <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/rsa-encryption-utility\">Encryption Utility</a>.<br>4. The data to be retrieved from the provider site can be passed using datasetName or dataset. If datasetName is passed, all the attributes that are implicitly configured for the dataset will be retrieved.<br>5. If the customer has not subscribed to the REFRESH event webhooks notification for accounts that require multifactor authentication (MFA), the get providerAccount service has to be called continuously till the login form (supported types are token, question & answer, and captcha) is returned in the response.<br>6. The <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-put\">Update Account</a> service should be called to post the MFA information to continue adding the account.<br><br>Generic Implementation Notes:<br>1. Refer to the <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/credential-based-aggregation#documentation-anchor--6\">Add Account</a> flow chart for implementation.<br>2. The get provider account details has <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/refresh-webhooks\">Webhooks Support</a>. If the customer has subscribed to the REFRESH event notification and has invoked this service to add an account, relevant notifications will be sent to the callback URL.<br>3. If you had not subscribed for notifications, the <a href=\"https://developer.envestnet.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-get\">Get Provider Account</a> details service has to be polled continuously till the account addition status is FAILED or PARTIAL_SUCCESS or SUCCESS. <br>4. A dataset may depend on another dataset for retrieval, so the response will include the requested datasets and the dependent datasets.<br>   It is necessary to check all the dataset additional statuses returned in the response, as the provider account status is drawn from the dataset additional statuses.<br>5. Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the open banking providerAccount. Ensure that the credential-based providerAccount belongs to the same institution. <br>6. The content type has to be passed as application/json in the body parameter. <br>7. Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account."
       operationId: "linkProviderAccount"
       responses:
         200:
@@ -3263,7 +3298,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The get extracts events service is used to learn about occurrences of data extract related events. This service currently supports only the DATA_UPDATES event.<br>Passing the event name as DATA_UPDATES provides information about users for whom data has been modified in the system for the specified time range. To learn more, please refer to the <a href=\"https://developer.yodlee.com/docs/api/1.1/DataExtracts\">dataExtracts</a> page.<br>You can retrieve data in increments of no more than 60 minutes over the period of the last 7 days from today's date.<br>This service is only invoked with either admin access token or a cobrand session.<br>"
+      description: "The get extracts events service is used to learn about occurrences of data extract related events. This service currently supports only the DATA_UPDATES event.<br>Passing the event name as DATA_UPDATES provides information about users for whom data has been modified in the system for the specified time range. To learn more, please refer to the <a href=\"https://developer.envestnet.com/resources/yodlee/data-extracts/docs/overview\">Data Extracts</a> page.<br>You can retrieve data in increments of no more than 60 minutes over the period of the last 7 days from today's date.<br>This service is only invoked with either admin access token or a cobrand session.<br>"
       operationId: "getDataExtractsEvents"
       responses:
         200:
@@ -3547,6 +3582,13 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/AssetClassificationList"
+  ConsentHistoryCount:
+    type: "object"
+    title: "ConsentHistoryCount"
+    properties:
+      TOTAL:
+        readOnly: true
+        $ref: "#/definitions/TotalCount"
   ClassificationSummaryTransactionSummary:
     type: "object"
     title: "ClassificationSummaryTransactionSummary"
@@ -4377,6 +4419,15 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/CreateConsent"
+  ConsentHistoryResponse:
+    type: "object"
+    title: "ConsentHistoryResponse"
+    properties:
+      consentHistory:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/ConsentHistory"
   UpdateAccountRequest:
     type: "object"
     title: "UpdateAccountRequest"
@@ -4584,27 +4635,6 @@ definitions:
         description: "The forget password URL of the provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      favicon:
-        description: "Favicon link of the provider.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      accountType:
-        description: "AccountType supported by the provider, eg: Brokerage Cash, Current<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "CURRENT"
-          - "BROKERAGE_CASH"
-      countryISOCode:
-        description: "Country to which the provider belongs.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      isAddedByUser:
-        description: "Indicates that the site has been added by the user at least once.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
       PRIORITY:
         description: "Indicates the priority for which the service is invoked.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
         readOnly: true
@@ -4626,18 +4656,6 @@ definitions:
         description: "Help text to guide the user to choose the correct provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      primaryLanguageISOCode:
-        description: "The primary language of the site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      help:
-        description: "Text to guide user through linking an account that belongs to the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      baseUrl:
-        description: "The base URL of the provider's site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
       capability:
         description: "Capability of the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><br><b>Note : </b> capability has been deprecated"
         readOnly: true
@@ -4656,23 +4674,21 @@ definitions:
         description: "Indicates if a provider site is auto-refreshed.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "boolean"
-      name:
-        description: "The name of a provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
       logo:
         description: "The logo link of the provider institution. The link will return the logo in the PNG format.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
+      betaContainers:
+        description: "This attribute will show the list of containers which are presently under development for the provider site and their link attempt may be unsuccessful<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          type: "string"
       id:
         format: "int64"
         description: "Unique identifier for the provider site(e.g., financial institution sites, biller sites, lender sites, etc.).<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "integer"
-      lastModified:
-        description: "Determines when the provider information was updated by Yodlee. If the customer caches the data, the cache is recommended to be refreshed based on this field.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
       authParameter:
         description: "AuthParameter appears in the response only in case of token-based aggregation sites.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -4692,6 +4708,47 @@ definitions:
         - "OAUTH"
         - "CREDENTIALS"
         - "MFA_CREDENTIALS"
+      favicon:
+        description: "Favicon link of the provider.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      accountType:
+        description: "AccountType supported by the provider, eg: Brokerage Cash, Current<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          type: "string"
+          enum:
+          - "CURRENT"
+          - "BROKERAGE_CASH"
+      countryISOCode:
+        description: "Country to which the provider belongs.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      isAddedByUser:
+        description: "Indicates that the site has been added by the user at least once.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      primaryLanguageISOCode:
+        description: "The primary language of the site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      help:
+        description: "Text to guide user through linking an account that belongs to the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      baseUrl:
+        description: "The base URL of the provider's site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      name:
+        description: "The name of a provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      lastModified:
+        description: "Determines when the provider information was updated by Yodlee. If the customer caches the data, the cache is recommended to be refreshed based on this field.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
       dataset:
         description: "Logical grouping of dataset attributes into datasets such as Basic Aggregation Data, Account Profile and Documents<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -7609,6 +7666,47 @@ definitions:
       title:
         description: "Title for the Data Cluster."
         type: "string"
+  ConsentHistory:
+    type: "object"
+    title: "ConsentHistory"
+    required:
+    - "consentCollectionPeriod"
+    - "consentStatus"
+    - "eventDateTime"
+    - "expirationDateTime"
+    - "revokedDateTime"
+    - "startDateTime"
+    properties:
+      eventDateTime:
+        description: "History logged time."
+        type: "string"
+      expirationDateTime:
+        description: "Expiration date of the consent. This data point is available for all Open Banking regions and only few provider consents of the US Open Banking region."
+        type: "string"
+      userDataPurge:
+        format: "int64"
+        description: "Applicable data deletion preference for consent as per AU OB onboarding model and user's &quot;delete my data instead&quot; option."
+        type: "integer"
+      deidentificationPreference:
+        description: "whether user has given consent to use deidentified data or not. Oauthpref id = 4."
+        type: "boolean"
+      startDateTime:
+        description: "Consent start date."
+        type: "string"
+      consentStatus:
+        description: "Represents the current status of the consent."
+        type: "string"
+        enum:
+        - "ACTIVE"
+        - "EXPIRED"
+        - "REVOKED"
+      revokedDateTime:
+        description: "Revoked date for the consent if consent is revoked."
+        type: "string"
+      consentCollectionPeriod:
+        format: "int32"
+        description: "Consent duration period selected by user for recurring consents during the new account addition or consent renewal. This data point is applicable for AU Open Banking region only. Oauthpref id = 6"
+        type: "integer"
   VerifyAccountRequest:
     type: "object"
     title: "VerifyAccountRequest"
@@ -7718,16 +7816,6 @@ definitions:
         description: "The balance in the account that is available for spending. For checking accounts with overdraft, available balance may include overdraft amount, if end site adds overdraft balance to available balance.<br><b>Applicable containers</b>: bank, investment<br><b>Associated Accounts<br><b>Endpoints</b>:<ul><li>GET Associated Accounts/{providerAccountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
-  UpdateHoldingRequest:
-    type: "object"
-    title: "UpdateHoldingRequest"
-    required:
-    - "holding"
-    properties:
-      holding:
-        type: "array"
-        items:
-          $ref: "#/definitions/UpdateHoldingRequestInfo"
   CobrandLoginResponse:
     type: "object"
     title: "CobrandLoginResponse"
@@ -9126,7 +9214,7 @@ definitions:
         readOnly: true
         type: "string"
       referenceCode:
-        description: "Unique Yodlee identifier used to troubleshoot issues at Yodleeâ€™s end."
+        description: "Unique Yodlee identifier used to troubleshoot issues at Yodlee's end."
         readOnly: true
         type: "string"
   DocumentDownload:
@@ -10245,99 +10333,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ConfigsNotificationEvent"
-  UpdateHoldingRequestInfo:
-    type: "object"
-    title: "UpdateHoldingRequestInfo"
-    properties:
-      symbol:
-        type: "string"
-      exercisedQuantity:
-        format: "double"
-        type: "number"
-      cusipNumber:
-        type: "string"
-      vestedQuantity:
-        format: "double"
-        type: "number"
-      description:
-        type: "string"
-      unvestedValue:
-        $ref: "#/definitions/Money"
-      vestedValue:
-        $ref: "#/definitions/Money"
-      optionType:
-        type: "string"
-        enum:
-        - "put"
-        - "call"
-        - "unknown"
-        - "other"
-      holdingType:
-        type: "string"
-        enum:
-        - "stock"
-        - "mutualFund"
-        - "bond"
-        - "CD"
-        - "option"
-        - "moneyMarketFund"
-        - "other"
-        - "remic"
-        - "future"
-        - "commodity"
-        - "currency"
-        - "unitInvestmentTrust"
-        - "employeeStockOption"
-        - "insuranceAnnuity"
-        - "unknown"
-        - "preferredStock"
-        - "ETF"
-        - "warrants"
-        - "digitalAsset"
-      maturityDate:
-        type: "string"
-      price:
-        $ref: "#/definitions/Money"
-      term:
-        type: "string"
-      contractQuantity:
-        format: "double"
-        type: "number"
-      isShort:
-        type: "boolean"
-      value:
-        $ref: "#/definitions/Money"
-      expirationDate:
-        type: "string"
-      interestRate:
-        format: "double"
-        type: "number"
-      quantity:
-        format: "double"
-        type: "number"
-      grantDate:
-        type: "string"
-      sedol:
-        type: "string"
-      vestedSharesExercisable:
-        format: "double"
-        type: "number"
-      spread:
-        $ref: "#/definitions/Money"
-      couponRate:
-        format: "double"
-        type: "number"
-      unvestedQuantity:
-        format: "double"
-        type: "number"
-      costBasis:
-        $ref: "#/definitions/Money"
-      vestingDate:
-        type: "string"
-      isin:
-        type: "string"
-      strikePrice:
-        $ref: "#/definitions/Money"
   VerificationStatus:
     type: "object"
     title: "VerificationStatus"
@@ -10707,7 +10702,7 @@ definitions:
         readOnly: true
         type: "string"
       type:
-        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
+        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, New Zealand and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
         readOnly: true
         type: "string"
       intermediary:
@@ -10849,7 +10844,7 @@ definitions:
         readOnly: true
         type: "integer"
       subType:
-        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "string"
         enum:
@@ -11278,6 +11273,13 @@ definitions:
         description: "Link of the transaction API service that corresponds to the value derivation.<br><br><b>Applicable containers</b>: creditCard, bank, investment<br>"
         readOnly: true
         type: "string"
+  ConsentHistoryCountResponse:
+    type: "object"
+    title: "ConsentHistoryCountResponse"
+    properties:
+      consentHistory:
+        readOnly: true
+        $ref: "#/definitions/ConsentHistoryCount"
   Transaction:
     type: "object"
     title: "Transaction"
@@ -11321,7 +11323,7 @@ definitions:
         readOnly: true
         type: "string"
       type:
-        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
+        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, New Zealand and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
         readOnly: true
         type: "string"
       intermediary:
@@ -11459,7 +11461,7 @@ definitions:
         readOnly: true
         type: "integer"
       subType:
-        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "string"
         enum:
@@ -11862,6 +11864,12 @@ definitions:
         description: "The logo link of the provider institution. The link will return the logo in the PNG format.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
+      betaContainers:
+        description: "This attribute will show the list of containers which are presently under development for the provider site and their link attempt may be unsuccessful<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          type: "string"
       id:
         format: "int64"
         description: "Unique identifier for the provider site(e.g., financial institution sites, biller sites, lender sites, etc.).<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
