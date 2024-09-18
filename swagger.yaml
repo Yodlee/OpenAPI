@@ -229,7 +229,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The get user data service is used to get a user's modified data for a particular period of time for accounts, transactions, holdings, and provider account information.<br>The time difference between fromDate and toDate fields cannot be more than 60 minutes.<br>By default, pagination is available for the transaction entity in this API. In the first response, the API will retrieve 500 transactions along with other data. The response header will provide a link to retrieve the next set of transactions.<br>In the response body of the first API response, totalTransactionsCount indicates the total number of transactions the API will retrieve for the user.<br>This service is only invoked with either admin access token or a cobrand session.<br/>Refer to <a href=\"https://developer.yodlee.com/docs/api/1.1/DataExtracts\">dataExtracts</a> page for more information.<br><br><b>Note:</b><li>This service supports the localization feature and accepts locale as a header parameter.</li>"
+      description: "The get user data service is used to get a user's modified data for a particular period of time for accounts, transactions, holdings, and provider account information.<br>The time difference between fromDate and toDate fields cannot be more than 60 minutes.<br>By default, pagination is available for the transaction entity in this API. In the first response, the API will retrieve 500 transactions along with other data. The response header will provide a link to retrieve the next set of transactions.<br>In the response body of the first API response, totalTransactionsCount indicates the total number of transactions the API will retrieve for the user.<br>This service is only invoked with either admin access token or a cobrand session.<br/>Refer to <a href=\"https://developer.envestnet.com/resources/yodlee/data-extracts/docs/overview\">dataExtracts</a> page for more information.<br><br><b>Note:</b><li>This service supports the localization feature and accepts locale as a header parameter.</li>"
       operationId: "getDataExtractsUserData"
       responses:
         200:
@@ -1297,7 +1297,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the <a href=\"https://developer.yodlee.com/api-reference#tag/Derived\">derived</a> services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <b>Login Name Change Feature:</b> loginName can be passed to update the user's login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the user's loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
+      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <b>Login Name Change Feature:</b> loginName can be passed to update the user's login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the user's loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
       operationId: "updateUser"
       responses:
         401:
@@ -6344,6 +6344,10 @@ definitions:
         description: "Indicate when the last attempt was performed to update the dataset for the given provider account<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET providerAccounts</li><li>POST providerAccounts</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
+      additionalStatusErrorCode:
+        description: "The status error code of last update attempted for the dataset.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>POST providerAccounts</li><li>GET providerAccounts</li><li>GET dataExtracts/userData</li><li>PUT providerAccounts/{providerAccountId}</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
+        readOnly: true
+        type: "string"
   UserDataTreatment:
     type: "object"
     title: "UserDataTreatment"
@@ -6507,6 +6511,22 @@ definitions:
         format: "int64"
         description: "Unique identifier for the provider account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         type: "integer"
+      additionalMessage:
+        description: "The additional information of the status of account verification.<br><br><b>Endpoints</b>:<ul><li>GET verification</li></ul><br><b>Applicable Values</b>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "PENDING_PROCESSING"
+        - "PROCESSED"
+        - "DEPOSITED"
+        - "PENDING_VERIFICATION"
+        - "FAILED"
+        - "SUSPECTED_FRAUD"
+        - "RESTRICTED_RTN"
+        - "RESTRICTED_ACCOUNT"
+        - "PENDING_PROCESSING_EXPIRED"
+        - "RETURNED"
+        - "ACCOUNT_VERIFICATION_EXPIRED"
       verificationType:
         description: "The account verification type.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul><br><b>Applicable Values</b>"
         type: "string"
@@ -10507,6 +10527,22 @@ definitions:
         format: "int64"
         description: "Unique identifier for the provider account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         type: "integer"
+      additionalMessage:
+        description: "The additional information of the status of account verification.<br><br><b>Endpoints</b>:<ul><li>GET verification</li></ul><br><b>Applicable Values</b>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "PENDING_PROCESSING"
+        - "PROCESSED"
+        - "DEPOSITED"
+        - "PENDING_VERIFICATION"
+        - "FAILED"
+        - "SUSPECTED_FRAUD"
+        - "RESTRICTED_RTN"
+        - "RESTRICTED_ACCOUNT"
+        - "PENDING_PROCESSING_EXPIRED"
+        - "RETURNED"
+        - "ACCOUNT_VERIFICATION_EXPIRED"
       verificationType:
         description: "The account verification type.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul><br><b>Applicable Values</b>"
         type: "string"
@@ -10672,6 +10708,22 @@ definitions:
         format: "int64"
         description: "Unique identifier for the provider account.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul>"
         type: "integer"
+      additionalMessage:
+        description: "The additional information of the status of account verification.<br><br><b>Endpoints</b>:<ul><li>GET verification</li></ul><br><b>Applicable Values</b>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "PENDING_PROCESSING"
+        - "PROCESSED"
+        - "DEPOSITED"
+        - "PENDING_VERIFICATION"
+        - "FAILED"
+        - "SUSPECTED_FRAUD"
+        - "RESTRICTED_RTN"
+        - "RESTRICTED_ACCOUNT"
+        - "PENDING_PROCESSING_EXPIRED"
+        - "RETURNED"
+        - "ACCOUNT_VERIFICATION_EXPIRED"
       verificationType:
         description: "The account verification type.<br><br><b>Endpoints</b>:<ul><li>POST verification</li><li>GET verification</li><li>PUT verification</li></ul><br><b>Applicable Values</b>"
         type: "string"
