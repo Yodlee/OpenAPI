@@ -3680,7 +3680,6 @@ definitions:
     required:
     - "applicationDisplayName"
     - "clientADR"
-    - "clientTrustedAdvisor"
     - "consentId"
     - "consentStatus"
     - "expirationDate"
@@ -3708,6 +3707,9 @@ definitions:
       otspADR:
         description: "Unique/Accredition Id of the ADR"
         type: "string"
+      businessUserDetail:
+        description: "Describes the information of the Business user consent disclosure"
+        $ref: "#/definitions/BusinessUserDetail"
       clientTrustedAdvisor:
         description: "describes information of client trusted advisor"
         type: "array"
@@ -3729,6 +3731,9 @@ definitions:
         format: "int64"
         description: "Consent Id generated through POST Consent."
         type: "integer"
+      cdrInsightsDisclosure:
+        description: "Describes the information of the CDR Insights"
+        $ref: "#/definitions/CDRInsightsDisclosure"
       providerId:
         format: "int64"
         description: "Provider Id for which the consent needs to be generated."
@@ -4614,6 +4619,10 @@ definitions:
         description: "The unique identifier of the high level category.<br><br><b>Applicable containers</b>: creditCard, investment, insurance, loan<br>"
         readOnly: true
         type: "integer"
+      businessCategory:
+        description: "business category details for the SMB customers.<br><br><b>Applicable containers</b>: creditCard, investment, insurance, loan<br>"
+        readOnly: true
+        $ref: "#/definitions/BusinessCategory"
       detailCategory:
         description: "Entity that provides detail category attributes<br><br><b>Applicable containers</b>: creditCard, investment, insurance, loan<br>"
         readOnly: true
@@ -4821,6 +4830,12 @@ definitions:
         description: "The address of the merchant associated with the transaction is populated in the merchant address field.<br><b>Note</b>: The merchant address field is not available by default and customers will have to specifically request the merchant's address (that includes city, state, and ZIP of the merchant). The merchant address field is available only for merchants in the United States.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
         readOnly: true
         $ref: "#/definitions/AccountAddress"
+      logoURLs:
+        description: "The logoURL of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/LogoURLs"
       contact:
         description: "The merchant contact information like phone and email.<br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
         $ref: "#/definitions/Contact"
@@ -4904,15 +4919,19 @@ definitions:
   RenewConsentRequest:
     type: "object"
     title: "RenewConsentRequest"
-    required:
-    - "clientTrustedAdvisor"
     properties:
       preferences:
         description: "preferences for consent renewal.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
         $ref: "#/definitions/RenewConsentPreferences"
+      cdrInsightsDisclosure:
+        description: "Describes the information of the CDR Insights"
+        $ref: "#/definitions/CDRInsightsDisclosure"
       renewal:
         description: "renewal entity from consent details service, containing default consent duration and reauthorization eligibility.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
         $ref: "#/definitions/RenewalConsent"
+      businessUserDetail:
+        description: "Describes the information of the Business user consent disclosure"
+        $ref: "#/definitions/BusinessUserDetail"
       clientTrustedAdvisor:
         description: "describes information of client trusted advisor."
         type: "array"
@@ -5188,8 +5207,6 @@ definitions:
   UpdateConsentRequest:
     type: "object"
     title: "UpdateConsentRequest"
-    required:
-    - "clientTrustedAdvisor"
     properties:
       preferences:
         description: "preferences for consent renewal.<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
@@ -5204,6 +5221,9 @@ definitions:
           - "TRANSACTION_DETAILS"
           - "STATEMENT_DETAILS"
           - "CONTACT_DETAILS"
+      cdrInsightsDisclosure:
+        description: "Describes the information of the CDR Insights<br><br><b>Endpoints</b>:<ul><li>PUT consents/{consentId}/renewal</li></ul>"
+        $ref: "#/definitions/CDRInsightsDisclosure"
       clientTrustedAdvisor:
         description: "describes information of client trusted advisor"
         type: "array"
@@ -5799,6 +5819,19 @@ definitions:
         description: "Value of the identifier"
         readOnly: true
         type: "string"
+  BusinessCategory:
+    type: "object"
+    title: "BusinessCategory"
+    properties:
+      categoryName:
+        description: "The name of the category assigned to the transaction. This is the category field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      categoryId:
+        format: "int64"
+        description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "integer"
   TransactionCategoryResponse:
     type: "object"
     title: "TransactionCategoryResponse"
@@ -6082,6 +6115,15 @@ definitions:
     properties:
       user:
         $ref: "#/definitions/UserRegistration"
+  BusinessUserDetailForCreateConsent:
+    type: "object"
+    title: "BusinessUserDetailForCreateConsent"
+    required:
+    - "abn"
+    properties:
+      abn:
+        description: "Australian Business number issued by ABR"
+        type: "string"
   PaymentProfile:
     type: "object"
     title: "PaymentProfile"
@@ -6205,6 +6247,16 @@ definitions:
         description: "The amount the insurance company paid for the incurred medical expenses.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance,investment<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+  CDRInsights:
+    type: "object"
+    title: "CDRInsights"
+    properties:
+      description:
+        description: "name of the insight"
+        type: "string"
+      detail:
+        description: "usage of the data for the insight"
+        type: "string"
   PaymentIdentifier:
     type: "object"
     title: "PaymentIdentifier"
@@ -7987,6 +8039,10 @@ definitions:
         description: "<br><b>Credit Card:</b> Amount that is available to spend on the credit card. It is usually the Total credit line- Running balance- pending charges. <br><b>Loan:</b> The unused portion of  line of credit, on a revolving loan (such as a home-equity line of credit).<br><b>Additional Details:</b><br><b>Note:</b> The available credit amount at the account-level can differ from the available credit field at the statement-level, as the information in the aggregated card account data provides more up-to-date information.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard, loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      sourceProductName:
+        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       currentBalance:
         description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8165,6 +8221,8 @@ definitions:
         description: "Interest paid from the start of the year to date.<br><b>Applicable containers</b>: loan<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      businessInformation:
+        $ref: "#/definitions/BusinessInformation"
       providerAccountId:
         format: "int64"
         description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -8213,6 +8271,10 @@ definitions:
         - "EVERY_4_WEEKS"
         - "UNKNOWN"
         - "OTHER"
+      sourceAccountOwnership:
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       maturityAmount:
         description: "The maturity amount on the CD is the amount(principal and interest) paid on or after the maturity date.<br><b>Additional Details:</b> The Maturity Amount field is only applicable for the account type CD(Fixed Deposits).<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8438,6 +8500,10 @@ definitions:
         - "realEstate"
         - "otherAssets"
         - "otherLiabilities"
+      isOwnedAtSource:
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
       lastEmployeeContributionDate:
         description: "The date on which the last employee contribution was made to the 401k account.<br><b>Note:</b> The last employee contribution date field is derived from the transaction data and not aggregated from the FI site. The field is only applicable to the 401k account type.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: investment<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8488,30 +8554,17 @@ definitions:
         description: "The CUSIP (Committee on Uniform Securities Identification Procedures) identifies the financial instruments in the United States and Canada.<br><b><br><b>Note</b></b>: The CUSIP number field applies only to trade related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
+      sourceApcaNumber:
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       highLevelCategoryId:
         format: "int64"
         description: "The high level category assigned to the transaction. The supported values are provided by the GET transactions/categories. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      detailCategoryId:
-        format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "integer"
-      description:
-        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Description"
       memo:
         description: "Additional notes provided by the user for a particular  transaction through application or API services. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      settleDate:
-        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      postDateTime:
-        description: "The timestamp on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
         readOnly: true
         type: "string"
       type:
@@ -8524,67 +8577,32 @@ definitions:
         type: "array"
         items:
           type: "string"
-      baseType:
-        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-      categorySource:
-        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "SYSTEM"
-        - "USER"
-      principal:
-        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       lastUpdated:
         readOnly: true
         type: "string"
-      interest:
-        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       price:
         description: "The price of the security for the transaction.<br><b>Note</b>: The price field applies only to the trade related transactions. <br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         $ref: "#/definitions/Money"
-      commission:
-        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+      sourceMerchantCategoryCode:
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
-        $ref: "#/definitions/Money"
+        type: "string"
       id:
         format: "int64"
         description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "string"
-      amount:
-        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       checkNumber:
         description: "The checkNumber of the transaction.<br><br><b>Applicable containers</b>: bank<br>"
         readOnly: true
         type: "string"
-      isPhysical:
-        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "boolean"
-      quantity:
-        format: "double"
-        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "number"
       transactionDateTime:
         description: "The timestamp the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      typeAtSource:
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -8595,16 +8613,16 @@ definitions:
         description: "Indicates if the transaction is aggregated from the FI site or the consumer has manually created the transaction using the application or an API. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "boolean"
+      sourceBillerName:
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       merchant:
         description: "The name of the merchant associated with the transaction.<br><b>Note</b>: The merchant name field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         $ref: "#/definitions/Merchant"
       sedol:
         description: "SEDOL stands for Stock Exchange Daily Official List, a list of security identifiers used in the United Kingdom and Ireland for clearing purposes.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      transactionDate:
-        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "string"
       categoryType:
@@ -8623,9 +8641,6 @@ definitions:
         description: "The account from which the transaction was made. This is basically the primary key of the account resource. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      createdDate:
-        readOnly: true
-        type: "string"
       sourceType:
         description: "The source through which the transaction is added to the Yodlee system.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loann<br><b>Applicable Values:</b><br>"
         readOnly: true
@@ -8633,30 +8648,6 @@ definitions:
         enum:
         - "AGGREGATED"
         - "MANUAL"
-      CONTAINER:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      postDate:
-        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      parentCategoryId:
-        format: "int64"
-        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
       subType:
         description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -8700,6 +8691,119 @@ definitions:
         - "OVERDRAFT_PROTECTION"
         - "CREDIT"
         - "NSF_FEES"
+      holdingDescription:
+        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      status:
+        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "POSTED"
+        - "PENDING"
+        - "SCHEDULED"
+        - "FAILED"
+        - "CLEARED"
+      detailCategoryId:
+        format: "int64"
+        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        readOnly: true
+        type: "integer"
+      description:
+        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Description"
+      settleDate:
+        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      postDateTime:
+        description: "The timestamp on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      baseType:
+        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "CREDIT"
+        - "DEBIT"
+      categorySource:
+        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "SYSTEM"
+        - "USER"
+      principal:
+        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      sourceBillerCode:
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
+      interest:
+        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      commission:
+        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      merchantType:
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "string"
+      amount:
+        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      isPhysical:
+        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "boolean"
+      quantity:
+        format: "double"
+        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "number"
+      transactionDate:
+        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      createdDate:
+        readOnly: true
+        type: "string"
+      CONTAINER:
+        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "bank"
+        - "creditCard"
+        - "investment"
+        - "insurance"
+        - "loan"
+        - "reward"
+        - "bill"
+        - "realEstate"
+        - "otherAssets"
+        - "otherLiabilities"
+      businessCategory:
+        description: "business category details for the SMB customers.<br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        $ref: "#/definitions/BusinessCategory"
+      postDate:
+        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      parentCategoryId:
+        format: "int64"
+        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "integer"
       category:
         description: "The name of the category assigned to the transaction. This is the category field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -8713,24 +8817,10 @@ definitions:
         description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      holdingDescription:
-        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
       isin:
         description: "International Securities Identification Number (ISIN) standard is used worldwide to identify specific securities.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
-      status:
-        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "POSTED"
-        - "PENDING"
-        - "SCHEDULED"
-        - "FAILED"
-        - "CLEARED"
   CreateCobrandNotificationEventRequest:
     type: "object"
     title: "CreateCobrandNotificationEventRequest"
@@ -9061,6 +9151,10 @@ definitions:
         description: "<br><b>Credit Card:</b> Amount that is available to spend on the credit card. It is usually the Total credit line- Running balance- pending charges. <br><b>Loan:</b> The unused portion of  line of credit, on a revolving loan (such as a home-equity line of credit).<br><b>Additional Details:</b><br><b>Note:</b> The available credit amount at the account-level can differ from the available credit field at the statement-level, as the information in the aggregated card account data provides more up-to-date information.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: creditCard, loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      sourceProductName:
+        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       currentBalance:
         description: "The balance in the account that is available at the beginning of the business day; it is equal to the ledger balance of the account.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -9229,6 +9323,8 @@ definitions:
         description: "Interest paid from the start of the year to date.<br><b>Applicable containers</b>: loan<br><b>Aggregated / Manual</b>: Aggregated<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      businessInformation:
+        $ref: "#/definitions/BusinessInformation"
       providerAccountId:
         format: "int64"
         description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -9281,6 +9377,10 @@ definitions:
         - "EVERY_4_WEEKS"
         - "UNKNOWN"
         - "OTHER"
+      sourceAccountOwnership:
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       maturityAmount:
         description: "The maturity amount on the CD is the amount(principal and interest) paid on or after the maturity date.<br><b>Additional Details:</b> The Maturity Amount field is only applicable for the account type CD(Fixed Deposits).<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: bank<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -9499,6 +9599,10 @@ definitions:
         - "realEstate"
         - "otherAssets"
         - "otherLiabilities"
+      isOwnedAtSource:
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
       lastEmployeeContributionDate:
         description: "The date on which the last employee contribution was made to the 401k account.<br><b>Note:</b> The last employee contribution date field is derived from the transaction data and not aggregated from the FI site. The field is only applicable to the 401k account type.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: investment<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -10380,7 +10484,6 @@ definitions:
     required:
     - "applicationDisplayName"
     - "clientADR"
-    - "clientTrustedAdvisor"
     - "consentId"
     - "consentStatus"
     - "expirationDate"
@@ -10492,6 +10595,27 @@ definitions:
         type: "string"
       expirationDate:
         description: "Consent expiry date."
+        type: "string"
+  BusinessUserDetail:
+    type: "object"
+    title: "BusinessUserDetail"
+    required:
+    - "abn"
+    - "name"
+    - "status"
+    - "verificationDateTime"
+    properties:
+      name:
+        description: "entity name of the given ABN"
+        type: "string"
+      verificationDateTime:
+        description: "when the ABN status is verified"
+        type: "string"
+      abn:
+        description: "Australian Business number issued by ABR"
+        type: "string"
+      status:
+        description: "status of the ABN"
         type: "string"
   Verification:
     type: "object"
@@ -11044,30 +11168,17 @@ definitions:
         description: "The CUSIP (Committee on Uniform Securities Identification Procedures) identifies the financial instruments in the United States and Canada.<br><b><br><b>Note</b></b>: The CUSIP number field applies only to trade related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
+      sourceApcaNumber:
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       highLevelCategoryId:
         format: "int64"
         description: "The high level category assigned to the transaction. The supported values are provided by the GET transactions/categories. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      detailCategoryId:
-        format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "integer"
-      description:
-        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Description"
       memo:
         description: "Additional notes provided by the user for a particular  transaction through application or API services. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      settleDate:
-        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      postDateTime:
-        description: "The timestamp on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
         readOnly: true
         type: "string"
       type:
@@ -11080,71 +11191,32 @@ definitions:
         type: "array"
         items:
           type: "string"
-      baseType:
-        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-      categorySource:
-        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "SYSTEM"
-        - "USER"
-      principal:
-        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       lastUpdated:
         readOnly: true
         type: "string"
-      isDeleted:
-        description: "Indicates if the transaction is marked as deleted.<b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET dataExtracts/userData</li></ul>"
-        readOnly: true
-        type: "boolean"
-      interest:
-        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       price:
         description: "The price of the security for the transaction.<br><b>Note</b>: The price field applies only to the trade related transactions. <br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         $ref: "#/definitions/Money"
-      commission:
-        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+      sourceMerchantCategoryCode:
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
-        $ref: "#/definitions/Money"
+        type: "string"
       id:
         format: "int64"
         description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "string"
-      amount:
-        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       checkNumber:
         description: "The checkNumber of the transaction.<br><br><b>Applicable containers</b>: bank<br>"
         readOnly: true
         type: "string"
-      isPhysical:
-        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "boolean"
-      quantity:
-        format: "double"
-        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "number"
       transactionDateTime:
         description: "The timestamp the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      typeAtSource:
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -11155,16 +11227,16 @@ definitions:
         description: "Indicates if the transaction is aggregated from the FI site or the consumer has manually created the transaction using the application or an API. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "boolean"
+      sourceBillerName:
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       merchant:
         description: "The name of the merchant associated with the transaction.<br><b>Note</b>: The merchant name field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         $ref: "#/definitions/Merchant"
       sedol:
         description: "SEDOL stands for Stock Exchange Daily Official List, a list of security identifiers used in the United Kingdom and Ireland for clearing purposes.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      transactionDate:
-        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "string"
       categoryType:
@@ -11183,9 +11255,6 @@ definitions:
         description: "The account from which the transaction was made. This is basically the primary key of the account resource. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      createdDate:
-        readOnly: true
-        type: "string"
       sourceType:
         description: "The source through which the transaction is added to the Yodlee system.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loann<br><b>Applicable Values:</b><br>"
         readOnly: true
@@ -11193,30 +11262,6 @@ definitions:
         enum:
         - "AGGREGATED"
         - "MANUAL"
-      CONTAINER:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      postDate:
-        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      parentCategoryId:
-        format: "int64"
-        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
       subType:
         description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -11260,6 +11305,123 @@ definitions:
         - "OVERDRAFT_PROTECTION"
         - "CREDIT"
         - "NSF_FEES"
+      holdingDescription:
+        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      status:
+        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "POSTED"
+        - "PENDING"
+        - "SCHEDULED"
+        - "FAILED"
+        - "CLEARED"
+      detailCategoryId:
+        format: "int64"
+        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        readOnly: true
+        type: "integer"
+      description:
+        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Description"
+      settleDate:
+        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      postDateTime:
+        description: "The timestamp on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      baseType:
+        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "CREDIT"
+        - "DEBIT"
+      categorySource:
+        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "SYSTEM"
+        - "USER"
+      principal:
+        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      sourceBillerCode:
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
+      isDeleted:
+        description: "Indicates if the transaction is marked as deleted.<b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
+      interest:
+        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      commission:
+        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      merchantType:
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "string"
+      amount:
+        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      isPhysical:
+        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "boolean"
+      quantity:
+        format: "double"
+        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "number"
+      transactionDate:
+        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      createdDate:
+        readOnly: true
+        type: "string"
+      CONTAINER:
+        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "bank"
+        - "creditCard"
+        - "investment"
+        - "insurance"
+        - "loan"
+        - "reward"
+        - "bill"
+        - "realEstate"
+        - "otherAssets"
+        - "otherLiabilities"
+      businessCategory:
+        description: "business category details for the SMB customers.<br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        $ref: "#/definitions/BusinessCategory"
+      postDate:
+        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      parentCategoryId:
+        format: "int64"
+        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "integer"
       category:
         description: "The name of the category assigned to the transaction. This is the category field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -11273,24 +11435,10 @@ definitions:
         description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      holdingDescription:
-        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
       isin:
         description: "International Securities Identification Number (ISIN) standard is used worldwide to identify specific securities.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
-      status:
-        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "POSTED"
-        - "PENDING"
-        - "SCHEDULED"
-        - "FAILED"
-        - "CLEARED"
   AccountHistory:
     type: "object"
     title: "AccountHistory"
@@ -11674,26 +11822,17 @@ definitions:
         description: "The CUSIP (Committee on Uniform Securities Identification Procedures) identifies the financial instruments in the United States and Canada.<br><b><br><b>Note</b></b>: The CUSIP number field applies only to trade related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
+      sourceApcaNumber:
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       highLevelCategoryId:
         format: "int64"
         description: "The high level category assigned to the transaction. The supported values are provided by the GET transactions/categories. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      detailCategoryId:
-        format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "integer"
-      description:
-        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Description"
       memo:
         description: "Additional notes provided by the user for a particular  transaction through application or API services. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      settleDate:
-        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
       type:
@@ -11706,65 +11845,30 @@ definitions:
         type: "array"
         items:
           type: "string"
-      baseType:
-        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-      categorySource:
-        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "SYSTEM"
-        - "USER"
-      principal:
-        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       lastUpdated:
         readOnly: true
         type: "string"
-      interest:
-        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       price:
         description: "The price of the security for the transaction.<br><b>Note</b>: The price field applies only to the trade related transactions. <br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         $ref: "#/definitions/Money"
-      commission:
-        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+      sourceMerchantCategoryCode:
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
-        $ref: "#/definitions/Money"
+        type: "string"
       id:
         format: "int64"
         description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "string"
-      amount:
-        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
       checkNumber:
         description: "The checkNumber of the transaction.<br><br><b>Applicable containers</b>: bank<br>"
         readOnly: true
         type: "string"
-      isPhysical:
-        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+      typeAtSource:
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
         readOnly: true
-        type: "boolean"
-      quantity:
-        format: "double"
-        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "number"
+        type: "string"
       valoren:
         description: "It is an identification number that is assigned to financial instruments such as stocks and bonds trading in Switzerland.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
@@ -11773,16 +11877,16 @@ definitions:
         description: "Indicates if the transaction is aggregated from the FI site or the consumer has manually created the transaction using the application or an API. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "boolean"
+      sourceBillerName:
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
       merchant:
         description: "The name of the merchant associated with the transaction.<br><b>Note</b>: The merchant name field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         $ref: "#/definitions/Merchant"
       sedol:
         description: "SEDOL stands for Stock Exchange Daily Official List, a list of security identifiers used in the United Kingdom and Ireland for clearing purposes.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      transactionDate:
-        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "string"
       categoryType:
@@ -11801,9 +11905,6 @@ definitions:
         description: "The account from which the transaction was made. This is basically the primary key of the account resource. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      createdDate:
-        readOnly: true
-        type: "string"
       sourceType:
         description: "The source through which the transaction is added to the Yodlee system.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loann<br><b>Applicable Values:</b><br>"
         readOnly: true
@@ -11811,30 +11912,6 @@ definitions:
         enum:
         - "AGGREGATED"
         - "MANUAL"
-      CONTAINER:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      postDate:
-        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      parentCategoryId:
-        format: "int64"
-        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
       subType:
         description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -11878,6 +11955,115 @@ definitions:
         - "OVERDRAFT_PROTECTION"
         - "CREDIT"
         - "NSF_FEES"
+      holdingDescription:
+        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      status:
+        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "POSTED"
+        - "PENDING"
+        - "SCHEDULED"
+        - "FAILED"
+        - "CLEARED"
+      detailCategoryId:
+        format: "int64"
+        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        readOnly: true
+        type: "integer"
+      description:
+        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Description"
+      settleDate:
+        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "string"
+      baseType:
+        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "CREDIT"
+        - "DEBIT"
+      categorySource:
+        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "SYSTEM"
+        - "USER"
+      principal:
+        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      sourceBillerCode:
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        type: "string"
+      interest:
+        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      commission:
+        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      merchantType:
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "string"
+      amount:
+        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      isPhysical:
+        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "boolean"
+      quantity:
+        format: "double"
+        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "number"
+      transactionDate:
+        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      createdDate:
+        readOnly: true
+        type: "string"
+      CONTAINER:
+        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "bank"
+        - "creditCard"
+        - "investment"
+        - "insurance"
+        - "loan"
+        - "reward"
+        - "bill"
+        - "realEstate"
+        - "otherAssets"
+        - "otherLiabilities"
+      businessCategory:
+        description: "business category details for the SMB customers.<br><br><b>Applicable containers</b>: Bank container<br>"
+        readOnly: true
+        $ref: "#/definitions/BusinessCategory"
+      postDate:
+        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
+        readOnly: true
+        type: "string"
+      parentCategoryId:
+        format: "int64"
+        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "integer"
       category:
         description: "The name of the category assigned to the transaction. This is the category field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -11891,24 +12077,10 @@ definitions:
         description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
         type: "integer"
-      holdingDescription:
-        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
       isin:
         description: "International Securities Identification Number (ISIN) standard is used worldwide to identify specific securities.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "string"
-      status:
-        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "POSTED"
-        - "PENDING"
-        - "SCHEDULED"
-        - "FAILED"
-        - "CLEARED"
   Option:
     type: "object"
     title: "Option"
@@ -12003,6 +12175,26 @@ definitions:
         readOnly: true
         type: "integer"
       toDate:
+        readOnly: true
+        type: "string"
+  BusinessInformation:
+    type: "object"
+    title: "BusinessInformation"
+    properties:
+      legalName:
+        description: "Legal name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
+      businessName:
+        description: "Name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
+      abn:
+        description: "Australian business number issued by Australian authority for businesses. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
+      acn:
+        description: "Australian company number issued by Australian authority for companies. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
   User:
@@ -12287,6 +12479,20 @@ definitions:
         - "Supported"
         - "Beta"
         - "Unsupported"
+  CDRInsightsDisclosure:
+    type: "object"
+    title: "CDRInsightsDisclosure"
+    properties:
+      purpose:
+        description: "purpose of the insights"
+        type: "string"
+      nonAPName:
+        description: "non accredited party name"
+        type: "string"
+      cdrInsights:
+        type: "array"
+        items:
+          $ref: "#/definitions/CDRInsights"
   ProvidersCount:
     type: "object"
     title: "ProvidersCount"
@@ -12760,6 +12966,18 @@ definitions:
       href:
         description: "Get Consent preference Endpoint"
         type: "string"
+  LogoURLs:
+    type: "object"
+    title: "LogoURLs"
+    properties:
+      type:
+        description: "The merchant type of the logo url (SVG/PNG)<br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "string"
+      url:
+        description: "The logo url of the merchant<br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        readOnly: true
+        type: "string"
   ConsentPreferencesResponse:
     type: "object"
     title: "ConsentPreferencesResponse"
@@ -12786,6 +13004,9 @@ definitions:
         format: "int64"
         description: "Unique identifier for the provider site.(e.g., financial institution sites, biller sites, lender sites, etc.).<br><br><b>Endpoints</b>:<ul><li>POST Consent</li></ul>"
         type: "integer"
+      businessUserDetail:
+        description: "Describes the information of the Business user consent disclosure"
+        $ref: "#/definitions/BusinessUserDetailForCreateConsent"
       dataset:
         description: "The name of the dataset attribute supported by the provider.If no dataset value is provided, the datasets that are configured for the customer will be considered.The configured dataset can be overridden by providing the dataset as an input.<br><br><b>Endpoints</b>:<ul><li>POST Consent</li></ul>"
         type: "array"
