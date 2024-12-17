@@ -1896,6 +1896,38 @@ paths:
         required: false
       tags:
       - "Transactions"
+  /documents/search:
+    post:
+      summary: "Get User Documents"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The Get User Documents service will allow customers to search or retrieve metadata related to PDF documents uploaded by user through the FastLink 4 flow."
+      operationId: "getuserdocuments"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/GetDocumentsResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for ids<br>Y800 : Invalid value for accountIds<br>Y800 : Invalid value for ids or accountIds<br>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - schema:
+          $ref: "#/definitions/GetDocumentsRequest"
+        in: "body"
+        name: "getDocumentsRequest"
+        description: "getDocumentsRequest"
+        required: false
+      tags:
+      - "User Documents"
+      consumes:
+      - "application/json"
   /consents/{consentId}/renewal:
     put:
       summary: "Renew Consent"
@@ -2128,6 +2160,33 @@ paths:
         required: false
       tags:
       - "Documents"
+    delete:
+      summary: "Delete User Documents"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The Delete User Documents service allows the consumer to delete the PDF documents uploaded by user through FastLink 4 flow.<br>The deleted documents will not be returned in the Get User Documents API.<br>The HTTP response code is 204 (success without content)."
+      operationId: "deleteuserdocuments"
+      responses:
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for documentId<br>Y904 : Internal exception<br>"
+        401:
+          description: "Unauthorized"
+        204:
+          description: "OK"
+        404:
+          description: "Not Found"
+      parameters:
+      - schema:
+          $ref: "#/definitions/DeleteDocumentsRequest"
+        in: "body"
+        name: "deleteDocumentsRequest"
+        description: "deleteDocumentsRequest"
+        required: true
+      tags:
+      - "User Documents"
   /accounts/evaluateAddress:
     post:
       summary: "Evaluate Address"
@@ -3395,6 +3454,14 @@ paths:
       tags:
       - "Derived"
 definitions:
+  GetDocumentsResponse:
+    type: "object"
+    title: "GetDocumentsResponse"
+    properties:
+      documents:
+        type: "array"
+        items:
+          $ref: "#/definitions/GetDocumentsList"
   HoldingResponse:
     type: "object"
     title: "HoldingResponse"
@@ -3795,6 +3862,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ThirdPartyADR"
+      renewedDateTime:
+        description: "Consent renewed datetime"
+        type: "string"
       providerAccountId:
         format: "int64"
         description: "Unique identifier for the provider account resource. <br>This is created during account addition.<br><br><b>Endpoints</b>:<ul><li>GET providerAccounts</li></ul>"
@@ -4539,6 +4609,7 @@ definitions:
         enum:
         - "BILLERS"
         - "SUBSCRIPTION"
+        - "BNPL"
         - "OTHERS"
       categoryId:
         format: "int64"
@@ -4863,6 +4934,7 @@ definitions:
         enum:
         - "YODLEE"
         - "FACTUAL"
+        - "FOURSQUARE"
       logoURL:
         description: "The logoURL of the merchant.<br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
         readOnly: true
@@ -4908,6 +4980,22 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Providers"
+  GetDocumentsRequest:
+    type: "object"
+    title: "GetDocumentsRequest"
+    properties:
+      accountId:
+        description: "The unique identifier of an account. Retrieve documents for a given associated accountId.<br>Comma separated Account Ids."
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
+      id:
+        description: "List of document ids."
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
   UpdateConfigsNotificationEventRequest:
     type: "object"
     title: "UpdateConfigsNotificationEventRequest"
@@ -6199,6 +6287,15 @@ definitions:
       provider:
         readOnly: true
         $ref: "#/definitions/ProvidersCount"
+  SuccessAssociations:
+    type: "object"
+    title: "SuccessAssociations"
+    properties:
+      accountId:
+        format: "int64"
+        description: "The account Ids associated with the document Id."
+        readOnly: true
+        type: "integer"
   DataExtractsEvent:
     type: "object"
     title: "DataExtractsEvent"
@@ -7805,6 +7902,9 @@ definitions:
       startDateTime:
         description: "Consent start datetime."
         type: "string"
+      renewedDateTime:
+        description: "Consent renewed datetime."
+        type: "string"
       consentStatus:
         description: "Status of the consent in each history event. Statuses will be shown as applicable for Open Banking regions."
         type: "string"
@@ -7992,6 +8092,10 @@ definitions:
         description: "The total account value. <br><b>Additional Details:</b><br><b>Bank:</b> available balance or current balance.<br><b>Credit Card:</b> running Balance.<br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<br><b>Insurance:</b> CashValue or amountDue<br><b>Loan:</b> principalBalance<br><b>Applicable containers</b>: bank, creditCard, investment, insurance, loan, otherAssets, otherLiabilities, realEstate<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      nsccMemberClearingCode:
+        description: "Used in the mutual fund industry as a standard method of identifying funds, firms, and other intermediaries such as third-party administrators and recordkeepers.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       homeInsuranceType:
         description: "Type of home insurance, like -<ul><li>HOME_OWNER</li><li>RENTAL</li><li>RENTER</li><li>etc..</li></ul><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul><b>Applicable Values</b><br>"
         readOnly: true
@@ -8040,7 +8144,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceProductName:
-        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       currentBalance:
@@ -8098,6 +8202,10 @@ definitions:
         $ref: "#/definitions/Money"
       policyFromDate:
         description: "The date the insurance policy began.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
+      dtccMemberClearingCode:
+        description: "Helps facilitate transactions between financial institutions.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       premiumPaymentTerm:
@@ -8272,7 +8380,7 @@ definitions:
         - "UNKNOWN"
         - "OTHER"
       sourceAccountOwnership:
-        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       maturityAmount:
@@ -8501,7 +8609,7 @@ definitions:
         - "otherAssets"
         - "otherLiabilities"
       isOwnedAtSource:
-        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
       lastEmployeeContributionDate:
@@ -8555,7 +8663,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -8585,7 +8693,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       id:
@@ -8602,7 +8710,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -8614,7 +8722,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -8741,7 +8849,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       interest:
@@ -8753,7 +8861,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,BNPL,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
         readOnly: true
         type: "string"
       amount:
@@ -9104,6 +9212,10 @@ definitions:
         description: "The total account value. <br><b>Additional Details:</b><br><b>Bank:</b> available balance or current balance.<br><b>Credit Card:</b> running Balance.<br><b>Investment:</b> The total balance of all the investment account, as it appears on the FI site.<br><b>Insurance:</b> CashValue or amountDue<br><b>Loan:</b> principalBalance<br><b>Applicable containers</b>: bank, creditCard, investment, insurance, loan, otherAssets, otherLiabilities, realEstate<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      nsccMemberClearingCode:
+        description: "Used in the mutual fund industry as a standard method of identifying funds, firms, and other intermediaries such as third-party administrators and recordkeepers.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       homeInsuranceType:
         description: "Type of home insurance, like -<ul><li>HOME_OWNER</li><li>RENTAL</li><li>RENTER</li><li>etc..</li></ul><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul><b>Applicable Values</b><br>"
         readOnly: true
@@ -9152,7 +9264,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceProductName:
-        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       currentBalance:
@@ -9206,6 +9318,10 @@ definitions:
         $ref: "#/definitions/Money"
       policyFromDate:
         description: "The date the insurance policy began.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
+      dtccMemberClearingCode:
+        description: "Helps facilitate transactions between financial institutions.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       premiumPaymentTerm:
@@ -9378,7 +9494,7 @@ definitions:
         - "UNKNOWN"
         - "OTHER"
       sourceAccountOwnership:
-        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       maturityAmount:
@@ -9600,7 +9716,7 @@ definitions:
         - "otherAssets"
         - "otherLiabilities"
       isOwnedAtSource:
-        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
       lastEmployeeContributionDate:
@@ -10198,6 +10314,38 @@ definitions:
       email:
         type: "string"
       segmentName:
+        type: "string"
+  GetDocumentsList:
+    type: "object"
+    title: "GetDocumentsList"
+    properties:
+      associatedAccounts:
+        type: "array"
+        items:
+          $ref: "#/definitions/SuccessAssociations"
+      uploadId:
+        format: "int64"
+        type: "integer"
+      downloadURL:
+        description: "The URL from where the document can be download."
+        readOnly: true
+        type: "string"
+      name:
+        description: "The name of the file uploaded."
+        readOnly: true
+        type: "string"
+      id:
+        format: "int64"
+        description: "The document's primary key and unique identifier."
+        readOnly: true
+        type: "integer"
+      urlExpiryTime:
+        description: "The validity time of the document to be downloaded."
+        readOnly: true
+        type: "string"
+      status:
+        description: "Indicates the status of the document download."
+        readOnly: true
         type: "string"
   Profile:
     type: "object"
@@ -10798,6 +10946,16 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ConfigsNotificationEvent"
+  DeleteDocumentsRequest:
+    type: "object"
+    title: "DeleteDocumentsRequest"
+    properties:
+      id:
+        description: "List of document ids."
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
   VerificationStatus:
     type: "object"
     title: "VerificationStatus"
@@ -11169,7 +11327,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -11199,7 +11357,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       id:
@@ -11216,7 +11374,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -11228,7 +11386,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -11355,7 +11513,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       isDeleted:
@@ -11371,7 +11529,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,BNPL,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
         readOnly: true
         type: "string"
       amount:
@@ -11823,7 +11981,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -11853,7 +12011,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       id:
@@ -11866,7 +12024,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -11878,7 +12036,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -12001,7 +12159,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank container<br>"
+        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       interest:
@@ -12013,7 +12171,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
+        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,BNPL,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
         readOnly: true
         type: "string"
       amount:
@@ -12182,19 +12340,19 @@ definitions:
     title: "BusinessInformation"
     properties:
       legalName:
-        description: "Legal name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Legal name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       businessName:
-        description: "Name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       abn:
-        description: "Australian business number issued by Australian authority for businesses. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Australian business number issued by Australian authority for businesses. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       acn:
-        description: "Australian company number issued by Australian authority for companies. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Australian company number issued by Australian authority for companies. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
   User:
@@ -13059,6 +13217,8 @@ tags:
   description: "Statements API"
 - name: "Transactions"
   description: "Transactions API"
+- name: "User Documents"
+  description: "User Documents API"
 - name: "User"
   description: "Users API"
 - name: "Verification"
