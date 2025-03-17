@@ -1812,7 +1812,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The count service provides the total number of transactions for a specific user depending on the input parameters passed.<br>If you are implementing pagination for transactions, call this endpoint before calling GET /transactions to know the number of transactions that are returned for the input parameters passed.<br>The functionality of the input parameters remains the same as that of the GET /transactions endpoint.<br>"
+      description: "The count service provides the total number of transactions for a specific user depending on the input parameters passed.<br>If you are implementing pagination for transactions, call this endpoint before calling GET /transactions to know the number of transactions that are returned for the input parameters passed.<br>The functionality of the input parameters remains the same as that of the GET /transactions endpoint.<br>If the difference between fromDate and toDate is more than 2 years, API will return the count of last 2 years from the toDate.<br>"
       operationId: "getTransactionsCount"
       responses:
         200:
@@ -4771,6 +4771,10 @@ definitions:
         description: "Help text to guide the user to choose the correct provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
+      isTanSupported:
+        description: "Indicates if a site supports TAN (Tokenized Account Number)<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "boolean"
       capability:
         description: "Capability of the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><br><b>Note : </b> capability has been deprecated"
         readOnly: true
@@ -4793,6 +4797,14 @@ definitions:
         description: "The logo link of the provider institution. The link will return the logo in the PNG format.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
+      authTypetestni:
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "OAUTH"
+        - "CREDENTIALS"
+        - "MFA_CREDENTIALS"
       betaContainers:
         description: "This attribute will show the list of containers which are presently under development for the provider site and their link attempt may be unsuccessful<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -4870,6 +4882,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ProvidersDataset"
+      uptimeMetrics:
+        description: "Indicates the availability of the site for account linking, login attempt<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/UptimeMetrics"
       status:
         description: "Determines if the provider is supported for the cobrand (customer), is in the beta stage, etc. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -8144,7 +8160,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceProductName:
-        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "sourceProductName: The account unique identifier belonging to which product name/provider account model name. (Example - Westpac Choice, CBA Smart Access.). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       currentBalance:
@@ -8204,6 +8220,10 @@ definitions:
         description: "The date the insurance policy began.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
+      sourceLoanOffsetEnabled:
+        description: "Set to true if one or more offset accounts are configured for this loan account.This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
       dtccMemberClearingCode:
         description: "Helps facilitate transactions between financial institutions.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8299,6 +8319,10 @@ definitions:
         description: "The home address of the real estate account. The address entity for home address consists of state, zip and city only<br><br><b>Aggregated / Manual</b>: Manual<br><b>Applicable containers</b>: realEstate<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/AccountAddress"
+      sourceLoanRepaymentType:
+        description: "Options in place for repayments. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       cashValue:
         description: "The amount of cash value available in the consumer's life insurance policy account - except for term insurance policy - for withdrawals, loans, etc. This field is also used to capture the cash value on the home insurance policy.It is the standard that the insurance company generally prefer to reimburse the policyholder for his or her loss, i.e., the cash value is equal to the replacement cost minus depreciation. The cash value is also referred to as surrender value in India for life insurance policies.<br><b>Note:</b> The cash value field is applicable to all types of life insurance (except for term life) and home insurance.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8331,6 +8355,10 @@ definitions:
         $ref: "#/definitions/Money"
       businessInformation:
         $ref: "#/definitions/BusinessInformation"
+      maxRedraw:
+        description: "Maximum amount of funds that can be redrawn. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
       providerAccountId:
         format: "int64"
         description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -8380,7 +8408,7 @@ definitions:
         - "UNKNOWN"
         - "OTHER"
       sourceAccountOwnership:
-        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       maturityAmount:
@@ -8473,6 +8501,10 @@ definitions:
         description: "Indicates the contract value of the annuity.<br><b>Note:</b> The annuity balance field is applicable only to annuities.<br><b>Applicable containers</b>: insurance, investment<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      accountCategory:
+        description: "AccountCategory stores the derived account type category.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       accountName:
         description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -8609,7 +8641,7 @@ definitions:
         - "otherAssets"
         - "otherLiabilities"
       isOwnedAtSource:
-        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
       lastEmployeeContributionDate:
@@ -8622,6 +8654,10 @@ definitions:
         $ref: "#/definitions/Money"
       recurringPayment:
         description: "The monthly or periodic payment on a loan that is recurring in nature. The recurring payment amount is usually same as the amount due, unless late fees or other charges are added eventually changing the amount due for a particular month.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      minRedraw:
+        description: "Minimum amount of funds that can be redrawn. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
   HoldingIdListResponse:
@@ -8663,7 +8699,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -8685,6 +8721,10 @@ definitions:
         type: "array"
         items:
           type: "string"
+      frequency:
+        description: "Frequency is set to MONTHLY if the Merchant type is BILLERS or SUBSCRIPTION.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       lastUpdated:
         readOnly: true
         type: "string"
@@ -8693,7 +8733,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       id:
@@ -8710,7 +8750,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The type of transaction. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -8722,7 +8762,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -8849,7 +8889,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "BPAY Biller Code for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       interest:
@@ -8877,6 +8917,10 @@ definitions:
         description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "number"
+      isRecurring:
+        description: "If the transaction is done on a merchant with merchant type as BILLERS/SUBSCRIPTION, then such transactions are marked isRecurring to True or else it is marked as False.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       transactionDate:
         description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -9019,7 +9063,7 @@ definitions:
         readOnly: true
         type: "number"
       stateTaxable:
-        description: "The state in which the security is taxed.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Flag indicating state taxable.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "boolean"
       callDate:
@@ -9264,7 +9308,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceProductName:
-        description: "The unique identifier of the account. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "sourceProductName: The account unique identifier belonging to which product name/provider account model name. (Example - Westpac Choice, CBA Smart Access.). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       currentBalance:
@@ -9320,6 +9364,10 @@ definitions:
         description: "The date the insurance policy began.<br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
+      sourceLoanOffsetEnabled:
+        description: "Set to true if one or more offset accounts are configured for this loan account.This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "boolean"
       dtccMemberClearingCode:
         description: "Helps facilitate transactions between financial institutions.<br>This attribute will only populate when account is aggregated through ATV flow.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -9415,6 +9463,10 @@ definitions:
         description: "The home address of the real estate account. The address entity for home address consists of state, zip and city only<br><br><b>Aggregated / Manual</b>: Manual<br><b>Applicable containers</b>: realEstate<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/AccountAddress"
+      sourceLoanRepaymentType:
+        description: "Options in place for repayments. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       cashValue:
         description: "The amount of cash value available in the consumer's life insurance policy account - except for term insurance policy - for withdrawals, loans, etc. This field is also used to capture the cash value on the home insurance policy.It is the standard that the insurance company generally prefer to reimburse the policyholder for his or her loss, i.e., the cash value is equal to the replacement cost minus depreciation. The cash value is also referred to as surrender value in India for life insurance policies.<br><b>Note:</b> The cash value field is applicable to all types of life insurance (except for term life) and home insurance.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: insurance<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -9441,6 +9493,10 @@ definitions:
         $ref: "#/definitions/Money"
       businessInformation:
         $ref: "#/definitions/BusinessInformation"
+      maxRedraw:
+        description: "Maximum amount of funds that can be redrawn. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
       providerAccountId:
         format: "int64"
         description: "The primary key of the provider account resource.<br><br><b>Aggregated / Manual</b>: Both <br><b>Applicable containers</b>: All containers<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
@@ -9494,7 +9550,7 @@ definitions:
         - "UNKNOWN"
         - "OTHER"
       sourceAccountOwnership:
-        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Value indicating the number of customers that have ownership of the account, according to the data holder's definition of account ownership. Does not indicate that all account owners are eligible consumers. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       maturityAmount:
@@ -9587,6 +9643,10 @@ definitions:
         description: "Indicates the contract value of the annuity.<br><b>Note:</b> The annuity balance field is applicable only to annuities.<br><b>Applicable containers</b>: insurance, investment<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
+      accountCategory:
+        description: "AccountCategory stores the derived account type category.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Investment container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        type: "string"
       accountName:
         description: "The account name as it appears at the site.<br>(The POST accounts service response return this field as name)<br><b>Applicable containers</b>: All Containers<br><b>Aggregated / Manual</b>: Both <br><b>Endpoints</b>:<br><ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
@@ -9716,7 +9776,7 @@ definitions:
         - "otherAssets"
         - "otherLiabilities"
       isOwnedAtSource:
-        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Flag indicating that the customer associated with the authorisation is an owner of the account. Does not indicate sole ownership. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "boolean"
       lastEmployeeContributionDate:
@@ -9729,6 +9789,10 @@ definitions:
         $ref: "#/definitions/Money"
       recurringPayment:
         description: "The monthly or periodic payment on a loan that is recurring in nature. The recurring payment amount is usually same as the amount due, unless late fees or other charges are added eventually changing the amount due for a particular month.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: loan<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/Money"
+      minRedraw:
+        description: "Minimum amount of funds that can be redrawn. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated <br><b>Applicable containers</b>: Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         $ref: "#/definitions/Money"
   Renewal:
@@ -11327,7 +11391,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -11349,6 +11413,10 @@ definitions:
         type: "array"
         items:
           type: "string"
+      frequency:
+        description: "Frequency is set to MONTHLY if the Merchant type is BILLERS or SUBSCRIPTION.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       lastUpdated:
         readOnly: true
         type: "string"
@@ -11357,7 +11425,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       id:
@@ -11374,7 +11442,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The type of transaction. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -11386,7 +11454,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -11513,7 +11581,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "BPAY Biller Code for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       isDeleted:
@@ -11545,6 +11613,10 @@ definitions:
         description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "number"
+      isRecurring:
+        description: "If the transaction is done on a merchant with merchant type as BILLERS/SUBSCRIPTION, then such transactions are marked isRecurring to True or else it is marked as False.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       transactionDate:
         description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -11915,6 +11987,10 @@ definitions:
         description: "Payment Account Number of given account.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
         type: "string"
+      tokenizedAccountNumber:
+        description: "Tokenized account number of given account.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
+        readOnly: true
+        type: "string"
       unmaskedAccountNumber:
         description: "Unmasked account number of given account.<br><br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li></ul>"
         readOnly: true
@@ -11981,7 +12057,7 @@ definitions:
         readOnly: true
         type: "string"
       sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       highLevelCategoryId:
@@ -12003,6 +12079,10 @@ definitions:
         type: "array"
         items:
           type: "string"
+      frequency:
+        description: "Frequency is set to MONTHLY if the Merchant type is BILLERS or SUBSCRIPTION.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       lastUpdated:
         readOnly: true
         type: "string"
@@ -12011,7 +12091,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The merchant category code for an outgoing payment to a merchant. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       id:
@@ -12024,7 +12104,7 @@ definitions:
         readOnly: true
         type: "string"
       typeAtSource:
-        description: "The type of transaction. <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "The type of transaction. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
         readOnly: true
         type: "string"
       valoren:
@@ -12036,7 +12116,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "Name of the BPAY biller for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       merchant:
@@ -12159,7 +12239,7 @@ definitions:
         readOnly: true
         $ref: "#/definitions/Money"
       sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). <br><br><b>Applicable containers</b>: Bank,Card container<br>"
+        description: "BPAY Biller Code for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
         readOnly: true
         type: "string"
       interest:
@@ -12187,6 +12267,10 @@ definitions:
         description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "number"
+      isRecurring:
+        description: "If the transaction is done on a merchant with merchant type as BILLERS/SUBSCRIPTION, then such transactions are marked isRecurring to True or else it is marked as False.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
+        readOnly: true
+        type: "string"
       transactionDate:
         description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
         readOnly: true
@@ -12302,6 +12386,18 @@ definitions:
     properties:
       user:
         $ref: "#/definitions/UpdateUserRegistration"
+  UptimeMetrics:
+    type: "object"
+    title: "UptimeMetrics"
+    properties:
+      thresholdPercentage:
+        description: "Value is calculated based on number of site failures and the total successful refreshes performed.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      status:
+        description: "Indicates the alert status for the site. ACCOUNT_LINKING_UNAVAILABLE: If the thresholdPercentage value is >= 100. REFRESH_FAILURE_ATTENTION: If the thresholdPercentage value is >= 90 and < 100.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
   ProviderAccountPreferences:
     type: "object"
     title: "ProviderAccountPreferences"
@@ -12340,19 +12436,19 @@ definitions:
     title: "BusinessInformation"
     properties:
       legalName:
-        description: "Legal name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Legal name of the business (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       businessName:
-        description: "Name of the business (if available). <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Name of the business (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       abn:
-        description: "Australian business number issued by Australian authority for businesses. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Australian business number issued by Australian authority for businesses. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
       acn:
-        description: "Australian company number issued by Australian authority for companies. <br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
+        description: "Australian company number issued by Australian authority for companies. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Aggregated / Manual</b>: Aggregated<br><b>Applicable containers</b>: Bank,Card,Loan container<br><b>Endpoints</b>:<ul><li>GET accounts</li><li>GET accounts/{accountId}</li><li>GET dataExtracts/userData</li></ul>"
         readOnly: true
         type: "string"
   User:
@@ -12507,6 +12603,87 @@ definitions:
         description: "The language in which the provider details are provided. For example, a site supports two languages English and French. English being the primary language, the provider response will be provided in French depending on the user's locale. The language follows the two letter ISO code.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
+      PRIORITY:
+        description: "Indicates the priority for which the service is invoked.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "POPULAR"
+        - "SUGGESTED"
+        - "COBRAND"
+        - "SEARCH"
+        - "ALL"
+      associatedProviderIds:
+        description: "The screen-scraping providers that are associated to the Open Banking provider ID.<br><br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET providers</li><li>GET providers/{providerId}</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          format: "int64"
+          type: "integer"
+      isTanSupported:
+        description: "Indicates if a site supports TAN (Tokenized Account Number)<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "boolean"
+      capability:
+        description: "Capability of the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><br><b>Note : </b> capability has been deprecated"
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/Capability"
+      isConsentRequired:
+        description: "Indicates if a provider site requires consent.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "boolean"
+      loginUrl:
+        description: "The login URL of the provider's site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      isAutoRefreshEnabled:
+        description: "Indicates if a provider site is auto-refreshed.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "boolean"
+      logo:
+        description: "The logo link of the provider institution. The link will return the logo in the PNG format.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "string"
+      authTypetestni:
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "OAUTH"
+        - "CREDENTIALS"
+        - "MFA_CREDENTIALS"
+      betaContainers:
+        description: "This attribute will show the list of containers which are presently under development for the provider site and their link attempt may be unsuccessful<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          type: "string"
+      id:
+        format: "int64"
+        description: "Unique identifier for the provider site(e.g., financial institution sites, biller sites, lender sites, etc.).<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "integer"
+      authParameter:
+        description: "AuthParameter appears in the response only in case of token-based aggregation sites.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        type: "array"
+        items:
+          type: "string"
+          enum:
+          - "authorizationCode"
+          - "idToken"
+          - "authResponse"
+          - "state"
+      authType:
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        readOnly: true
+        type: "string"
+        enum:
+        - "OAUTH"
+        - "CREDENTIALS"
+        - "MFA_CREDENTIALS"
       favicon:
         description: "Favicon link of the provider.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -12528,23 +12705,6 @@ definitions:
         description: "Indicates that the site has been added by the user at least once.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      PRIORITY:
-        description: "Indicates the priority for which the service is invoked.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "POPULAR"
-        - "SUGGESTED"
-        - "COBRAND"
-        - "SEARCH"
-        - "ALL"
-      associatedProviderIds:
-        description: "The screen-scraping providers that are associated to the Open Banking provider ID.<br><br><b>Applicable containers</b>: All Containers<br><b>Endpoints</b>:<ul><li>GET providers</li><li>GET providers/{providerId}</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          format: "int64"
-          type: "integer"
       primaryLanguageISOCode:
         description: "The primary language of the site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
@@ -12557,78 +12717,30 @@ definitions:
         description: "The base URL of the provider's site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      capability:
-        description: "Capability of the site<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><br><b>Note : </b> capability has been deprecated"
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/Capability"
       loginForm:
         description: "This entity represents the structure of the login or MFA form that is displayed to the user at the provider site. For performance reasons, this field is returned only when a single provider is requested in the request.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li></ul>"
         readOnly: true
         type: "array"
         items:
           $ref: "#/definitions/LoginForm"
-      isConsentRequired:
-        description: "Indicates if a provider site requires consent.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "boolean"
-      loginUrl:
-        description: "The login URL of the provider's site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      isAutoRefreshEnabled:
-        description: "Indicates if a provider site is auto-refreshed.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "boolean"
       name:
         description: "The name of a provider site.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      logo:
-        description: "The logo link of the provider institution. The link will return the logo in the PNG format.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "string"
-      betaContainers:
-        description: "This attribute will show the list of containers which are presently under development for the provider site and their link attempt may be unsuccessful<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          type: "string"
-      id:
-        format: "int64"
-        description: "Unique identifier for the provider site(e.g., financial institution sites, biller sites, lender sites, etc.).<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "integer"
       lastModified:
         description: "Determines when the provider information was updated by Yodlee. If the customer caches the data, the cache is recommended to be refreshed based on this field.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "string"
-      authParameter:
-        description: "AuthParameter appears in the response only in case of token-based aggregation sites.<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
-        readOnly: true
-        type: "array"
-        items:
-          type: "string"
-          enum:
-          - "authorizationCode"
-          - "idToken"
-          - "authResponse"
-          - "state"
-      authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "OAUTH"
-        - "CREDENTIALS"
-        - "MFA_CREDENTIALS"
       dataset:
         description: "Logical grouping of dataset attributes into datasets such as Basic Aggregation Data, Account Profile and Documents<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
         type: "array"
         items:
           $ref: "#/definitions/ProvidersDataset"
+      uptimeMetrics:
+        description: "Indicates the availability of the site for account linking, login attempt<br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
+        readOnly: true
+        $ref: "#/definitions/UptimeMetrics"
       status:
         description: "Determines if the provider is supported for the cobrand (customer), is in the beta stage, etc. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul>"
         readOnly: true
