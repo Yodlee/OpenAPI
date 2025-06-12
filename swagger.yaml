@@ -2,115 +2,35 @@
 basePath: "/"
 paths:
   /transactions:
-    get:
-      summary: "Get Transactions"
+    put:
+      summary: "Update Transaction for Transaction Source ID"
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The Transaction service is used to get a list of transactions for a user.<br>By default, this service returns the last 30 days of transactions from today's date.<br>API will only return up to 2 years of transaction history. If the difference between fromDate and toDate is more than 2 years, API will return only last 2 years from the toDate.<br>The keyword parameter performs a contains search on the original, consumer, and simple description attributes, replace the special characters #, &, and + with percent-encoding values %23, %26, and %2B respectively. Eg: for -Debit# , pass the input as -Debit%23.<br>Values for categoryId parameter can be fetched from get transaction category list service.<br> The categoryId is used to filter transactions based on system-defined category as well as user-defined category.<br>User-defined categoryIds should be provided in the filter with the prefix ''U''. E.g. U10002<br>The skip and top parameters are used for pagination. In the skip and top parameters pass the number of records to be skipped and retrieved, respectively. The response header provides the links to retrieve the next and previous set of transactions.<br>Double quotes in the merchant name will be prefixed by backslashes (&#92;) in the response, e.g. Toys \"R\" Us. <br>sourceId is a unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts. Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts.<br><br><b>Note</b><ul><li><a href=\"https://developer.yodlee.com/resources/yodlee/transaction-data-enrichment/docs/overview\">Transaction Data Enrichment</a> is made available for bank and card accounts. The address field in the response is available only when the Transaction Data Enrichment key is turned ON.</li><li>The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 transactions.</li><li>This service supports the localization feature and accepts locale as a header parameter.</li></ul>"
-      operationId: "getTransactions"
+      description: "Update the category, consumer description, memo, isPhysical, merchantType, and detailCategory for a transaction by filtering it using the Transaction Source ID.<br>The HTTP response code is 204 (Success without content).<br>"
+      operationId: "updateTransaction"
       responses:
-        200:
-          schema:
-            $ref: "#/definitions/TransactionResponse"
-          description: "OK"
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for baseType<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for category<br>Y800 : Invalid value for toDate<br>Y800 : Invalid value for container<br>Y809 : Invalid date range<br>Y804 : Permitted values of top between 1 - 500<br>Y805 : Multiple containers not supported<br>Y800 : Invalid value for transaction type<br>Y824 : The maximum number of accountIds permitted is 100<br>Y824 : The maximum number of categoryIds permitted is 100<br>Y824 : The maximum number of highLevelCategoryIds permitted is 100<br>Y848 : detailCategoryId cannot be provided as input, as the detailedCategory feature is not enabled<br>Y823 : detailCategoryId is not for applicable containers other than bank and card<br>Y824 : The maximum number of detailCategoryIds permitted is 100<br>Y800 : Invalid value for detailCategoryId<br>Y800 : Invalid value for convertToCurrency<br>Y820 : The currency value is not supported for convertToCurrency<br>"
+          description: "Y812 : Required field -transactionSourceId missing in the transaction <br>Y812 : Required field -container missing in the transactionParam parameter input<br>Y800 : Invalid value for transactionId<br>Y800 : Invalid value for merchantType<br>Y800 : Invalid value for detailCategoryId<br>Y800 : Invalid value for categoryId<br>Y868 : No action is allowed, as the data is being migrated to the Open Banking provider<br>Y800 : Invalid value for transactionSourceId<br>Y800 : Invalid value for transactionSourceId. Muiltiple transactionId found for given transactionSourceId<br>"
         401:
           description: "Unauthorized"
+        204:
+          description: "Updated Successfully"
         404:
           description: "Not Found"
       parameters:
-      - in: "query"
-        allowEmptyValue: false
-        name: "accountId"
-        description: "Comma separated accountIds"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "baseType"
-        description: "DEBIT/CREDIT"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "categoryId"
-        description: "Comma separated categoryIds"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "categoryType"
-        description: "Transaction Category Type(LOAN, UNCATEGORIZE, INCOME, TRANSFER, EXPENSE or DEFERRED_COMPENSATION)"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "container"
-        description: "bank/creditCard/investment/insurance/loan"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "convertToCurrency"
-        description: "On-demand currency conversion parameter"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "detailCategoryId"
-        description: "Comma separated detailCategoryIds"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "fromDate"
-        description: "Transaction from date(YYYY-MM-DD)"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "highLevelCategoryId"
-        description: "Comma separated highLevelCategoryIds"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "keyword"
-        description: "Transaction search text"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "skip"
-        format: "int32"
-        description: "skip (Min 0)"
-        type: "integer"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "toDate"
-        description: "Transaction end date (YYYY-MM-DD)"
-        type: "string"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "top"
-        format: "int32"
-        description: "top (Max 500)"
-        type: "integer"
-        required: false
-      - in: "query"
-        allowEmptyValue: false
-        name: "type"
-        description: "Transaction Type(SELL,SWEEP, etc.) for bank/creditCard/investment"
-        type: "string"
-        required: false
+      - schema:
+          $ref: "#/definitions/TransactionRequest"
+        in: "body"
+        name: "transactionRequest"
+        description: "transactionRequest"
+        required: true
       tags:
       - "Transactions"
+      consumes:
+      - "application/json"
   /accounts/associatedAccounts/{providerAccountId}:
     get:
       summary: "Associated Accounts"
@@ -512,7 +432,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
-        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+        - "CREDIT_MATRIX_REPORT_UPDATES"
       tags:
       - "Configs"
   /consents/history/count:
@@ -1628,7 +1548,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The add account service is used to link the user's account with the provider site in the Yodlee system. Providers that require multifactor authentication or open banking are also supported by this service. The response includes the Yodlee generated ID (providerAccountId) of the account along with the refresh information.<br><br>Open Banking Implementation Notes: <br>To link the user's account of the Open Banking provider site in the Yodlee system, pass the field entity that contains:<br>1. id - From the authParameters provided in the get provider details service<br>2. value - From the redirect URL of the Open Banking site<br><br>Credential-based Implementation Notes: <br>1. The loginForm or the field array are the objects under the provider object, obtained from the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccountsprovideraccountid-get\">Get Provider Details</a> service response.<br>2. The credentials provided by the user should be embedded in the loginForm or field array object.<br>3. While testing the <a href=\"https://developer.yodlee.com/KnowledgeBase/How_to_use_PKI\">PKI feature</a>, encrypt the credentials using the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/rsa-encryption-utility\">Encryption Utility</a>.<br>4. The data to be retrieved from the provider site can be passed using datasetName or dataset. If datasetName is passed, all the attributes that are implicitly configured for the dataset will be retrieved.<br>5. If the customer has not subscribed to the REFRESH event webhooks notification for accounts that require multifactor authentication (MFA), the get providerAccount service has to be called continuously till the login form (supported types are token, question & answer, and captcha) is returned in the response.<br>6. The <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-put\">Update Account</a> service should be called to post the MFA information to continue adding the account.<br><br>Generic Implementation Notes:<br>1. Refer to the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/credential-based-aggregation#documentation-anchor--6\">Add Account</a> flow chart for implementation.<br>2. The get provider account details has <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/refresh-webhooks\">Webhooks Support</a>. If the customer has subscribed to the REFRESH event notification and has invoked this service to add an account, relevant notifications will be sent to the callback URL.<br>3. If you had not subscribed for notifications, the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-get\">Get Provider Account</a> details service has to be polled continuously till the account addition status is FAILED or PARTIAL_SUCCESS or SUCCESS. <br>4. A dataset may depend on another dataset for retrieval, so the response will include the requested datasets and the dependent datasets.<br>   It is necessary to check all the dataset additional statuses returned in the response, as the provider account status is drawn from the dataset additional statuses.<br>5. Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the open banking providerAccount. Ensure that the credential-based providerAccount belongs to the same institution. <br>6. The content type has to be passed as application/json in the body parameter. <br>7. Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account."
+      description: "The add account service is used to link the user's account with the provider site in the Yodlee system. Providers that require multifactor authentication or open banking are also supported by this service. The response includes the Yodlee generated ID (providerAccountId) of the account along with the refresh information.<br><br>Open Banking Implementation Notes: <br>To link the user's account of the Open Banking provider site in the Yodlee system, pass the field entity that contains:<br>1. id - From the authParameters provided in the get provider details service<br>2. value - From the redirect URL of the Open Banking site<br><br>Credential-based Implementation Notes: <br>1. The loginForm or the field array are the objects under the provider object, obtained from the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccountsprovideraccountid-get\">Get Provider Details</a> service response.<br>2. The credentials provided by the user should be embedded in the loginForm or field array object.<br>3. While testing the <a href=\"https://developer.yodlee.com/KnowledgeBase/How_to_use_PKI\">PKI feature</a>, encrypt the credentials using the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/rsa-encryption-utility\">Encryption Utility</a>.<br>4. The data to be retrieved from the provider site can be passed using datasetName or dataset. If datasetName is passed, all the attributes that are implicitly configured for the dataset will be retrieved.<br>5. If the customer has not subscribed to the REFRESH event webhooks notification for accounts that require multifactor authentication (MFA), the get providerAccount service has to be called continuously till the login form (supported types are token, question & answer, and captcha) is returned in the response.<br>6. The <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-put\">Update Account</a> service should be called to post the MFA information to continue adding the account.<br><br>Generic Implementation Notes:<br>1. Refer to the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/credential-based-aggregation#documentation-anchor--6\">Add Account</a> flow chart for implementation.<br>2. The get provider account details has <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/refresh-webhooks\">Webhooks Support</a>. If the customer has subscribed to the REFRESH event notification and has invoked this service to add an account, relevant notifications will be sent to the callback URL.<br>3. If you had not subscribed for notifications, the <a href=\"https://developer.yodlee.com/products/yodlee/link-account-apis/docs/api-reference#link-account-apis-provideraccounts-get\">Get Provider Account</a> details service has to be polled continuously till the account addition status is FAILED or PARTIAL_SUCCESS or SUCCESS. <br>4. A dataset may depend on another dataset for retrieval, so the response will include the requested datasets and the dependent datasets.<br>   It is necessary to check all the dataset additional statuses returned in the response, as the provider account status is drawn from the dataset additional statuses.<br>5. Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the open banking providerAccount. Ensure that the credential-based providerAccount belongs to the same institution. <br>6. The content type has to be passed as application/json in the body parameter. <br>7. Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account.<br>8. configName is included as an optional parameter in the body of the request, which is used to enable the billing metrics for the customers based on the instance configs, when logged in with client credentials."
       operationId: "linkProviderAccount"
       responses:
         200:
@@ -1696,7 +1616,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "<b>Credential-based Implementation Notes:</b> <br>The update account API is used to:  &bull; Retrieve the latest information for accounts that belong to one providerAccount from the provider site. You must allow at least 15 min between requests. <br> &bull; Update account credentials when the user has changed the authentication information at the provider site. <br> &bull; Post MFA information for the MFA-enabled provider accounts during add and update accounts. <br> &bull; Retrieve the latest information of all the eligible accounts that belong to the user. <br><br><b>Edit Credentials - Notes: </b> <br> &bull; If credentials have to be updated in the Yodlee system, one of the following should be provided: <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; LoginForm <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; Field array <br> &bull; LoginForm or the field array, can be obtained from the GET providerAccounts/{providerAccountId}?include=credentials API response. <br> &bull; The credentials provided by the user should be embedded in the loginForm or field array object before you pass to this API. <br><b>Posting MFA Info - Notes: </b> <br>1. You might receive the MFA request details to be presented to the end user in the GET providerAccounts/{providerAccount} API during polling or through REFRESH webhooks notificaiton. <br>2. After receiving the inputs from your user: <br>&nbsp;&nbsp;&nbsp;&nbsp;a.Embed the MFA information provided by the user in the loginForm or field array object.<br>&nbsp;&nbsp;&nbsp;&nbsp;b.Pass one of the following objects as input to this API:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; LoginForm<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; Field array<br/><br><b>Points to consider:</b><br>&bull; Data to be retrieved from the provider site can be overridden using datasetName or dataset. If you do pass datasetName, all the datasets that are implicitly configured for <br>the dataset will be retrieved. This action is allowed for edit credentials and single provider account refresh flows only. <br>&bull; Encrypt the credentials and MFA information using the public key.<br>&bull; While testing the PKI feature in sandbox environment, encrypt the password credentials and answers to the MFA questions using the encryption tool.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Open Banking (OB)-based Authentication - Notes:</b><br>The update account API is used to:<br>&bull; Retrieve the latest information for accounts from the provider site.<br>&bull; Update the renewed consent for an existing provider account.<br>&bull; Retrieve the latest information for all the eligible accounts that belong to the user.<br/><br>Yodlee recommendations: <br/>&bull; Create the field entity with the authParameters provided in the get provider details API.<br>&bull; Populate the field entity with the values received from the OB site and pass it to this API.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Update All Eligible Accounts - Notes: </b><br>&bull; This API will trigger a refresh for all the eligible provider accounts(both OB and credential-based accounts).<br>&bull; This API will not refresh closed, inactive, or UAR accounts, or accounts with refreshes in-progress or recently refreshed non-OB accounts.<br>&bull; No parameters should be passed to this API to trigger this action.<br>&bull; Do not call this API often. Our recommendation is to call this only at the time the user logs in to your app because it can hamper other API calls performance. <br>&bull; The response only contains information for accounts that were refreshed. If no accounts are eligible for refresh, no response is returned.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>What follows are common to both OB and credential-based authentication implementations:  </b><br>&bull; Check the status of the providerAccount before invoking this API. Do not call this API to trigger any action on a providerAccount when an action is already in progress for the providerAccount. <br>&bull; If the customer has subscribed to the REFRESH event notification and invoked this API, relevant notifications will be sent to the customer.<br>&bull; A dataset may depend on another dataset for retrieval, so the response will include the requested and dependent datasets.<br>&bull; Check all the dataset additional statuses returned in the response because the provider account status is drawn from the dataset additional statuses.<br>&bull; Updating preferences using this API will trigger refreshes.<br>&bull; Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the OB providerAccount or viceversa. Ensure that the both the providerAccounts belong to the same institution. <br>&bull; The content type has to be passed as application/json for the body parameter.<br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Note:</b>Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account."
+      description: "<b>Credential-based Implementation Notes:</b> <br>The update account API is used to:  &bull; Retrieve the latest information for accounts that belong to one providerAccount from the provider site. You must allow at least 15 min between requests. <br> &bull; Update account credentials when the user has changed the authentication information at the provider site. <br> &bull; Post MFA information for the MFA-enabled provider accounts during add and update accounts. <br> &bull; Retrieve the latest information of all the eligible accounts that belong to the user. <br><br><b>Edit Credentials - Notes: </b> <br> &bull; If credentials have to be updated in the Yodlee system, one of the following should be provided: <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; LoginForm <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9702; Field array <br> &bull; LoginForm or the field array, can be obtained from the GET providerAccounts/{providerAccountId}?include=credentials API response. <br> &bull; The credentials provided by the user should be embedded in the loginForm or field array object before you pass to this API. <br><b>Posting MFA Info - Notes: </b> <br>1. You might receive the MFA request details to be presented to the end user in the GET providerAccounts/{providerAccount} API during polling or through REFRESH webhooks notificaiton. <br>2. After receiving the inputs from your user: <br>&nbsp;&nbsp;&nbsp;&nbsp;a.Embed the MFA information provided by the user in the loginForm or field array object.<br>&nbsp;&nbsp;&nbsp;&nbsp;b.Pass one of the following objects as input to this API:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; LoginForm<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&bull; Field array<br/><br><b>Points to consider:</b><br>&bull; Data to be retrieved from the provider site can be overridden using datasetName or dataset. If you do pass datasetName, all the datasets that are implicitly configured for <br>the dataset will be retrieved. This action is allowed for edit credentials and single provider account refresh flows only. <br>&bull; Encrypt the credentials and MFA information using the public key.<br>&bull; While testing the PKI feature in sandbox environment, encrypt the password credentials and answers to the MFA questions using the encryption tool.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Open Banking (OB)-based Authentication - Notes:</b><br>The update account API is used to:<br>&bull; Retrieve the latest information for accounts from the provider site.<br>&bull; Update the renewed consent for an existing provider account.<br>&bull; Retrieve the latest information for all the eligible accounts that belong to the user.<br/><br>Yodlee recommendations: <br/>&bull; Create the field entity with the authParameters provided in the get provider details API.<br>&bull; Populate the field entity with the values received from the OB site and pass it to this API.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Update All Eligible Accounts - Notes: </b><br>&bull; This API will trigger a refresh for all the eligible provider accounts(both OB and credential-based accounts).<br>&bull; This API will not refresh closed, inactive, or UAR accounts, or accounts with refreshes in-progress or recently refreshed non-OB accounts.<br>&bull; No parameters should be passed to this API to trigger this action.<br>&bull; Do not call this API often. Our recommendation is to call this only at the time the user logs in to your app because it can hamper other API calls performance. <br>&bull; The response only contains information for accounts that were refreshed. If no accounts are eligible for refresh, no response is returned.<br/><br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>What follows are common to both OB and credential-based authentication implementations:  </b><br>&bull; Check the status of the providerAccount before invoking this API. Do not call this API to trigger any action on a providerAccount when an action is already in progress for the providerAccount. <br>&bull; If the customer has subscribed to the REFRESH event notification and invoked this API, relevant notifications will be sent to the customer.<br>&bull; A dataset may depend on another dataset for retrieval, so the response will include the requested and dependent datasets.<br>&bull; Check all the dataset additional statuses returned in the response because the provider account status is drawn from the dataset additional statuses.<br>&bull; Updating preferences using this API will trigger refreshes.<br>&bull; Pass linkedProviderAccountId in the input to link a user's credential-based providerAccount with the OB providerAccount or viceversa. Ensure that the both the providerAccounts belong to the same institution. <br>&bull; The content type has to be passed as application/json for the body parameter.<br>&bull; configName is included as an optional parameter in the body of the request, which is used to enable the billing metrics for the customers based on the instance configs, when logged in with client credentials.<br><b>--------------------------------------------------------------------------------------------------------------------------------</b><br><b>Note:</b>Only for the REDSYS/PSD2 UK OB integration, passing the state parameter is mandatory during the add or update account process. The state parameter key can be found in the authParameter attribute of the get provider or get provider details API response. The value for the state parameter is present in the Authorization URL. Append the callback URL to the state parameter while adding or updating an account."
       operationId: "editCredentialsOrRefreshProviderAccount"
       responses:
         200:
@@ -2614,7 +2534,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATES,LATEST_BALANCE_UPDATES and CREDIT_ACCELERATOR_REPORT_UPDATES event.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
+      description: "The subscribe events service is used to subscribe to an event for receiving notifications.<br>The callback URL, where the notification will be posted should be provided to this service.<br>If the callback URL is invalid or inaccessible, the subscription will be unsuccessful, and an error will be thrown.<br>Customers can subscribe to REFRESH,DATA_UPDATES,AUTO_REFRESH_UPDATES,LATEST_BALANCE_UPDATES and CREDIT_MATRIX_REPORT_UPDATES event.<br><br><b>Notes:</b><li>This service is not available in developer sandbox/test environment and will be made available for testing in your dedicated environment, once the contract is signed.<li>The content type has to be passed as application/json for the body parameter.</li>"
       operationId: "createSubscriptionNotificationEvent"
       responses:
         201:
@@ -2638,7 +2558,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
-        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+        - "CREDIT_MATRIX_REPORT_UPDATES"
       - schema:
           $ref: "#/definitions/CreateConfigsNotificationEventRequest"
         in: "body"
@@ -2678,7 +2598,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
-        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+        - "CREDIT_MATRIX_REPORT_UPDATES"
       tags:
       - "Configs"
     put:
@@ -2710,7 +2630,7 @@ paths:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
-        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+        - "CREDIT_MATRIX_REPORT_UPDATES"
       - schema:
           $ref: "#/definitions/UpdateConfigsNotificationEventRequest"
         in: "body"
@@ -3321,7 +3241,7 @@ paths:
       produces:
       - "application/json;charset=UTF-8"
       description: "The update transaction service is used to update the category,consumer description, memo, isPhysical, merchantType, detailCategory for a transaction.<br>The HTTP response code is 204 (Success without content).<br>"
-      operationId: "updateTransaction"
+      operationId: "updateTransaction_1"
       responses:
         400:
           schema:
@@ -3557,7 +3477,7 @@ definitions:
         readOnly: true
         type: "boolean"
       lastUpdated:
-        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
+        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
       consentId:
@@ -3590,7 +3510,7 @@ definitions:
         readOnly: true
         type: "integer"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -4365,7 +4285,7 @@ definitions:
         readOnly: true
         type: "boolean"
       lastUpdated:
-        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
+        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
       consentId:
@@ -4404,7 +4324,7 @@ definitions:
         readOnly: true
         type: "integer"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -4554,21 +4474,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Verification"
-  ProviderDetailResponse:
-    type: "object"
-    title: "ProviderDetailResponse"
-    properties:
-      provider:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/ProviderDetail"
-  ClientCredentialTokenResponse:
-    type: "object"
-    title: "ClientCredentialTokenResponse"
-    properties:
-      token:
-        $ref: "#/definitions/ClientCredentialToken"
   UpdateTransaction:
     type: "object"
     title: "UpdateTransaction"
@@ -4576,6 +4481,7 @@ definitions:
     - "categoryId"
     - "categorySource"
     - "container"
+    - "transactionSourceId"
     properties:
       categorySource:
         type: "string"
@@ -4604,6 +4510,8 @@ definitions:
         $ref: "#/definitions/Description"
       memo:
         type: "string"
+      transactionSourceId:
+        type: "string"
       merchantType:
         type: "string"
         enum:
@@ -4614,6 +4522,21 @@ definitions:
       categoryId:
         format: "int64"
         type: "integer"
+  ProviderDetailResponse:
+    type: "object"
+    title: "ProviderDetailResponse"
+    properties:
+      provider:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/ProviderDetail"
+  ClientCredentialTokenResponse:
+    type: "object"
+    title: "ClientCredentialTokenResponse"
+    properties:
+      token:
+        $ref: "#/definitions/ClientCredentialToken"
   Attribute:
     type: "object"
     title: "Attribute"
@@ -4828,7 +4751,7 @@ definitions:
           - "authResponse"
           - "state"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -5225,7 +5148,7 @@ definitions:
         readOnly: true
         type: "boolean"
       lastUpdated:
-        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
+        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
       createdDate:
@@ -5265,7 +5188,7 @@ definitions:
         readOnly: true
         type: "integer"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -5421,6 +5344,9 @@ definitions:
     required:
     - "field"
     properties:
+      configName:
+        description: "The name of configuration created at the time onboarding or configuration creation."
+        type: "string"
       consentId:
         format: "int64"
         description: "Consent Id generated for the request through POST Consent.<br><br><b>Endpoints</b>:<ul><li>POST Provider Account</li><li>PUT Provider Account</li></ul>"
@@ -8681,301 +8607,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/ApiKeyOutput"
-  TransactionWithDateTime:
-    type: "object"
-    title: "TransactionWithDateTime"
-    properties:
-      date:
-        description: "The value provided will be either postDate or transactionDate. postDate takes higher priority than transactionDate, except for the investment container as only transactionDate is available. The availability of postDate or transactionDate depends on the provider site.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      sourceId:
-        description: "A unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts.<br>Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts."
-        readOnly: true
-        type: "string"
-      symbol:
-        description: "The symbol of the security being traded.<br><b>Note</b>: The settle date field applies only to trade-related transactions. <br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      cusipNumber:
-        description: "The CUSIP (Committee on Uniform Securities Identification Procedures) identifies the financial instruments in the United States and Canada.<br><b><br><b>Note</b></b>: The CUSIP number field applies only to trade related transactions.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      sourceApcaNumber:
-        description: "6 Digit APCA number for the initiating institution. The field is fixed-width and padded with leading zeros if applicable. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
-        readOnly: true
-        type: "string"
-      highLevelCategoryId:
-        format: "int64"
-        description: "The high level category assigned to the transaction. The supported values are provided by the GET transactions/categories. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      memo:
-        description: "Additional notes provided by the user for a particular  transaction through application or API services. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      type:
-        description: "The nature of the transaction, i.e., deposit, refund, payment, etc.<br><b>Note</b>: The transaction type field is available only for the United States, Canada, United Kingdom, New Zealand and India based provider sites. <br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
-        readOnly: true
-        type: "string"
-      intermediary:
-        description: "The intermediary of the transaction.<br><br><b>Applicable containers</b>:  bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "array"
-        items:
-          type: "string"
-      frequency:
-        description: "Frequency is set to MONTHLY if the Merchant type is BILLERS or SUBSCRIPTION.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      lastUpdated:
-        readOnly: true
-        type: "string"
-      price:
-        description: "The price of the security for the transaction.<br><b>Note</b>: The price field applies only to the trade related transactions. <br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      sourceMerchantCategoryCode:
-        description: "The merchant category code for an outgoing payment to a merchant. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
-        readOnly: true
-        type: "string"
-      id:
-        format: "int64"
-        description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      checkNumber:
-        description: "The checkNumber of the transaction.<br><br><b>Applicable containers</b>: bank<br>"
-        readOnly: true
-        type: "string"
-      transactionDateTime:
-        description: "The timestamp the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      typeAtSource:
-        description: "The type of transaction. This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card,Loan container<br>"
-        readOnly: true
-        type: "string"
-      valoren:
-        description: "It is an identification number that is assigned to financial instruments such as stocks and bonds trading in Switzerland.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      isManual:
-        description: "Indicates if the transaction is aggregated from the FI site or the consumer has manually created the transaction using the application or an API. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "boolean"
-      sourceBillerName:
-        description: "Name of the BPAY biller for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
-        readOnly: true
-        type: "string"
-      merchant:
-        description: "The name of the merchant associated with the transaction.<br><b>Note</b>: The merchant name field is available only in the United States, Canada, United Kingdom, and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Merchant"
-      sedol:
-        description: "SEDOL stands for Stock Exchange Daily Official List, a list of security identifiers used in the United Kingdom and Ireland for clearing purposes.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      categoryType:
-        description: "The categoryType of the category assigned to the transaction. This is the type field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "TRANSFER"
-        - "DEFERRED_COMPENSATION"
-        - "UNCATEGORIZE"
-        - "INCOME"
-        - "EXPENSE"
-        - "LOAN"
-      accountId:
-        format: "int64"
-        description: "The account from which the transaction was made. This is basically the primary key of the account resource. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      sourceType:
-        description: "The source through which the transaction is added to the Yodlee system.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loann<br><b>Applicable Values:</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "AGGREGATED"
-        - "MANUAL"
-      subType:
-        description: "The transaction subtype field provides a detailed transaction type. For example, purchase is a transaction type and the transaction subtype field indicates if the purchase was made using a debit or credit card.<br><b>Note</b>: The transaction subtype field is available only in the United States, Canada, United Kingdom, New Zealand and India.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "OVERDRAFT_CHARGE"
-        - "ONLINE_PURCHASE"
-        - "TAX_PAYMENT"
-        - "PAYMENT_BY_CHECK"
-        - "ATM_CASH_WITHDRAWAL"
-        - "SERVICE_CHARGE"
-        - "RETURNED_CHECK_CHARGE"
-        - "STOP_PAYMENT_CHARGE"
-        - "CONVENIENCE_FEE"
-        - "AUTO_LOAN"
-        - "HOME_LOAN_MORTGAGE"
-        - "RECURRING_SUBSCRIPTION_PAYMENT"
-        - "INTEREST"
-        - "PAYMENT"
-        - "PURCHASE"
-        - "REFUND"
-        - "TRANSFER"
-        - "FINANCE_CHARGE"
-        - "OTHER_CHARGES_FEES"
-        - "ANNUAL_FEE"
-        - "DEPOSIT"
-        - "DIRECT_DEPOSIT_SALARY"
-        - "INVESTMENT_INCOME_CASH"
-        - "SSA"
-        - "REWARDS"
-        - "TAX_REFUND"
-        - "CREDIT_CARD_PAYMENT"
-        - "INSURANCE_PAYMENT"
-        - "UTILITIES_PAYMENT"
-        - "CHILD_SUPPORT"
-        - "LOAN"
-        - "PERSONAL_LOAN"
-        - "STUDENT_LOAN"
-        - "REIMBURSEMENT"
-        - "BALANCE_TRANSFER"
-        - "OVERDRAFT_PROTECTION"
-        - "CREDIT"
-        - "NSF_FEES"
-      holdingDescription:
-        description: "For transactions involving securities, this captures the securities description.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      status:
-        description: "The status of the transaction: pending or posted.<br><b>Note</b>: Most FI sites only display posted transactions. If the FI site displays transaction status, same will be aggregated.  <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "POSTED"
-        - "PENDING"
-        - "SCHEDULED"
-        - "FAILED"
-        - "CLEARED"
-      detailCategoryId:
-        format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
-        readOnly: true
-        type: "integer"
-      description:
-        description: "Description details<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Description"
-      settleDate:
-        description: "It is the date on which the transaction is finalized, that is, the date the ownership of the security is transferred to the buyer. The settlement date is usually few days after the transaction date.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
-      postDateTime:
-        description: "The timestamp on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      baseType:
-        description: "Indicates if the transaction appears as a debit or a credit transaction in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "CREDIT"
-        - "DEBIT"
-      categorySource:
-        description: "Indicates the source of the category, i.e., categories derived by the system or assigned/provided by the consumer. This is the source field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "SYSTEM"
-        - "USER"
-      principal:
-        description: "The portion of the principal in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      sourceBillerCode:
-        description: "BPAY Biller Code for the transaction (if available). This field will be primarily be available for AU Open Banking sites, and for other regions/providers, the population will depend on the availability of data.<br><br><b>Applicable containers</b>: Bank,Card container<br>"
-        readOnly: true
-        type: "string"
-      interest:
-        description: "The portion of interest in the transaction amount. The transaction amount can be the amount due, payment amount, minimum amount, repayment, etc.<br><br><b>Applicable containers</b>: loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      commission:
-        description: "A commission or brokerage associated with a transaction.<br><br><br><b>Additional Details</b>:The commission only applies to trade-related transactions.<b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      merchantType:
-        description: "Indicates the merchantType of the transaction.e.g:-BILLERS,SUBSCRIPTION,BNPL,OTHERS <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "string"
-      amount:
-        description: "The amount of the transaction as it appears at the FI site. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      isPhysical:
-        description: "Indicates if the transaction is happened online or in-store. <br><br><b>Applicable containers</b>: bank,creditCard,investment,loan<br>"
-        readOnly: true
-        type: "boolean"
-      quantity:
-        format: "double"
-        description: "The quantity associated with the transaction.<br><b>Note</b>: The quantity field applies only to trade-related transactions.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "number"
-      isRecurring:
-        description: "If the transaction is done on a merchant with merchant type as BILLERS/SUBSCRIPTION, then such transactions are marked isRecurring to True or else it is marked as False.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      transactionDate:
-        description: "The date the transaction happens in the account. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      createdDate:
-        readOnly: true
-        type: "string"
-      CONTAINER:
-        description: "The account's container.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br><b>Applicable Values</b><br>"
-        readOnly: true
-        type: "string"
-        enum:
-        - "bank"
-        - "creditCard"
-        - "investment"
-        - "insurance"
-        - "loan"
-        - "reward"
-        - "bill"
-        - "realEstate"
-        - "otherAssets"
-        - "otherLiabilities"
-      businessCategory:
-        description: "business category details for the SMB customers.<br><br><b>Applicable containers</b>: Bank container<br>"
-        readOnly: true
-        $ref: "#/definitions/BusinessCategory"
-      postDate:
-        description: "The date on which the transaction is posted to the account.<br><br><b>Applicable containers</b>: bank,creditCard,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      parentCategoryId:
-        format: "int64"
-        description: "The parentCategoryId of the category assigned to the transaction.<br><b>Note</b>: This field will be provided in the response if the transaction is assigned to a user-created category. <br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      category:
-        description: "The name of the category assigned to the transaction. This is the category field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "string"
-      runningBalance:
-        description: "The running balance in an account indicates the balance of the account after every transaction.<br><br><b>Applicable containers</b>: bank,creditCard,investment<br>"
-        readOnly: true
-        $ref: "#/definitions/Money"
-      categoryId:
-        format: "int64"
-        description: "The id of the category assigned to the transaction. This is the id field of the transaction category resource. The supported values are provided by the GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard,investment,insurance,loan<br>"
-        readOnly: true
-        type: "integer"
-      isin:
-        description: "International Securities Identification Number (ISIN) standard is used worldwide to identify specific securities.<br><br><b>Applicable containers</b>: investment<br>"
-        readOnly: true
-        type: "string"
   CreateCobrandNotificationEventRequest:
     type: "object"
     title: "CreateCobrandNotificationEventRequest"
@@ -10414,6 +10045,14 @@ definitions:
         description: "Indicates the status of the document download."
         readOnly: true
         type: "string"
+  TransactionRequest:
+    type: "object"
+    title: "TransactionRequest"
+    required:
+    - "transaction"
+    properties:
+      transaction:
+        $ref: "#/definitions/UpdateTransaction"
   Profile:
     type: "object"
     title: "Profile"
@@ -10450,14 +10089,6 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Email"
-  TransactionRequest:
-    type: "object"
-    title: "TransactionRequest"
-    required:
-    - "transaction"
-    properties:
-      transaction:
-        $ref: "#/definitions/UpdateTransaction"
   ClassificationSummaryResponse:
     type: "object"
     title: "ClassificationSummaryResponse"
@@ -10505,15 +10136,6 @@ definitions:
         type: "string"
       segmentName:
         type: "string"
-  TransactionResponse:
-    type: "object"
-    title: "TransactionResponse"
-    properties:
-      transaction:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/TransactionWithDateTime"
   ConsentResponse:
     type: "object"
     title: "ConsentResponse"
@@ -10975,7 +10597,7 @@ definitions:
         - "DATA_UPDATES"
         - "AUTO_REFRESH_UPDATES"
         - "LATEST_BALANCE_UPDATES"
-        - "CREDIT_ACCELERATOR_REPORT_UPDATES"
+        - "CREDIT_MATRIX_REPORT_UPDATES"
       callbackUrl:
         minLength: 1
         description: "URL to which the notification should be posted.<br><br><b>Endpoints</b>:<ul><li>GET configs/notifications/events</li></ul>"
@@ -11162,7 +10784,7 @@ definitions:
     title: "AddedProviderAccount"
     properties:
       lastUpdated:
-        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
+        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
       aggregationSource:
@@ -11200,7 +10822,7 @@ definitions:
         readOnly: true
         type: "integer"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -12684,7 +12306,7 @@ definitions:
           - "authResponse"
           - "state"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
@@ -12859,7 +12481,7 @@ definitions:
     title: "UpdatedProviderAccount"
     properties:
       lastUpdated:
-        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET dataExtracts/userData</li></ul>"
+        description: "Indicate when the providerAccount is last updated successfully.<br><br><b>Account Type</b>: Aggregated<br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul>"
         readOnly: true
         type: "string"
       loginForm:
@@ -12907,7 +12529,7 @@ definitions:
         readOnly: true
         type: "integer"
       authType:
-        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li></ul><b>Applicable Values</b><br>"
+        description: "The authentication type enabled at the provider site. <br><br><b>Endpoints</b>:<ul><li>GET providers/{providerId}</li><li>GET providers</li><li>GET /dataExtracts/userData</li><li>GET providerAccounts</li><li>GET providerAccounts/{providerAccountId}</li></ul><b>Applicable Values</b><br>"
         readOnly: true
         type: "string"
         enum:
