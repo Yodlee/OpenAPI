@@ -7,7 +7,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The Transaction service is used to get a list of transactions for a user.<br>By default, this service returns the last 30 days of transactions from today's date.<br>API will only return up to 2 years of transaction history. If the difference between fromDate and toDate is more than 2 years, API will return only last 2 years from the toDate.<br>The keyword parameter performs a contains search on the original, consumer, and simple description attributes, replace the special characters #, &, and + with percent-encoding values %23, %26, and %2B respectively. Eg: for -Debit# , pass the input as -Debit%23.<br>Values for categoryId parameter can be fetched from get transaction category list service.<br> The categoryId is used to filter transactions based on system-defined category as well as user-defined category.<br>User-defined categoryIds should be provided in the filter with the prefix ''U''. E.g. U10002<br>The skip and top parameters are used for pagination. In the skip and top parameters pass the number of records to be skipped and retrieved, respectively. The response header provides the links to retrieve the next and previous set of transactions.<br>Double quotes in the merchant name will be prefixed by backslashes (&#92;) in the response, e.g. Toys \"R\" Us. <br>sourceId is a unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts. Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts.<br><br><b>Note</b><ul><li><a href=\"https://developer.yodlee.com/resources/yodlee/transaction-data-enrichment/docs/overview\">Transaction Data Enrichment</a> is made available for bank and card accounts. The address field in the response is available only when the Transaction Data Enrichment key is turned ON.</li><li>The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 transactions.</li><li>This service supports the localization feature and accepts locale as a header parameter.</li></ul>"
+      description: "The Transaction service is used to get a list of transactions for a user.<br>By default, this service returns the last 30 days of transactions from today's date when fromDate and toDate are not passed.<br>When fromDate and toDate are passed, the API will only return up to 2 years of transaction history. If the difference between fromDate and toDate is more than 2 years, API will return only last 2 years from the toDate.<br>The keyword parameter performs a contains search on the original, consumer, and simple description attributes, replace the special characters #, &, and + with percent-encoding values %23, %26, and %2B respectively. Eg: for -Debit# , pass the input as -Debit%23.<br>Values for categoryId parameter can be fetched from get transaction category list service.<br> The categoryId is used to filter transactions based on system-defined category as well as user-defined category.<br>User-defined categoryIds should be provided in the filter with the prefix ''U''. E.g. U10002<br>The skip and top parameters are used for pagination. In the skip and top parameters pass the number of records to be skipped and retrieved, respectively. The response header provides the links to retrieve the next and previous set of transactions.<br>Double quotes in the merchant name will be prefixed by backslashes (&#92;) in the response, e.g. Toys \"R\" Us. <br>sourceId is a unique ID that the provider site has assigned to the transaction. The source ID is only available for the pre-populated accounts. Pre-populated accounts are the accounts that the FI customers shares with Yodlee, so that the user does not have to add or aggregate those accounts.<br><br><b>Note</b><ul><li><a href=\"https://developer.yodlee.com/resources/yodlee/transaction-data-enrichment/docs/overview\">Transaction Data Enrichment</a> is made available for bank and card accounts. The address field in the response is available only when the Transaction Data Enrichment key is turned ON.</li><li>The pagination feature is available by default. If no values are passed in the skip and top parameters, the API will only return the first 500 transactions.</li><li>This service supports the localization feature and accepts locale as a header parameter.</li></ul>"
       operationId: "getTransactions"
       responses:
         200:
@@ -102,6 +102,12 @@ paths:
         format: "int32"
         description: "top (Max 500)"
         type: "integer"
+        required: false
+      - in: "query"
+        allowEmptyValue: false
+        name: "transactionSourceId"
+        description: "A unique ID that the provider site has assigned to the transaction"
+        type: "string"
         required: false
       - in: "query"
         allowEmptyValue: false
@@ -806,7 +812,7 @@ paths:
         name: "source"
         description: "source"
         type: "string"
-        required: false
+        required: true
       tags:
       - "User"
       consumes:
@@ -2088,6 +2094,36 @@ paths:
       - "ProviderAccounts"
       consumes:
       - "application/json"
+  /riskAnalytics:
+    get:
+      summary: "Risk Analytics"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The Account Verification service checks for any fraud pattern but does not derive any risk information with respect to the verified account. The risk analytics feature introduced enables customers to gain deeper insights into potential risks associated with their consumers, helping them to identify, assess, and effectively manage those risks. <br>Risk analytics will be generated only for accounts verified using FastLink 4 Instant Account Verification service and not the Micro Entries service. Once account verification is complete, risk analytics for the selected account(s) will be initiated and made available in near real time. <br>Contact the Yodlee Client Services team to enable this feature, however, the plan to automate this feature is in the roadmap. <br>Once the risk information is generated for the verified accounts, the webhook RISK_ANALYTICS will be notified to the customers. The customers can invoke GET /riskAnalytics?accountId={accountId} to get the risk analytics for the selected account(s). <br>"
+      operationId: "riskAnalytics"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/RiskAnalyticsResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for accountId<br>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        allowEmptyValue: false
+        name: "accountId"
+        description: "accountId"
+        type: "string"
+        required: true
+      tags:
+      - "Risk Analytics"
   /transactions/categories/txnRules:
     get:
       summary: "Get Transaction Categorization Rules"
@@ -3344,6 +3380,47 @@ paths:
       tags:
       - "Holdings"
   /transactions/{transactionId}:
+    get:
+      summary: "Get Transactions using Transaction ID"
+      deprecated: false
+      produces:
+      - "application/json;charset=UTF-8"
+      description: "The Transaction service is used to get a list of transactions for a user using Transaction ID.<br>"
+      operationId: "getTransactionsByTransactionID"
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/TransactionResponse"
+          description: "OK"
+        400:
+          schema:
+            $ref: "#/definitions/YodleeError"
+          description: "Y800 : Invalid value for baseType<br>Y800 : Invalid value for fromDate<br>Y800 : Invalid value for category<br>Y800 : Invalid value for toDate<br>Y800 : Invalid value for container<br>Y809 : Invalid date range<br>Y804 : Permitted values of top between 1 - 500<br>Y805 : Multiple containers not supported<br>Y800 : Invalid value for transaction type<br>Y824 : The maximum number of accountIds permitted is 100<br>Y824 : The maximum number of categoryIds permitted is 100<br>Y824 : The maximum number of highLevelCategoryIds permitted is 100<br>Y848 : detailCategoryId cannot be provided as input, as the detailedCategory feature is not enabled<br>Y823 : detailCategoryId is not for applicable containers other than bank and card<br>Y824 : The maximum number of detailCategoryIds permitted is 100<br>Y800 : Invalid value for detailCategoryId<br>Y800 : Invalid value for convertToCurrency<br>Y820 : The currency value is not supported for convertToCurrency<br>"
+        401:
+          description: "Unauthorized"
+        404:
+          description: "Not Found"
+      parameters:
+      - in: "query"
+        allowEmptyValue: false
+        name: "container"
+        description: "bank/creditCard/investment/insurance/loan"
+        type: "string"
+        required: true
+      - in: "query"
+        allowEmptyValue: false
+        name: "convertToCurrency"
+        description: "On-demand currency conversion parameter"
+        type: "string"
+        required: false
+      - in: "path"
+        name: "transactionId"
+        format: "int64"
+        description: "An unique identifier for the transaction. The combination of the id and account container are unique in the system."
+        type: "integer"
+        required: true
+      tags:
+      - "Transactions"
     put:
       summary: "Update Transaction"
       deprecated: false
@@ -4615,8 +4692,6 @@ definitions:
       detailCategoryId:
         format: "int64"
         type: "integer"
-      description:
-        $ref: "#/definitions/Description"
       memo:
         type: "string"
       transactionSourceId:
@@ -7399,6 +7474,39 @@ definitions:
         description: "The balance in the account that is available for spending. The value is aggregated from the provider site during the last refresh.<br><b>Note</b>: For checking accounts with overdraft, the available balance amount may include the overdraft amount if the provider site adds the overdraft balance to the available balance."
         readOnly: true
         $ref: "#/definitions/Money"
+  MajorCharges:
+    type: "object"
+    title: "MajorCharges"
+    properties:
+      ageOfRecentOccurence:
+        format: "int32"
+        description: "No. of days elapsed since latest occurrence date."
+        readOnly: true
+        type: "integer"
+      ageOfFirstOccurence:
+        format: "int32"
+        description: "No. of days elapsed since first occurrence date."
+        readOnly: true
+        type: "integer"
+      amount:
+        format: "double"
+        description: "Amount corresponding to the feature."
+        readOnly: true
+        type: "number"
+      featureName:
+        description: "Risk analytics feature."
+        readOnly: true
+        type: "string"
+      countDistinctMonths:
+        format: "int32"
+        description: "Months of feature."
+        readOnly: true
+        type: "integer"
+      countTxn:
+        format: "int32"
+        description: "Total count of transactions for feature."
+        readOnly: true
+        type: "integer"
   CreateConfigsNotificationEvent:
     type: "object"
     title: "CreateConfigsNotificationEvent"
@@ -12994,6 +13102,115 @@ definitions:
       holdings:
         readOnly: true
         type: "string"
+  RiskAnalyticsResponse:
+    type: "object"
+    title: "RiskAnalyticsResponse"
+    properties:
+      debitCount:
+        format: "int32"
+        description: "Total number of debits."
+        readOnly: true
+        type: "integer"
+      accountName:
+        description: "The account name as it appears at the site."
+        readOnly: true
+        type: "string"
+      completenessScore:
+        format: "double"
+        description: "Score indicating completeness of an account across a variety of transaction categories. Closer the  score is to 1, higher the level of completeness of an account."
+        readOnly: true
+        type: "number"
+      accountType:
+        description: "The aggregated account type, such as savings, checking, etc. The account type is derived based on the attributes of the account."
+        readOnly: true
+        type: "string"
+      currentBalance:
+        format: "double"
+        description: "The balance in the account that is available at the beginning of the business day; is equal to the account's ledger balance. Applicable only for bank container."
+        readOnly: true
+        type: "number"
+      displayedName:
+        description: "The name or identification of the account owner as it appears at the financial institution (FI) site."
+        readOnly: true
+        type: "string"
+      transactionsPresent:
+        description: "Yes/ No Flag indicating the presence of transactional data."
+        readOnly: true
+        type: "string"
+      creditCount:
+        format: "int32"
+        description: "Total number of credits."
+        readOnly: true
+        type: "integer"
+      debitAmount:
+        format: "double"
+        description: "Total amount of debits."
+        readOnly: true
+        type: "number"
+      accountNumber:
+        description: "The account number as it appears on the site."
+        readOnly: true
+        type: "string"
+      avgNetMonthlyCashflow:
+        format: "double"
+        description: "Average of all EOM cashflow values belonging to months within the requested timeframe."
+        readOnly: true
+        type: "number"
+      majorCharges:
+        type: "array"
+        items:
+          $ref: "#/definitions/MajorCharges"
+      transactionBeginDate:
+        description: "Earliest Transaction Date present in the transactional data  (mm/dd/ccyy)."
+        readOnly: true
+        type: "string"
+      noOfNegativeCashflowMonths:
+        format: "int32"
+        description: "Unique number of months wherein the EOM cashflow value was less than zero."
+        readOnly: true
+        type: "integer"
+      accountClassification:
+        description: "Type of account ownership  - Personal, Business, Trust, etc."
+        readOnly: true
+        type: "string"
+      availableBalance:
+        format: "double"
+        description: "The balance in the account that is available for spending. For checking accounts with overdrafts, the available balance may include an overdraft amount if the site adds an overdraft balance to the available balance."
+        readOnly: true
+        type: "number"
+      accountId:
+        format: "int64"
+        description: "The primary key of the account resource and the unique identifier for the account."
+        readOnly: true
+        type: "integer"
+      transactionEndDate:
+        description: "Latest Transaction Date present in the transactional data  (mm/dd/ccyy)."
+        readOnly: true
+        type: "string"
+      transactionDays:
+        format: "int32"
+        description: "Number of days where there was a transaction on the account."
+        readOnly: true
+        type: "integer"
+      transfers:
+        type: "array"
+        items:
+          $ref: "#/definitions/Transfers"
+      providerAccountId:
+        format: "int64"
+        description: "The primary key of the account resource and the unique identifier for the account."
+        readOnly: true
+        type: "integer"
+      creditAmount:
+        format: "double"
+        description: "Total amount of credits."
+        readOnly: true
+        type: "number"
+      transactionsCount:
+        format: "int32"
+        description: "Total number of transactions."
+        readOnly: true
+        type: "integer"
   Contact:
     type: "object"
     title: "Contact"
@@ -13049,6 +13266,39 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/PaymentAccountHolder"
+  Transfers:
+    type: "object"
+    title: "Transfers"
+    properties:
+      ageOfRecentOccurence:
+        format: "int32"
+        description: "No. of days elapsed since latest occurrence date."
+        readOnly: true
+        type: "integer"
+      ageOfFirstOccurence:
+        format: "int32"
+        description: "No. of days elapsed since first occurrence date."
+        readOnly: true
+        type: "integer"
+      amount:
+        format: "double"
+        description: "Amount corresponding to the feature."
+        readOnly: true
+        type: "number"
+      featureName:
+        description: "Risk analytics feature."
+        readOnly: true
+        type: "string"
+      countDistinctMonths:
+        format: "int32"
+        description: "Months of feature."
+        readOnly: true
+        type: "integer"
+      countTxn:
+        format: "int32"
+        description: "Total count of transactions for feature."
+        readOnly: true
+        type: "integer"
   DataExtractsHolding:
     type: "object"
     title: "DataExtractsHolding"
@@ -13367,6 +13617,8 @@ tags:
   description: "Provider Accounts API"
 - name: "Providers"
   description: "Providers API"
+- name: "Risk Analytics"
+  description: "Risk Analytics API"
 - name: "Statements"
   description: "Statements API"
 - name: "Transactions"
