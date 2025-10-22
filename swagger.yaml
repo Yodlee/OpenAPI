@@ -9001,7 +9001,7 @@ definitions:
         - "CLEARED"
       detailCategoryId:
         format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        description: "The id of the detail category that is assigned to the transaction. This is a premium attribute which will be returned in the response only if the Detail Category feature is enabled. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
         readOnly: true
         type: "integer"
       description:
@@ -9229,7 +9229,7 @@ definitions:
         readOnly: true
         type: "boolean"
       sAndPRating:
-        description: "Unique identifier for S&P rating on Envestnet platform.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Unique identifier for S&P rating on Yodlee platform.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
       shareClass:
@@ -9339,7 +9339,7 @@ definitions:
         readOnly: true
         type: "boolean"
       moodyRating:
-        description: "Unique identifier for Moody rating on Envestnet platform.<br><br><b>Applicable containers</b>: investment, insurance<br>"
+        description: "Unique identifier for Moody rating on Yodlee platform.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
         type: "string"
       style:
@@ -11697,7 +11697,7 @@ definitions:
         - "CLEARED"
       detailCategoryId:
         format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        description: "The id of the detail category that is assigned to the transaction. This is a premium attribute which will be returned in the response only if the Detail Category feature is enabled. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
         readOnly: true
         type: "integer"
       description:
@@ -12359,7 +12359,7 @@ definitions:
         - "CLEARED"
       detailCategoryId:
         format: "int64"
-        description: "The id of the detail category that is assigned to the transaction. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
+        description: "The id of the detail category that is assigned to the transaction. This is a premium attribute which will be returned in the response only if the Detail Category feature is enabled. The supported values are provided by GET transactions/categories.<br><br><b>Applicable containers</b>: bank,creditCard<br>"
         readOnly: true
         type: "integer"
       description:
@@ -12722,7 +12722,7 @@ definitions:
     title: "AccountToken"
     properties:
       processorToken:
-        description: "The unique token that the payment partner can use to make API request to the Envestnet | Yodlee system."
+        description: "The unique token that the payment partner can use to make API request to the Yodlee system."
         readOnly: true
         type: "string"
       accountId:
@@ -13590,7 +13590,7 @@ info:
   version: "1.1.0"
 tags:
 - name: "Account Token"
-  description: "Account verification customers looking to integrate with one of our payment partners can use the Account Token endpoints. These APIs allow creating a secure processor token for your user's verified financial accounts. You can then share the processor token with our payment partners to enable them to securely request the user's account details from Envestnet | Yodlee.<br><br>You will have to set the header before making the API call. The following headers apply to all the APIs:</p><ul><li>Authorization: This header holds the access token</li> <li> Api-Version: 1.1</li></ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description.<p></p>"
+  description: "Account verification customers looking to integrate with one of our payment partners can use the Account Token endpoints. These APIs allow creating a secure processor token for your user's verified financial accounts. You can then share the processor token with our payment partners to enable them to securely request the user's account details from Yodlee.<br><br>You will have to set the header before making the API call. The following headers apply to all the APIs:</p><ul><li>Authorization: This header holds the access token</li> <li> Api-Version: 1.1</li></ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description.<p></p>"
 - name: "Accounts"
   description: "Accounts API"
 - name: "Auth"
@@ -13612,7 +13612,7 @@ tags:
 - name: "Institutions"
   description: "Institutions API"
 - name: "Payment Processor"
-  description: "Envestnet | Yodlee's payment processor partners can use the Payment Processor endpoints to access verified account details using the <code>processorToken</code> created and shared by mutual customers. These APIs are only for payment processor partners and not for developers using the Envestnet | Yodlee services to integrate with payment partners. Refer <a href=\"/products/yodlee/account-token/docs#customers\"> here </a> for a guide on working with payment processor partners.<br>As a processor payment partner, you can retrieve the following account information using the <code>processorToken</code>:<ul><li>Account details include account status, account name, full account number, bank transfer code, balance, etc.</li><li>Account holder details include name, email, phone number, address, etc.</li><li>Account balance details.</li></ul><br>You will have to set the header before making the API call. The following headers apply to all the APIs:</p><ul><li>Authorization: This header holds the access token</li> </ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description.<p></p>"
+  description: "Yodlee's payment processor partners can use the Payment Processor endpoints to access verified account details using the <code>processorToken</code> created and shared by mutual customers. These APIs are only for payment processor partners and not for developers using the Yodlee services to integrate with payment partners. Refer <a href=\"/products/yodlee/account-token/docs#customers\"> here </a> for a guide on working with payment processor partners.<br>As a processor payment partner, you can retrieve the following account information using the <code>processorToken</code>:<ul><li>Account details include account status, account name, full account number, bank transfer code, balance, etc.</li><li>Account holder details include name, email, phone number, address, etc.</li><li>Account balance details.</li></ul><br>You will have to set the header before making the API call. The following headers apply to all the APIs:</p><ul><li>Authorization: This header holds the access token</li> </ul><b>Note</b>: If there are any API-specific headers, they are mentioned explicitly in the respective API's description.<p></p>"
 - name: "ProviderAccounts"
   description: "Provider Accounts API"
 - name: "Providers"
