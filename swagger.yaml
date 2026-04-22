@@ -1673,7 +1673,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y803 : providerId is mandatory<br>Y803 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y901 : Service not supported"
+          description: "Y803 : providerId is mandatory<br>Y803 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y901 : Service not supported<br>Y821 : Provider not supported <br>"
         401:
           description: "Unauthorized"
         404:
@@ -1741,7 +1741,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y805 : Multiple providerAccountId not supported for updating credentials<br>Y800 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y806 : Invalid input<br>Y823 : Credentials are not applicable for real estate aggregated / manual accounts<br>Y868 : No action is allowed, as the data is being migrated to the Open Banking provider<br>"
+          description: "Y805 : Multiple providerAccountId not supported for updating credentials<br>Y800 : Invalid value for credentialsParam<br>Y400 : id and value in credentialsParam are mandatory<br>Y806 : Invalid input<br>Y823 : Credentials are not applicable for real estate aggregated / manual accounts<br>Y868 : No action is allowed, as the data is being migrated to the Open Banking provider<br>Y821 : Provider not supported <br>"
         401:
           description: "Unauthorized"
         404:
@@ -3217,7 +3217,7 @@ paths:
         400:
           schema:
             $ref: "#/definitions/YodleeError"
-          description: "Y800 : Invalid value for providerId <br/>Y807 : Resource not found <br/>Y800 : Invalid value for consentParam <br/>Y901 : Service not supported <br/>Y800 : Invalid value for applicationName <br/>"
+          description: "Y800 : Invalid value for providerId <br/>Y807 : Resource not found <br/>Y800 : Invalid value for consentParam <br/>Y901 : Service not supported <br/>Y800 : Invalid value for applicationName <br/>Y821 : Provider not supported <br/>"
         401:
           description: "Unauthorized"
         404:
@@ -6188,6 +6188,10 @@ definitions:
         description: "Indicates that the holding is a short trading.<br><br><b>Applicable containers</b>: investment<br>"
         readOnly: true
         type: "boolean"
+      isNormalized:
+        description: "Indicates whether a holding has been successfully normalized by IDE.<br>This field is available only if customer is enabled with SN3 OR in ACAT flow"
+        readOnly: true
+        type: "boolean"
       value:
         description: "The total market value of the security. For insurance container, the field is only applicable for insurance annuity and variable life insurance types.<br><br><b>Applicable containers</b>: investment, insurance<br>"
         readOnly: true
@@ -7768,6 +7772,10 @@ definitions:
         type: "integer"
       isShort:
         description: "Indicates that the holding is a short trading.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "boolean"
+      isNormalized:
+        description: "Indicates whether a holding has been successfully normalized by IDE.<br>This field is available only if customer is enabled with SN3 OR in ACAT flow"
         readOnly: true
         type: "boolean"
       value:
@@ -13916,6 +13924,10 @@ definitions:
         type: "integer"
       isShort:
         description: "Indicates that the holding is a short trading.<br><br><b>Applicable containers</b>: investment<br>"
+        readOnly: true
+        type: "boolean"
+      isNormalized:
+        description: "Indicates whether a holding has been successfully normalized by IDE.<br>This field is available only if customer is enabled with SN3 OR in ACAT flow"
         readOnly: true
         type: "boolean"
       value:
