@@ -62,7 +62,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "detailCategoryId"
-        description: "Comma separated detailCategoryIds"
+        description: "Comma separated detailCategoryIds. The id of the detail category that is assigned to the transaction. This is a premium attribute which will be returned in the response only if the Detail Category feature is enabled. The supported values are provided by GET transactions/categories."
         type: "string"
         required: false
       - in: "query"
@@ -1332,7 +1332,7 @@ paths:
       deprecated: false
       produces:
       - "application/json;charset=UTF-8"
-      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <b>Login Name Change Feature:</b> loginName can be passed to update the user's login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the user's loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
+      description: "The update user details service is used to update user details like name, address, currency preference, etc.<br>This service can also be used to change the business unit of the user for FL4 customers.<br>Currency provided in the input will be respected in the derived services and the amount fields in the response will be provided in the preferred currency.<br>The HTTP response code is 204 (Success without content). <br><br> <b>Login Name Change Feature:</b> loginName can be passed to update the user's login name. Once the loginName is updated, to access the user's data, a token with the changed loginName must be created. This feature is supported only Client Credentials authentication methods.<br><b>Note:</b> <li>We strongly recommend to immediately delete the old access token once the user's loginName is successfully changed to avoid misuse.</li> <li>After updating the login name, the already sent data extract events with the old login name will no more be functional. Replace the loginName with new loginName or try polling method to retrieve the data.</li><br>"
       operationId: "updateUser"
       responses:
         401:
@@ -1896,7 +1896,7 @@ paths:
       - in: "query"
         allowEmptyValue: false
         name: "detailCategoryId"
-        description: "Comma separated detailCategoryIds"
+        description: "Comma separated detailCategoryIds. The id of the detail category that is assigned to the transaction. This is a premium attribute which will be returned in the response only if the Detail Category feature is enabled. The supported values are provided by GET transactions/categories."
         type: "string"
         required: false
       - in: "query"
@@ -10511,6 +10511,9 @@ definitions:
     type: "object"
     title: "UpdateUserRegistration"
     properties:
+      configName:
+        description: "The name of configuration created at the time onboarding or configuration creation."
+        type: "string"
       preferences:
         $ref: "#/definitions/UserRequestPreferences"
       address:
